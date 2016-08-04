@@ -8,7 +8,7 @@ Fix and customize W3 Total Cache by @ftownes
 - [ ] Support PHP7
 - [ ] Support APCu
 - [ ] Support OPcache
-- [ ] Add woff2 CORS support
+- [x] Support WOFF2 fonts format
 - [ ] Halfdone CloudFlare support in trunk
 
 ### And customize
