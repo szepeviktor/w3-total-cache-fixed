@@ -9,13 +9,14 @@ Fix and customize W3 Total Cache by @ftownes
 - [ ] support APCu
 - [ ] support OPcache
 - [ ] add woff2 CORS support
+- [ ] halfdone CloudFlare support in trunk
 
 ### And customize
 
 - [ ] disable w3tc-edge-mode
 - [ ] hide most widgets
 - [ ] remove contextual help `w3tc_*`
-- [ ] `#w3tc h2.logo { float: right; }`
+- [x] `#w3tc h2.logo { float: right; }`
 - [ ] hook `w3tc_can_print_comment`
 
 ### Disabled submenus
@@ -30,7 +31,7 @@ Fix and customize W3 Total Cache by @ftownes
 - W3_Plugin_NewRelicAdmin
 - W3_Licensing
 
-### Disabled W3Tc widgets
+### Disabled W3TC widgets
 
 - W3_Widget_SpreadTheWord
 - W3_Widget_News
