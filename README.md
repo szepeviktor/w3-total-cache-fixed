@@ -13,7 +13,7 @@ Fix and customize W3 Total Cache by @ftownes
 
 ### And customize
 
-- [ ] Disable w3tc-edge-mode
+- [x] Disable edge mode `evaluation.reminder`
 - [x] Hide most widgets from W3TC Dashboard
 - [x] Remove informational submenus `$pages_tail`
 - [x] Remove contextual help `w3tc_*`

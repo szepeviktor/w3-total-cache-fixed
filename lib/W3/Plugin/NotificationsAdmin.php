@@ -48,6 +48,8 @@ class W3_Plugin_NotificationsAdmin {
      * Queue edge mode notification
      */
     public function edge_notification() {
+       return;
+
        if ((!w3tc_edge_mode() &&
             $this->_config_admin->get_integer('evaluation.reminder', 0) == 0) || w3tc_show_notification('edge_mode_note')) {
             add_action('admin_notices', array($this, 'notify_edge_mode'));
@@ -68,6 +70,8 @@ class W3_Plugin_NotificationsAdmin {
      * Edge Mode popup notification
      */
     public function edge_nag() {
+        return;
+
         $edge_reminder = ($this->_config_admin->get_integer('evaluation.reminder') != 0 && $this->_config_admin->get_integer('evaluation.reminder') < time()) && !w3tc_edge_mode();
         if ($edge_reminder  || w3tc_show_notification('edge_mode_popup')) { ?>
             <script type="text/javascript">/*<![CDATA[*/
