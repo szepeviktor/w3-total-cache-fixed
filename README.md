@@ -4,20 +4,21 @@ Fix and customize W3 Total Cache by @ftownes
 
 ### Fix
 
-- [ ] fix deprecated `get_currentuserinfo()`
-- [ ] support PHP7
-- [ ] support APCu
-- [ ] support OPcache
-- [ ] add woff2 CORS support
-- [ ] halfdone CloudFlare support in trunk
+- [ ] Fix deprecated `get_currentuserinfo()`
+- [ ] Support PHP7
+- [ ] Support APCu
+- [ ] Support OPcache
+- [ ] Add woff2 CORS support
+- [ ] Halfdone CloudFlare support in trunk
 
 ### And customize
 
-- [ ] disable w3tc-edge-mode
-- [ ] hide most widgets
-- [ ] remove contextual help `w3tc_*`
+- [ ] Disable w3tc-edge-mode
+- [ ] Hide most widgets
+- [ ] Remove contextual help `w3tc_*`
 - [x] `#w3tc h2.logo { float: right; }`
-- [ ] hook `w3tc_can_print_comment`
+- [x] Remove HTML comment by hooking `w3tc_can_print_comment`
+- [x] Disable EDD/licensing
 
 ### Disabled submenus
 
