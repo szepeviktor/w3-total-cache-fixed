@@ -14,7 +14,7 @@ Fix and customize W3 Total Cache by @ftownes
 ### And customize
 
 - [ ] Disable w3tc-edge-mode
-- [ ] Hide most widgets from W3TC Dashboard
+- [x] Hide most widgets from W3TC Dashboard
 - [ ] Remove informational submenus
 - [x] Remove contextual help `w3tc_*`
 - [x] Make admin pages smaller `#w3tc h2.logo { float: right; }`

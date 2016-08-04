@@ -46,18 +46,18 @@ class W3_Root {
             $this->_plugins[] = array('class_name' => 'W3_Plugin_TotalCacheAdmin', 'enable_options' => null);
             $this->_plugins[] = array('class_name' => 'W3_Plugin_PgCacheAdmin', 'enable_options' => 'pgcache.enabled');
             $this->_plugins[] = array('class_name' => 'W3_Plugin_MinifyAdmin', 'enable_options' => array('minify.enabled', 'minify.auto'));
-            $this->_plugins[] = array('class_name' => 'W3_Plugin_NewRelicAdmin', 'enable_options' => null);
+//            $this->_plugins[] = array('class_name' => 'W3_Plugin_NewRelicAdmin', 'enable_options' => null);
             $this->_plugins[] = array('class_name' => 'W3_Widget_Services', 'enable_options' => null);
-            $this->_plugins[] = array('class_name' => 'W3_Widget_SpreadTheWord', 'enable_options' => null);
-            $this->_plugins[] = array('class_name' => 'W3_Widget_News', 'enable_options' => null);
-            $this->_plugins[] = array('class_name' => 'W3_Widget_Forum', 'enable_options' => null);
-            $this->_plugins[] = array('class_name' => 'W3_Widget_MaxCDN', 'enable_options' => array(array('cdn.engine', '==', 'maxcdn'),'||', array('cdn.engine', '!=', 'netdna')));
-            $this->_plugins[] = array('class_name' => 'W3_Widget_NetDNA', 'enable_options' => array(array('cdn.engine', '==', 'netdna')));
-            $this->_plugins[] = array('class_name' => 'W3_Widget_NewRelic', 'enable_options' => null);
+//            $this->_plugins[] = array('class_name' => 'W3_Widget_SpreadTheWord', 'enable_options' => null);
+//            $this->_plugins[] = array('class_name' => 'W3_Widget_News', 'enable_options' => null);
+//            $this->_plugins[] = array('class_name' => 'W3_Widget_Forum', 'enable_options' => null);
+//            $this->_plugins[] = array('class_name' => 'W3_Widget_MaxCDN', 'enable_options' => array(array('cdn.engine', '==', 'maxcdn'),'||', array('cdn.engine', '!=', 'netdna')));
+//            $this->_plugins[] = array('class_name' => 'W3_Widget_NetDNA', 'enable_options' => array(array('cdn.engine', '==', 'netdna')));
+//            $this->_plugins[] = array('class_name' => 'W3_Widget_NewRelic', 'enable_options' => null);
             $this->_plugins[] = array('class_name' => 'W3_Widget_PageSpeed', 'enable_options' => 'widget.pagespeed.enabled');
             $this->_plugins[] = array('class_name' => 'W3_AdminCompatibility', 'enable_options' => null);
-            if (!(defined('W3TC_PRO') || w3_is_enterprise()))
-                $this->_plugins[] = array('class_name' => 'W3_Licensing', 'enable_options' => null);
+//            if (!(defined('W3TC_PRO') || w3_is_enterprise()))
+//                $this->_plugins[] = array('class_name' => 'W3_Licensing', 'enable_options' => null);
             $this->_plugins[] = array('class_name' => 'W3_Plugin_DefaultSettings', 'enable_options' => null);
             $this->_plugins[] = array('class_name' => 'W3_GeneralActions', 'enable_options' => array('pgcache.enabled','||', 'varnish.enabled','||', array('cdn.enabled', 'cdncache.enabled')));
             $this->_plugins[] = array('class_name' => 'W3_Plugin_ExtensionsAdmin', 'enable_options' => null);
