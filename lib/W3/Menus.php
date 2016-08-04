@@ -122,7 +122,7 @@ class W3_Menus {
             )
         );
         $pages = apply_filters('w3tc_menu', $pages, $this->_config, $this->_config_admin);
-        $pages = array_merge($pages, $pages_tail);
+//        $pages = array_merge($pages, $pages_tail);
         return $pages;
     }
     function generate() {
