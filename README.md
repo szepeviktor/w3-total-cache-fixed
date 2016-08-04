@@ -18,6 +18,27 @@ Fix and customize W3 Total Cache by @ftownes
 - [ ] `#w3tc h2.logo { float: right; }`
 - [ ] hook `w3tc_can_print_comment`
 
+### Disabled submenus
+
+- FAQ
+- Support
+- Install
+- About
+
+### Disabled W3TC plugins
+
+- W3_Plugin_NewRelicAdmin
+- W3_Licensing
+
+### Disabled W3Tc widgets
+
+- W3_Widget_SpreadTheWord
+- W3_Widget_News
+- W3_Widget_Forum
+- W3_Widget_MaxCDN
+- W3_Widget_NetDNA
+- W3_Widget_NewRelic
+
 ### Upstream
 
 svn: https://plugins.svn.wordpress.org/w3-total-cache/
