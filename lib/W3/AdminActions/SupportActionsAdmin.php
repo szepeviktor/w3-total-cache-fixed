@@ -651,8 +651,7 @@ class W3_AdminActions_SupportActionsAdmin extends W3_UI_PluginView {
         w3_require_once(W3TC_INC_FUNCTIONS_DIR . '/admin_ui.php');
         w3_require_once(W3TC_INC_FUNCTIONS_DIR . '/ui.php');
         $supports = $this->get_supports();
-        global $current_user;
-        get_currentuserinfo();
+        $current_user = wp_get_current_user();
         $email = $current_user->user_email;
         include W3TC_INC_DIR . '/lightbox/support_us.php';
     }

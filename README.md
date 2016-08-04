@@ -4,11 +4,12 @@ Fix and customize W3 Total Cache by @ftownes
 
 ### Fix
 
-- [ ] Fix deprecated `get_currentuserinfo()`
+- [x] Modernize deprecated WordPress code
 - [x] Support PHP7 [disallow reference arguments](https://github.com/php/php-src/commit/fafe01b)
 - [ ] Support APCu
 - [ ] Support OPcache
 - [x] Support WOFF2 fonts format
+- [ ] Fix https caching
 - [ ] Halfdone CloudFlare support in trunk
 
 ### And customize

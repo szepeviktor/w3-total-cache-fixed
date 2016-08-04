@@ -108,7 +108,7 @@ class W3_SharedPageUrls
     function get_post_urls($post_id) {
         if (!isset($this->post_urls[$post_id])) {
             $full_urls = array();
-            $post_link = post_permalink($post_id);
+            $post_link = get_permalink($post_id);
             $post_uri = str_replace($this->domain_url, '', $post_link);
 
             $full_urls[] = $post_link;

@@ -559,7 +559,7 @@ class W3_PgCacheAdminEnvironment {
         $cache_dir = w3_path(W3TC_CACHE_PAGE_ENHANCED_DIR);
         $permalink_structure = get_option('permalink_structure');
 
-        $current_user = get_currentuserinfo();
+        $current_user = wp_get_current_user();
 
         /**
          * Auto reject cookies
