@@ -1276,6 +1276,10 @@ function w3_get_engine_name($engine, $module = '') {
             $engine_name = 'apc';
             break;
 
+        case 'apcu':
+            $engine_name = 'apcu';
+            break;
+
         case 'eaccelerator':
             $engine_name = 'eaccelerator';
             break;

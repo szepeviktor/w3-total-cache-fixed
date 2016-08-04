@@ -9,6 +9,7 @@
  */
 define('W3TC_CACHE_MEMCACHED', 'memcached');
 define('W3TC_CACHE_APC', 'apc');
+define('W3TC_CACHE_APCU', 'apcu');
 define('W3TC_CACHE_EACCELERATOR', 'eaccelerator');
 define('W3TC_CACHE_XCACHE', 'xcache');
 define('W3TC_CACHE_WINCACHE', 'wincache');
@@ -45,6 +46,11 @@ class W3_Cache {
                 case W3TC_CACHE_APC:
                     w3_require_once(W3TC_LIB_W3_DIR . '/Cache/Apc.php');
                     $instances[$instance_key] = new W3_Cache_Apc($config);
+                    break;
+
+                case W3TC_CACHE_APCU:
+                    w3_require_once(W3TC_LIB_W3_DIR . '/Cache/Apcu.php');
+                    $instances[$instance_key] = new W3_Cache_Apcu($config);
                     break;
 
                 case W3TC_CACHE_EACCELERATOR:

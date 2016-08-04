@@ -6,10 +6,10 @@ Fix and customize W3 Total Cache by @ftownes
 
 - [x] Modernize deprecated WordPress code
 - [x] Support PHP7 [disallow reference arguments](https://github.com/php/php-src/commit/fafe01b)
-- [ ] Support APCu
+- [x] Add APCu support (props. [@nigrosimone](https://github.com/nigrosimone))
 - [ ] Support OPcache
 - [x] Support WOFF2 fonts format
-- [ ] Fix https caching
+- [x] Fix https caching
 - [ ] Halfdone CloudFlare support in trunk
 
 ### And customize
