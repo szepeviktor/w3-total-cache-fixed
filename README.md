@@ -5,7 +5,7 @@ Fix and customize W3 Total Cache by @ftownes
 ### Fix
 
 - [ ] Fix deprecated `get_currentuserinfo()`
-- [ ] Support PHP7
+- [x] Support PHP7 [disallow reference arguments](https://github.com/php/php-src/commit/fafe01b)
 - [ ] Support APCu
 - [ ] Support OPcache
 - [x] Support WOFF2 fonts format
@@ -47,6 +47,18 @@ Fix and customize W3 Total Cache by @ftownes
 svn: https://plugins.svn.wordpress.org/w3-total-cache/
 
 git: https://github.com/wp-plugins/w3-total-cache.git
+
+### PHP 7 support
+
+In version 7.0.9 reference arguments were disallowed in `call_user_func()`.
+
+This is how to find them in the code:
+
+```bash
+grep -Fnr 'ob_callback(&$buffer)' w3-total-cache/*
+```
+
+Props. [IT Nota](https://www.itnota.com/fixing-php7-compatibility-issue-w3-total-cache/)
 
 ### Alternatives
 

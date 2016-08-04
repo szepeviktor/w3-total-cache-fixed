@@ -328,7 +328,7 @@ class W3_PgCache {
      * @param string $buffer
      * @return string
      */
-    function ob_callback(&$buffer) {
+    function ob_callback($buffer) {
         if ($buffer != '' && $this->_is_cacheable_content_type()) {
             $compression = false;
             $has_dynamic = $this->_has_dynamic($buffer);

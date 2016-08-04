@@ -128,7 +128,7 @@ class W3_Plugin_Minify extends W3_Plugin {
      * @param string $buffer
      * @return string
      */
-    function ob_callback(&$buffer) {
+    function ob_callback($buffer) {
         if ($buffer != '' && w3_is_xml($buffer)) {
             if ($this->can_minify2($buffer)) {
                 $this->minify_helpers = new _W3_MinifyHelpers($this->_config);

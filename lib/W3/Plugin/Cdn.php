@@ -239,7 +239,7 @@ class W3_Plugin_Cdn extends W3_Plugin {
      * @param string $buffer
      * @return string
      */
-    function ob_callback(&$buffer) {
+    function ob_callback($buffer) {
         if ($buffer != '' && w3_is_xml($buffer)) {
             if ($this->can_cdn2($buffer)) {
                 $regexps = array();

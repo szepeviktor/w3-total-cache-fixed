@@ -28,7 +28,7 @@ class W3_Plugin_NewRelic extends W3_Plugin{
         w3tc_add_ob_callback('newrelic', array($this,'ob_callback'));
     }
 
-    function ob_callback(&$buffer) {
+    function ob_callback($buffer) {
         if ($this->_config->get_boolean('newrelic.include_rum')) {
             if (($this->_config->get_boolean('browsercache.html.compression') ||
                 $this->_config->get_string('pgcache.engine') == 'file_generic') && !$this->_should_disable_auto_rum()) {

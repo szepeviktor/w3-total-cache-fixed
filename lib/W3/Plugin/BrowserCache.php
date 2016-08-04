@@ -113,7 +113,7 @@ class W3_Plugin_BrowserCache extends W3_Plugin {
      * @param string $buffer
      * @return mixed
      */
-    function ob_callback(&$buffer) {
+    function ob_callback($buffer) {
         if ($buffer != '' && w3_is_xml($buffer)) {
             $domain_url_regexp = w3_get_domain_url_regexp();
 
