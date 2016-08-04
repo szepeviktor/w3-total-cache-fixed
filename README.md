@@ -43,6 +43,12 @@ Fix and customize W3 Total Cache by @ftownes
 - W3_Widget_NetDNA
 - W3_Widget_NewRelic
 
+### Mini CI
+
+```bash
+find -type f -name "*.php" -exec php -l "{}" ";"
+```
+
 ### Upstream
 
 svn: https://plugins.svn.wordpress.org/w3-total-cache/
@@ -69,5 +75,7 @@ Props. [IT Nota](https://www.itnota.com/fixing-php7-compatibility-issue-w3-total
 - https://github.com/StefanoWP/W3-Total-Cache-WordPress-Plugin-Default-Settings
 
 <!--
+configwriter: master.phps ???
+inspect alternative
 try Google Page Speed API on dashboard widget
 -->
