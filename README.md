@@ -2,6 +2,8 @@
 
 Fix and customize W3 Total Cache by @ftownes
 
+[Latest release](https://github.com/szepeviktor/fix-w3tc/releases/latest)
+
 ### Fix
 
 - [x] Modernize deprecated WordPress code
