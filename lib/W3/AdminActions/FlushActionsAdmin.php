@@ -66,6 +66,15 @@ class W3_AdminActions_FlushActionsAdmin {
             'w3tc_note' => 'flush_apc_system'
         ), true);
     }
+    
+    /**
+     * Flush opcode caches action
+     *
+     * @return void
+     */
+    function action_flush_apcu_system() {
+    	$this->flush_apcu_system();
+    }
 
     /**
      * Flush file caches action
@@ -263,6 +272,10 @@ class W3_AdminActions_FlushActionsAdmin {
             $this->_config->save();
             $this->flush_minify();
         }
+        
+        if( 'opcache' == $type){
+        	$this->flush_opcache();
+        }
     }
 
     /**
@@ -281,7 +294,9 @@ class W3_AdminActions_FlushActionsAdmin {
      */
     function flush_opcode() {
         $this->flush('apc');
+        $this->flush('apcu');
         $this->flush('eaccelerator');
+        $this->flush('opcache');
         $this->flush('xcache');
         $this->flush('wincache');
     }
@@ -292,6 +307,13 @@ class W3_AdminActions_FlushActionsAdmin {
     function flush_apc_system() {
         $cacheflush = w3_instance('W3_CacheFlush');
         $cacheflush->apc_system_flush();
+    }
+    
+    /**
+     * Flush APC system cache
+     */
+    function flush_apcu_system() {
+    	throw new \Exception('no opcode cache for apcu'); 
     }
 
     /**
@@ -318,6 +340,16 @@ class W3_AdminActions_FlushActionsAdmin {
         if ($this->_config->get_boolean('varnish.enabled'))
             $this->flush_varnish();
         do_action('w3tc_flush_all');
+    }
+    
+    /**
+     * Flush opcache
+     *
+     * @return void
+     */
+    function flush_opcache() {
+    	$flusher = w3_instance('W3_CacheFlush');
+    	$flusher->opcache_system_flush();
     }
 
     /**
