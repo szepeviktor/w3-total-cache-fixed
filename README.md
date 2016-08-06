@@ -2,7 +2,13 @@
 
 Fix and customize W3 Total Cache by @ftownes
 
-[Latest release](https://github.com/szepeviktor/fix-w3tc/releases/latest)
+### Installation
+
+1. Deactivate official plugin from WP.org
+1. Delete plugin directory `w3-total-cache` by hand, DO NOT click "Delete" on Plugins page
+1. Unpack [latest release](https://github.com/szepeviktor/fix-w3tc/releases/latest)
+1. Activate w3tc
+1. Check that it's working
 
 ### Fix
 
