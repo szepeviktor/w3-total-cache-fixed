@@ -530,7 +530,8 @@ $keys = array(
         'type' => 'array',
         'default' => array(
             'google_ad_',
-            'RSPEAK_'
+            'RSPEAK_',
+            'mfunc'
         )
     ),
     'minify.css.enable' => array(
