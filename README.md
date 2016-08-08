@@ -1,4 +1,4 @@
-# Fix W3TC
+# Fix W3TC (W3 Total Cache)
 
 Fix and customize W3 Total Cache by @ftownes
 
