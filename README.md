@@ -1,6 +1,6 @@
 # Fix W3TC (W3 Total Cache)
 
-Fix and customize W3 Total Cache by @ftownes
+Fix and customize W3 Total Cache by [@ftownes](https://github.com/ftownes)
 
 ### Installation
 
