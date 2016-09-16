@@ -959,11 +959,12 @@ class W3_PgCacheAdminEnvironment {
 
         /**
          * Check for preview cookie
-         */
+         */        
+        $rules .= "set \$w3tc_rewrite_preview \"\";\n";
         $rules .= "if (\$http_cookie ~* \"(w3tc_preview)\") {\n";
-        $rules .= "    set \$w3tc_rewrite _preview;\n";
+        $rules .= "    set \$w3tc_rewrite_preview _preview;\n";
         $rules .= "}\n";
-        $env_w3tc_preview = "\$w3tc_rewrite";
+        $env_w3tc_preview = "\$w3tc_rewrite_preview";
 
         /**
          * Check referrer groups
