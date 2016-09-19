@@ -20,7 +20,7 @@ Fix and customize W3 Total Cache by [@ftownes](https://github.com/ftownes)
 - [x] Support OPcache
 - [x] Support WOFF2 font format
 - [x] Fix https caching
-- [ ] Halfdone CloudFlare support in trunk
+- [ ] [Halfdone CloudFlare support in trunk](https://github.com/szepeviktor/fix-w3tc/issues/68)
 - [x] Support AMP
 - [x] Support Redis
 
