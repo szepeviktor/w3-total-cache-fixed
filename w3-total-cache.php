@@ -7,7 +7,6 @@ Plugin URI: http://www.w3-edge.com/wordpress-plugins/w3-total-cache/
 Author: Frederick Townes
 Author URI: http://www.linkedin.com/in/w3edge
 Network: True
-GitHub Plugin URI: https://github.com/szepeviktor/fix-w3tc
 */
 
 /*  Copyright (c) 2009 Frederick Townes <ftownes@w3-edge.com>
