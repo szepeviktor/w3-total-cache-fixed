@@ -42,6 +42,13 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Abort W3TC loading if php is too old
+ */
+if (version_compare(PHP_VERSION, '5.3.0', '<')) {
+    return;
+}
+
+/**
  * Abort W3TC loading if WordPress is upgrading
  */
 if ( defined( 'WP_INSTALLING' ) && WP_INSTALLING )
