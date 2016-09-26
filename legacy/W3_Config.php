@@ -4,7 +4,7 @@
 if(!class_exists('W3_Config')) :
     class W3_Config extends \W3TC\Config {
         
-        public function __construct($blog_id = null) {
+        public function __construct($master = false, $blog_id = null) {
             return parent::__construct($blog_id);
         }
         

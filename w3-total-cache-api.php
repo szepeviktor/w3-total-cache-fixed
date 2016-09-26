@@ -485,3 +485,5 @@ function w3tc_opcache_flush_file( $file, $http = false ) {
 		return true;
 	}
 }
+
+require_once W3TC_DIR . '/legacy/W3_Config.php';
