@@ -44,7 +44,15 @@ if ( !defined( 'ABSPATH' ) ) {
 /**
  * Abort W3TC loading if php is too old
  */
+function w3tc_old_php_notice() {
+	$class = 'notice notice-error';
+	$message = __( 'You are using an old PHP version. W3TC requires PHP >= 5.3', 'w3-total-cache' );
+
+	printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message );     
+}
+
 if (version_compare(PHP_VERSION, '5.3.0', '<')) {
+    add_action( 'admin_notices', 'w3tc_old_php_notice' );
     return;
 }
 
