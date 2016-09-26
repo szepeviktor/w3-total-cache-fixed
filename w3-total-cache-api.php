@@ -140,25 +140,31 @@ function w3tc_class_autoload( $class ) {
 
 		$filePath = W3TC_LIB_DIR . DIRECTORY_SEPARATOR .
 			implode( '/', $classPath ) . '.php';
-		require $filePath;
+		if ( is_readable( $filePath ) ) {
+                    require $filePath;
+                }
 		return;
 	}
 
 	if ( !is_null( $base ) ) {
 		$file = $base . strtr( $class, "\\_",
 			DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR ) . '.php';
-		if ( is_readable( $file ) )
+		if ( is_readable( $file ) ) {
 			require_once $file;
+                }
 	} else if ( substr( $class, 0, 5 ) == 'W3TC\\' ) {
 			$filename = W3TC_DIR . DIRECTORY_SEPARATOR . substr( $class, 5 ) . '.php';
 
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				if ( !file_exists( $filename ) ) {
-					debug_print_backtrace();
-				}
+                        if ( is_readable( $filename ) ) {
+                            require $filename;
+                        }
+                        else {
+                            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+                                    debug_print_backtrace();
+                            }
 			}
-
-			require $filename;
+			
+                        return;
 		}
 }
 
