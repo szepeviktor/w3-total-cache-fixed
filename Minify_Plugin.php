@@ -964,6 +964,15 @@ class Minify_Plugin {
 
 			return false;
 		}
+                
+		/**
+		 * Check if AMP endpoint
+		 */
+		if ( function_exists('is_amp_endpoint') && is_amp_endpoint() ) {
+			$this->minify_reject_reason = 'AMP is rejected';
+
+			return false;
+		}
 
 		return true;
 	}
