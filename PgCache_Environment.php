@@ -529,7 +529,7 @@ class PgCache_Environment {
 		$cache_dir = Util_Environment::normalize_path( W3TC_CACHE_PAGE_ENHANCED_DIR );
 		$permalink_structure = get_option( 'permalink_structure' );
 
-		$current_user = get_currentuserinfo();
+		$current_user = wp_get_current_user();
 
 		/**
 		 * Auto reject cookies
