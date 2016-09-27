@@ -186,7 +186,7 @@ class PgCache_Plugin_Admin {
 
 				foreach ( $url_matches[1] as $url_match ) {
 					$loc = '';
-					$priority = 0;
+					$priority = 0.5;
 
 					if ( preg_match( '~<loc>(.*?)</loc>~is', $url_match, $loc_matches ) ) {
 						$loc = trim( $loc_matches[1] );
