@@ -91,7 +91,7 @@ class Util_PageUrls {
 
 		if ( !isset( $post_urls[$post_id] ) ) {
 			$full_urls = array();
-			$post_link = post_permalink( $post_id );
+			$post_link = get_permalink( $post_id );
 			$post_uri = str_replace( Util_Environment::home_domain_root_url(), '', $post_link );
 
 			$full_urls[] = $post_link;
