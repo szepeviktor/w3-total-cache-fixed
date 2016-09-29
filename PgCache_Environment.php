@@ -815,7 +815,7 @@ class PgCache_Environment {
 		$rules = '';
 		$rules .= W3TC_MARKER_BEGIN_PGCACHE_CORE . "\n";
 		if ( $config->get_boolean( 'pgcache.debug' ) ) {
-			$rules .= "rewrite ^(.*\\/)?w3tc_rewrite_test([0-9]+)/?$ $1?w3tc_rewrite_test=1 last;\n";
+			$rules .= "rewrite ^(.*\\/)?w3tc_rewrite_test([a-z0-9]+)/?$ $1?w3tc_rewrite_test=1 last;\n";
 		}
 
 		/**
