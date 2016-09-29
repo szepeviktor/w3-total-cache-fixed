@@ -140,7 +140,7 @@ function w3tc_class_autoload( $class ) {
 
 		$filePath = W3TC_LIB_DIR . DIRECTORY_SEPARATOR .
 			implode( '/', $classPath ) . '.php';
-		if ( is_readable( $filePath ) ) {
+		if ( file_exists( $filePath ) ) {
                     require $filePath;
                 }
 		return;
@@ -149,13 +149,13 @@ function w3tc_class_autoload( $class ) {
 	if ( !is_null( $base ) ) {
 		$file = $base . strtr( $class, "\\_",
 			DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR ) . '.php';
-		if ( is_readable( $file ) ) {
+		if ( file_exists( $file ) ) {
 			require_once $file;
                 }
 	} else if ( substr( $class, 0, 5 ) == 'W3TC\\' ) {
 			$filename = W3TC_DIR . DIRECTORY_SEPARATOR . substr( $class, 5 ) . '.php';
 
-                        if ( is_readable( $filename ) ) {
+                        if ( file_exists( $filename ) ) {
                             require $filename;
                         }
                         else {
