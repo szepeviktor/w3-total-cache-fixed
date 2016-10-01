@@ -278,7 +278,7 @@ class PgCache_Plugin_Admin {
 		} elseif ( $this->_config->get_string( 'pgcache.engine' ) == 'redis' ) {
 			$summary['redis_servers']['pgcache'] = array(
 				'servers' => $this->_config->get_array( 'pgcache.redis.servers' ),
-				'username' => $this->_config->get_boolean( 'pgcache.redis.username' ),
+				//'username' => $this->_config->get_boolean( 'pgcache.redis.username' ),
 				'dbid' => $this->_config->get_integer( 'pgcache.redis.dbid' ),
 				'password' => $this->_config->get_string( 'pgcache.redis.password' ),
 				'name' => __( 'Page Cache', 'w3-total-cache' )
