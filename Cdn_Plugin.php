@@ -630,7 +630,7 @@ class Cdn_Plugin {
 	 * @return boolean
 	 */
 	private function _check_logged_in_role_allowed() {
-		global $current_user;
+		$current_user = wp_get_current_user();
 
 		if ( !is_user_logged_in() )
 			return true;
