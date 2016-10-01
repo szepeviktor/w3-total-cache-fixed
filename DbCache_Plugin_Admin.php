@@ -22,16 +22,16 @@ class DbCache_Plugin_Admin {
 		if ( $c->get_string( 'dbcache.engine' ) == 'memcached' ) {
 			$summary['memcached_servers']['dbcache'] = array(
 				'servers' => $c->get_array( 'dbcache.memcached.servers' ),
-				'username' => $c->get_boolean( 'dbcache.memcached.username' ),
-				'password' => $c->get_boolean( 'dbcache.memcached.password' ),
+				'username' => $c->get_string( 'dbcache.memcached.username' ),
+				'password' => $c->get_string( 'dbcache.memcached.password' ),
 				'name' => __( 'Database Cache', 'w3-total-cache' )
 			);
 		} elseif ( $c->get_string( 'dbcache.engine' ) == 'redis' ) {
 			$summary['redis_servers']['dbcache'] = array(
 				'servers' => $c->get_array( 'dbcache.redis.servers' ),
 				'username' => $c->get_boolean( 'dbcache.redis.username' ),
-				'dbid' => $c->get_boolean( 'dbcache.redis.dbid' ),
-				'password' => $c->get_boolean( 'dbcache.redis.password' ),
+				'dbid' => $c->get_integer( 'dbcache.redis.dbid' ),
+				'password' => $c->get_string( 'dbcache.redis.password' ),
 				'name' => __( 'Database Cache', 'w3-total-cache' )
 			);
 		}

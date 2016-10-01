@@ -515,8 +515,8 @@ class ObjectCache_WpObjectCache_Regular {
 				'servers' => $this->_config->get_array( 'objectcache.memcached.servers' ),
 				'persistent' => $this->_config->get_boolean( 'objectcache.memcached.persistent' ),
 				'aws_autodiscovery' => $this->_config->get_boolean( 'objectcache.memcached.aws_autodiscovery' ),
-				'username' => $this->_config->get_boolean( 'objectcache.memcached.username' ),
-				'password' => $this->_config->get_boolean( 'objectcache.memcached.password' )
+				'username' => $this->_config->get_string( 'objectcache.memcached.username' ),
+				'password' => $this->_config->get_string( 'objectcache.memcached.password' )
 			);
 			break;
 
@@ -524,8 +524,8 @@ class ObjectCache_WpObjectCache_Regular {
 			$engineConfig = array(
 				'servers' => $this->_config->get_array( 'objectcache.redis.servers' ),
 				'persistent' => $this->_config->get_boolean( 'objectcache.redis.persistent' ),
-				'dbid' => $this->_config->get_boolean( 'objectcache.redis.dbid' ),
-				'password' => $this->_config->get_boolean( 'objectcache.redis.password' )
+				'dbid' => $this->_config->get_integer( 'objectcache.redis.dbid' ),
+				'password' => $this->_config->get_string( 'objectcache.redis.password' )
 			);
 			break;
 
@@ -561,8 +561,8 @@ class ObjectCache_WpObjectCache_Regular {
 					'servers' => $this->_config->get_array( 'objectcache.memcached.servers' ),
 					'persistent' => $this->_config->get_boolean( 'objectcache.memcached.persistent' ),
 					'aws_autodiscovery' => $this->_config->get_boolean( 'objectcache.memcached.aws_autodiscovery' ),
-					'username' => $this->_config->get_boolean( 'objectcache.memcached.username' ),
-					'password' => $this->_config->get_boolean( 'objectcache.memcached.password' )
+					'username' => $this->_config->get_string( 'objectcache.memcached.username' ),
+					'password' => $this->_config->get_string( 'objectcache.memcached.password' )
 				);
 				break;
 
@@ -570,8 +570,8 @@ class ObjectCache_WpObjectCache_Regular {
 				$engineConfig = array(
 					'servers' => $this->_config->get_array( 'objectcache.redis.servers' ),
 					'persistent' => $this->_config->get_boolean( 'objectcache.redis.persistent' ),
-					'dbid' => $this->_config->get_boolean( 'objectcache.redis.dbid' ),
-					'password' => $this->_config->get_boolean( 'objectcache.redis.password' )
+					'dbid' => $this->_config->get_integer( 'objectcache.redis.dbid' ),
+					'password' => $this->_config->get_string( 'objectcache.redis.password' )
 				);
 				break;
 

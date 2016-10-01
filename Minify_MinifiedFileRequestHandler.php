@@ -632,8 +632,8 @@ class Minify_MinifiedFileRequestHandler {
 					'servers' => $this->_config->get_array( 'minify.memcached.servers' ),
 					'persistent' => $this->_config->get_boolean( 'minify.memcached.persistent' ),
 					'aws_autodiscovery' => $this->_config->get_boolean( 'minify.memcached.aws_autodiscovery' ),
-					'username' => $this->_config->get_boolean( 'minify.memcached.username' ),
-					'password' => $this->_config->get_boolean( 'minify.memcached.password' )
+					'username' => $this->_config->get_string( 'minify.memcached.username' ),
+					'password' => $this->_config->get_string( 'minify.memcached.password' )
 				);
 				if ( class_exists( 'Memcached' ) ) {
 					$w3_cache = new Cache_Memcached( $config );
@@ -652,8 +652,8 @@ class Minify_MinifiedFileRequestHandler {
 					'module' => 'minify',
 					'servers' => $this->_config->get_array( 'minify.redis.servers' ),
 					'persistent' => $this->_config->get_boolean( 'minify.redis.persistent' ),
-					'dbid' => $this->_config->get_boolean( 'minify.redis.dbid' ),
-					'password' => $this->_config->get_boolean( 'minify.redis.password' )
+					'dbid' => $this->_config->get_integer( 'minify.redis.dbid' ),
+					'password' => $this->_config->get_string( 'minify.redis.password' )
 				);
 				if ( class_exists( 'Memcached' ) ) {
 					$w3_cache = new Cache_Memcached( $config );

@@ -15,8 +15,8 @@ class DbCache_Core {
 				'servers' => $c->get_array( 'dbcache.memcached.servers' ),
 				'persistent' => $c->get_boolean( 'dbcache.memcached.persistent' ),
 				'aws_autodiscovery' => $c->get_boolean( 'dbcache.memcached.aws_autodiscovery' ),
-				'username' => $c->get_boolean( 'dbcache.memcached.username' ),
-				'password' => $c->get_boolean( 'dbcache.memcached.password' )
+				'username' => $c->get_string( 'dbcache.memcached.username' ),
+				'password' => $c->get_string( 'dbcache.memcached.password' )
 			);
 			break;
 
@@ -24,8 +24,8 @@ class DbCache_Core {
 			$engineConfig = array(
 				'servers' => $c->get_array( 'dbcache.redis.servers' ),
 				'persistent' => $c->get_boolean( 'dbcache.redis.persistent' ),
-				'dbid' => $c->get_boolean( 'dbcache.redis.dbid' ),
-				'password' => $c->get_boolean( 'dbcache.redis.password' )
+				'dbid' => $c->get_integer( 'dbcache.redis.dbid' ),
+				'password' => $c->get_string( 'dbcache.redis.password' )
 			);
 			break;
 

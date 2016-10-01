@@ -613,8 +613,8 @@ class PgCache_ContentGrabber {
 				'servers' => $this->_config->get_array( 'pgcache.memcached.servers' ),
 				'persistent' => $this->_config->get_boolean( 'pgcache.memcached.persistent' ),
 				'aws_autodiscovery' => $this->_config->get_boolean( 'pgcache.memcached.aws_autodiscovery' ),
-				'username' => $this->_config->get_boolean( 'pgcache.memcached.username' ),
-				'password' => $this->_config->get_boolean( 'pgcache.memcached.password' )
+				'username' => $this->_config->get_string( 'pgcache.memcached.username' ),
+				'password' => $this->_config->get_string( 'pgcache.memcached.password' )
 			);
 			break;
 
@@ -622,8 +622,8 @@ class PgCache_ContentGrabber {
 			$engineConfig = array(
 				'servers' => $this->_config->get_array( 'pgcache.redis.servers' ),
 				'persistent' => $this->_config->get_boolean( 'pgcache.redis.persistent' ),
-				'dbid' => $this->_config->get_boolean( 'pgcache.redis.dbid' ),
-				'password' => $this->_config->get_boolean( 'pgcache.redis.password' )
+				'dbid' => $this->_config->get_integer( 'pgcache.redis.dbid' ),
+				'password' => $this->_config->get_string( 'pgcache.redis.password' )
 			);
 			break;
 
@@ -656,8 +656,8 @@ class PgCache_ContentGrabber {
 					'servers' => $this->_config->get_array( 'pgcache.memcached.servers' ),
 					'persistent' => $this->_config->get_boolean( 'pgcache.memcached.persistent' ),
 					'aws_autodiscovery' => $this->_config->get_boolean( 'pgcache.memcached.aws_autodiscovery' ),
-					'username' => $this->_config->get_boolean( 'pgcache.memcached.username' ),
-					'password' => $this->_config->get_boolean( 'pgcache.memcached.password' )
+					'username' => $this->_config->get_string( 'pgcache.memcached.username' ),
+					'password' => $this->_config->get_string( 'pgcache.memcached.password' )
 				);
 				break;
 
@@ -665,8 +665,8 @@ class PgCache_ContentGrabber {
 				$engineConfig = array(
 					'servers' => $this->_config->get_array( 'pgcache.redis.servers' ),
 					'persistent' => $this->_config->get_boolean( 'pgcache.redis.persistent' ),
-					'dbid' => $this->_config->get_boolean( 'pgcache.redis.dbid' ),
-					'password' => $this->_config->get_boolean( 'pgcache.redis.password' )
+					'dbid' => $this->_config->get_integer( 'pgcache.redis.dbid' ),
+					'password' => $this->_config->get_string( 'pgcache.redis.password' )
 				);
 				break;
 

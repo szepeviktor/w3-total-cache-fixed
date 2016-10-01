@@ -271,16 +271,16 @@ class PgCache_Plugin_Admin {
 		if ( $this->_config->get_string( 'pgcache.engine' ) == 'memcached' ) {
 			$summary['memcached_servers']['pgcache'] = array(
 				'servers' => $this->_config->get_array( 'pgcache.memcached.servers' ),
-				'username' => $this->_config->get_boolean( 'pgcache.memcached.username' ),
-				'password' => $this->_config->get_boolean( 'pgcache.memcached.password' ),
+				'username' => $this->_config->get_string( 'pgcache.memcached.username' ),
+				'password' => $this->_config->get_string( 'pgcache.memcached.password' ),
 				'name' => __( 'Page Cache', 'w3-total-cache' )
 			);
 		} elseif ( $this->_config->get_string( 'pgcache.engine' ) == 'redis' ) {
 			$summary['redis_servers']['pgcache'] = array(
 				'servers' => $this->_config->get_array( 'pgcache.redis.servers' ),
 				'username' => $this->_config->get_boolean( 'pgcache.redis.username' ),
-				'dbid' => $this->_config->get_boolean( 'pgcache.redis.dbid' ),
-				'password' => $this->_config->get_boolean( 'pgcache.redis.password' ),
+				'dbid' => $this->_config->get_integer( 'pgcache.redis.dbid' ),
+				'password' => $this->_config->get_string( 'pgcache.redis.password' ),
 				'name' => __( 'Page Cache', 'w3-total-cache' )
 			);
 		}

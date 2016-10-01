@@ -156,8 +156,8 @@ class Minify_Core {
 				'persistent' => $c->get_boolean( 'minify.memcached.persistent' ),
 				'aws_autodiscovery' =>
 				$c->get_boolean( 'minify.memcached.aws_autodiscovery' ),
-				'username' => $c->get_boolean( 'minify.memcached.username' ),
-				'password' => $c->get_boolean( 'minify.memcached.password' )
+				'username' => $c->get_string( 'minify.memcached.username' ),
+				'password' => $c->get_string( 'minify.memcached.password' )
 			);
 			break;
 
@@ -165,8 +165,8 @@ class Minify_Core {
 			$engineConfig = array(
 				'servers' => $c->get_array( 'minify.redis.servers' ),
 				'persistent' => $c->get_boolean( 'minify.redis.persistent' ),
-				'dbid' => $c->get_boolean( 'minify.redis.dbid' ),
-				'password' => $c->get_boolean( 'minify.redis.password' )
+				'dbid' => $c->get_integer( 'minify.redis.dbid' ),
+				'password' => $c->get_string( 'minify.redis.password' )
 			);
 			break;
 
