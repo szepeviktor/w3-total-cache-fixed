@@ -40,7 +40,7 @@ class Minify_Environment {
 		}
 
 		// if no errors so far - check if rewrite actually works
-		if ( count( $exs->exceptions() ) <= 0 || true ) {
+		if ( count( $exs->exceptions() ) <= 0  ) {
 			try {
 				if ( $config->get_boolean( 'minify.enabled' ) &&
 					$config->get_boolean( 'minify.rewrite' ) &&
