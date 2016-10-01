@@ -269,7 +269,7 @@ class Minify_Environment {
 
 			$is_ok = ( !is_wp_error( $response ) &&
 				$response['response']['code'] == 200 &&
-				trim( $response['body'] ) == 'OK' );
+				trim( $response['body'] ) == 'Minify OK' );
 
 			if ( $is_ok )
 				$result = 'ok';
@@ -575,7 +575,7 @@ class Minify_Environment {
 
 			if ( $w3tc ) {
 				$rules .= "    Header set X-Powered-By \"" .
-					Util_Environment::w3tc_header( $config ) . "\"\n";
+					Util_Environment::w3tc_header() . "\"\n";
 			}
 
 			if ( $compression ) {
@@ -663,7 +663,7 @@ class Minify_Environment {
 
 		if ( $w3tc ) {
 			$common_rules .= "    add_header X-Powered-By \"" .
-				Util_Environment::w3tc_header( $config ) . "\";\n";
+				Util_Environment::w3tc_header() . "\";\n";
 		}
 
 		if ( $compression ) {

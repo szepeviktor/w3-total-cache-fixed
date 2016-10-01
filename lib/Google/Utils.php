@@ -21,7 +21,7 @@
  *
  * @author Chirag Shah <chirags@google.com>
  */
-class Google_Utils
+class W3TCG_Google_Utils
 {
   public static function urlSafeB64Encode($data)
   {

@@ -16,12 +16,12 @@
  */
 
 /**
- * Http Streams based implementation of Google_IO.
+ * Http Streams based implementation of W3TCG_Google_IO.
  *
  * @author Stuart Langley <slangley@google.com>
  */
 
-class Google_IO_Stream extends Google_IO_Abstract
+class W3TCG_Google_IO_Stream extends W3TCG_Google_IO_Abstract
 {
   const TIMEOUT = "timeout";
   const ZLIB = "compress.zlib://";
@@ -41,12 +41,12 @@ class Google_IO_Stream extends Google_IO_Abstract
   /**
    * Execute an HTTP Request
    *
-   * @param Google_HttpRequest $request the http request to be executed
-   * @return Google_HttpRequest http request with the response http code,
+   * @param W3TCG_Google_HttpRequest $request the http request to be executed
+   * @return W3TCG_Google_HttpRequest http request with the response http code,
    * response headers and response body filled in
-   * @throws Google_IO_Exception on curl or IO error
+   * @throws W3TCG_Google_IO_Exception on curl or IO error
    */
-  public function executeRequest(Google_Http_Request $request)
+  public function executeRequest(W3TCG_Google_Http_Request $request)
   {
     $default_options = stream_context_get_options(stream_context_get_default());
 
@@ -107,7 +107,7 @@ class Google_IO_Stream extends Google_IO_Abstract
     // END - error trap.
 
     if ($this->trappedErrorNumber) {
-      throw new Google_IO_Exception(
+      throw new W3TCG_Google_IO_Exception(
           sprintf(
               "HTTP Error: Unable to connect: '%s'",
               $this->trappedErrorString
@@ -130,7 +130,7 @@ class Google_IO_Stream extends Google_IO_Abstract
     }
 
     if (false === $response_data) {
-      throw new Google_IO_Exception(
+      throw new W3TCG_Google_IO_Exception(
           sprintf(
               "HTTP Error: Unable to connect: '%s'",
               $respHttpCode

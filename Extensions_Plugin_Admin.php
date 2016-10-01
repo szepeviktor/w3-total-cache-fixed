@@ -59,6 +59,10 @@ class Extensions_Plugin_Admin {
 				'\W3TC\Extension_Wpml_Plugin_Admin',
 				'w3tc_extensions' ),
 			10, 2 );
+		add_filter( 'w3tc_extensions', array(
+				'\W3TC\Extension_Amp_Plugin_Admin',
+				'w3tc_extensions' ),
+			10, 2 );
 		add_filter( 'w3tc_extensions_hooks', array(
 				'\W3TC\Extension_Wpml_Plugin_Admin',
 				'w3tc_extensions_hooks' ) );

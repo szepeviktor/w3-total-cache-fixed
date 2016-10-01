@@ -2,11 +2,11 @@
     background-color: #FFF;
     margin:0;padding:0;
 }
-#w3tc-dashboard-widgets h3.hndle {
+#w3tc-dashboard-widgets .hndle {
     height: 36px;
     line-height: 36px;
 }
-#w3tc-dashboard-widgets h3.hndle, #w3tc-dashboard-widgets h3.hndle span {
+#w3tc-dashboard-widgets .hndle, #w3tc-dashboard-widgets .hndle span {
     font-family: Arial, sans-serif;
     font-weight: bold;
     text-shadow: none;
@@ -73,7 +73,7 @@
     padding-right: 10px;
 }
 
-.w3tc-widget-spreadtheword-logo {
+.w3tc-widget-w3tc-logo {
     float: left;
     width: 50px;
     height: 35px;
@@ -102,10 +102,10 @@
 }
 
 .w3tc-widget-maxcdn-logo {
-    float: left;
     width: 150px;
     height: 35px;
     background: url("pub/img/w3tc_maxcdn-logo.png") 0 5px no-repeat;
+    float: left;
 }
 
 #normal-sortables .postbox {
@@ -115,6 +115,7 @@
 /**
  * HiDPI Displays
  */
+/* doesnt work
 @media print,
 only screen and (-webkit-min-device-pixel-ratio: 2),
 only screen and (   min--moz-device-pixel-ratio: 2),
@@ -127,7 +128,7 @@ only screen and (                min-resolution: 2dppx)  {
         background-size: 224px 44px;
     }
 
-    .w3tc-widget-spreadtheword-logo {
+    .w3tc-widget-w3tc-logo {
         float: left;
         width: 50px;
         height: 90px;
@@ -167,3 +168,4 @@ only screen and (                min-resolution: 2dppx)  {
         background-size: 468px 90px;
     }
 }
+*/

@@ -42,6 +42,7 @@ class Extension_Genesis_Plugin_Admin {
 			'author_uri' => 'https://www.w3-edge.com/',
 			'extension_uri' => 'https://www.w3-edge.com/',
 			'extension_id' => 'genesis.theme',
+			'settings_exists' => true,
 			'version' => '0.1',
 			'enabled' => empty( $requirements ),
 			'requirements' => implode( ', ', $requirements ),
@@ -121,7 +122,7 @@ class Extension_Genesis_Plugin_Admin {
 		$extension_id = 'genesis.theme';
 
 		$notes[$extension_id] = sprintf(
-			__( 'It appears that activating the <a href="%s">Genesis Theme</a> extension for W3 Total Cache will be helpful for your site. <a href="%s">Click here</a> to try it. %s',
+			__( 'Activating the <a href="%s">Genesis Theme</a> extension for W3 Total Cache may be helpful for your site. <a href="%s">Click here</a> to try it. %s',
 				'w3-total-cache' ),
 			Util_Ui::admin_url( 'admin.php?page=w3tc_extensions#' . $extension_id ),
 			Util_Ui::url( array( 'w3tc_extensions_activate' => $extension_id ) ),

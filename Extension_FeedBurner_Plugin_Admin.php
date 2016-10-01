@@ -44,6 +44,7 @@ class Extension_FeedBurner_Plugin_Admin {
 			'author_uri' => 'https://www.w3-edge.com/',
 			'extension_uri' => 'https://www.w3-edge.com/',
 			'extension_id' => 'feedburner',
+			'settings_exists' => true,
 			'version' => '0.1',
 			'enabled' => true,
 			'requirements' => implode( ', ', $message ),

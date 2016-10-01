@@ -15,6 +15,6 @@
  * limitations under the License.
  */
 
-class Google_IO_Exception extends Google_Exception
+class W3TCG_Google_IO_Exception extends W3TCG_Google_Exception
 {
 }

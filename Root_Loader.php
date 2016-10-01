@@ -45,7 +45,6 @@ class Root_Loader {
 			$plugins[] = new ObjectCache_Plugin_Admin();
 			$plugins[] = new PgCache_Plugin_Admin();
 			$plugins[] = new Minify_Plugin_Admin();
-			$plugins[] = new Generic_Plugin_WidgetServices();
 			$plugins[] = new Generic_WidgetSpreadTheWord_Plugin();
 			$plugins[] = new Generic_Plugin_WidgetNews();
 			$plugins[] = new Generic_Plugin_WidgetForum();
@@ -154,4 +153,10 @@ class Root_Loader {
 			}
 		}
 	}
+}
+
+global $w3tc_root;
+if ( is_null( $w3tc_root ) ) {
+	$w3tc_root = new \W3TC\Root_Loader();
+	$w3tc_root->run();
 }

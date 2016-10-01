@@ -27,6 +27,34 @@ class Support_Page {
 			'w3tc_support_first_name', $u->first_name );
 		wp_localize_script( 'w3tc-options',
 			'w3tc_support_last_name', $u->last_name );
+
+		// values from widget
+		$w3tc_support_form_hash = 'm5pom8z0qy59rm';
+		$w3tc_support_field_name = '';
+		$w3tc_support_field_value = '';
+
+		if ( isset( $_GET['service_item'] ) ) {
+			$pos = (int) $_GET['service_item'];
+
+			$v = get_site_option( 'w3tc_generic_widgetservices' );
+			try {
+				$v = json_decode( $v, true );
+				if ( isset( $v['items'] ) && isset( $v['items'][$pos] )) {
+					$i = $v['items'][$pos];
+					$w3tc_support_form_hash = $i['form_hash'];
+					$w3tc_support_field_name = $i['parameter_name'];
+					$w3tc_support_field_value = $i['parameter_value'];
+				}
+			} catch ( \Exception $e ) {
+			}
+		}
+
+		wp_localize_script( 'w3tc-options', 'w3tc_support_form_hash',
+			$w3tc_support_form_hash );
+		wp_localize_script( 'w3tc-options', 'w3tc_support_field_name',
+			$w3tc_support_field_name );
+		wp_localize_script( 'w3tc-options', 'w3tc_support_field_value',
+			$w3tc_support_field_value );
 	}
 	/**
 	 * Support tab

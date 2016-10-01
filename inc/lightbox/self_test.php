@@ -5,7 +5,7 @@ if ( !defined( 'W3TC' ) )
 	die();
 
 ?>
-<h3><?php _e( 'Compatibility Test', 'w3-total-cache' ); ?></h3>
+<h3><?php _e( 'Compatibility Check', 'w3-total-cache' ); ?></h3>
 
 <fieldset>
     <legend><?php _e( 'Legend', 'w3-total-cache' ); ?></legend>

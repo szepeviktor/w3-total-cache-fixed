@@ -19,9 +19,9 @@
  * A blank storage class, for cases where caching is not
  * required.
  */
-class Google_Cache_Null extends Google_Cache_Abstract
+class W3TCG_Google_Cache_Null extends W3TCG_Google_Cache_Abstract
 {
-  public function __construct(Google_Client $client)
+  public function __construct(W3TCG_Google_Client $client)
   {
 
   }

@@ -23,7 +23,7 @@
  * @author Chirag Shah <chirags@google.com>
  *
  */
-class Google_Http_Request
+class W3TCG_Google_Http_Request
 {
   const GZIP_UA = " (gzip)";
 
@@ -192,7 +192,7 @@ class Google_Http_Request
    */
   public function setResponseHeaders($headers)
   {
-    $headers = Google_Utils::normalize($headers);
+    $headers = W3TCG_Google_Utils::normalize($headers);
     if ($this->responseHeaders) {
       $headers = array_merge($this->responseHeaders, $headers);
     }
@@ -310,7 +310,7 @@ class Google_Http_Request
    */
   public function setRequestHeaders($headers)
   {
-    $headers = Google_Utils::normalize($headers);
+    $headers = W3TCG_Google_Utils::normalize($headers);
     if ($this->requestHeaders) {
       $headers = array_merge($this->requestHeaders, $headers);
     }

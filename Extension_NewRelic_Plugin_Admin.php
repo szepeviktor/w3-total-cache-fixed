@@ -21,6 +21,7 @@ class Extension_NewRelic_Plugin_Admin {
 			'author_uri' => 'https://www.w3-edge.com/',
 			'extension_uri' => 'https://www.w3-edge.com/',
 			'extension_id' => 'newrelic',
+			'settings_exists' => true,
 			'version' => '1.0',
 			'enabled' => true,
 			'requirements' => '',

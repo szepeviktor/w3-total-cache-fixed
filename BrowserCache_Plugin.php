@@ -214,7 +214,7 @@ class BrowserCache_Plugin {
 
 		$test_url = Util_Environment::remove_query( $url );
 		foreach ( $exceptions as $exception ) {
-			if ( trim( $exception ) && preg_match( '/' . $exception . '/', $test_url ) )
+			if ( trim( $exception ) && preg_match( '~' . $exception . '~', $test_url ) )
 				return false;
 		}
 
@@ -266,7 +266,7 @@ class BrowserCache_Plugin {
 	 * Send headers
 	 */
 	function send_headers() {
-		@header( 'X-Powered-By: ' . Util_Environment::w3tc_header( $this->_config ) );
+		@header( 'X-Powered-By: ' . Util_Environment::w3tc_header() );
 	}
 
 	/**

@@ -20,7 +20,8 @@ class Extension_CloudFlare_Widget {
 
 
 	function w3tc_widget_setup() {
-		Util_Widget::add( 'w3tc_cloudflare', __( 'CloudFlare', 'w3-total-cache' ),
+		Util_Widget::add( 'w3tc_cloudflare', 
+			'<div class="w3tc_cloudflare_widget_logo"></div>',
 			array( $this, 'widget_form' ),
 			Util_Ui::admin_url( 'admin.php?page=w3tc_general#cloudflare' ),
 			'normal' );

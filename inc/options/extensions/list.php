@@ -40,21 +40,22 @@ if ( !defined( 'W3TC' ) )
     </div>
     <br class="clear">
 </div>
-<table class="wp-list-table widefat plugins extensions" cellspacing="0">
+<table class="wp-list-table widefat plugins w3tc_extensions" cellspacing="0">
     <thead>
         <tr>
-            <th scope="col" id="cb" class="manage-column column-cb check-column" style=""><label class="screen-reader-text" for="cb-select-all-1"><?php _e( 'Select All', 'w3-total-cache' )?></label><input id="cb-select-all-1" type="checkbox"></th><th scope="col" id="name" class="manage-column column-name" style=""><?php _e( 'Extension', 'w3-total-cache' )?></th><th scope="col" id="description" class="manage-column column-description" style=""><?php _e( 'Description', 'w3-total-cache' )?></th>
+            <th scope="col" id="cb" class="w3tc_extensions_manage_column_check"><label class="screen-reader-text" for="cb-select-all-1"><?php _e( 'Select All', 'w3-total-cache' )?></label><input id="cb-select-all-1" type="checkbox" class="w3tc_extensions_manage_input_checkall"></th><th scope="col" id="name" class="manage-column column-name" style=""><?php _e( 'Extension', 'w3-total-cache' )?></th><th scope="col" id="description" class="manage-column column-description" style=""><?php _e( 'Description', 'w3-total-cache' )?></th>
         </tr>
     </thead>
     <tfoot>
         <tr>
-            <th scope="col" class="manage-column column-cb check-column" style=""><label class="screen-reader-text" for="cb-select-all-2"><?php _e( 'Select All', 'w3-total-cache' )?></label><input id="cb-select-all-2" type="checkbox"></th><th scope="col" class="manage-column column-name" style=""><?php _e( 'Extension', 'w3-total-cache' )?></th><th scope="col" class="manage-column column-description" style=""><?php _e( 'Description', 'w3-total-cache' )?></th>
+            <th scope="col" class="w3tc_extensions_manage_column_check"><label class="screen-reader-text" for="cb-select-all-2"><?php _e( 'Select All', 'w3-total-cache' )?></label><input id="cb-select-all-2" type="checkbox" class="w3tc_extensions_manage_input_checkall"></th><th scope="col" class="manage-column column-name" style=""><?php _e( 'Extension', 'w3-total-cache' )?></th><th scope="col" class="manage-column column-description" style=""><?php _e( 'Description', 'w3-total-cache' )?></th>
         </tr>
     </tfoot>
     <tbody id="the-list">
     <?php
 $cb_id = 0;
-foreach ( $extensions as $extension => $meta ):
+foreach ( $extension_keys as $extension ):
+    $meta = $extensions[$extension];
 	$meta = $this->default_meta( $meta );
 $cb_id++;
 ?>
@@ -62,14 +63,16 @@ $cb_id++;
             <tr id="<?php echo esc_attr( $extension )?>" class="<?php echo $config->is_extension_active( $extension ) ? 'active' : 'inactive'?>">
             <th scope="row" class="check-column">
                 <label class="screen-reader-text" for="checkbox_<?php echo $cb_id?>"><?php printf( __( 'Select %s' ), $meta['name'] ) ?></label>
-                <input type="checkbox" name="checked[]" value="<?php echo esc_attr( $extension ) ?>" id="checkbox_<?php echo $cb_id?>" <?php disabled( !$meta['enabled'] )?>>
+                <input type="checkbox" name="checked[]" value="<?php echo esc_attr( $extension ) ?>" id="checkbox_<?php echo $cb_id?>" class="w3tc_extensions_input_active" <?php disabled( !$meta['enabled'] )?>>
             </th>
             <td class="plugin-title">
                 <strong><?php esc_html_e( $meta['name'] ) ?></strong>
                 <div class="row-actions-visible">
                     <?php if ( $config->is_extension_active( $extension ) ):
-	$settings = '<a class="edit" href="' . esc_attr( Util_Ui::admin_url( sprintf( 'admin.php?page=w3tc_extensions&extension=%s', $extension ) ) ).'&action=view">'. __( 'Settings' ).'</a>';
-$extra_links = apply_filters( "w3tc_extension_plugin_links_{$extension}", array( $settings ) );
+    $extra_links = array();
+    if ( isset( $meta['settings_exists'] ) && $meta['settings_exists'] )
+	   $extra_links[] = '<a class="edit" href="' . esc_attr( Util_Ui::admin_url( sprintf( 'admin.php?page=w3tc_extensions&extension=%s', $extension ) ) ).'&action=view">'. __( 'Settings' ).'</a>';
+$extra_links = apply_filters( "w3tc_extension_plugin_links_{$extension}", $extra_links );
 $links =  implode( ' | ', $extra_links );
 if ( $links ) {
 	echo $links;

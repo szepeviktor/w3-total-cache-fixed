@@ -462,7 +462,7 @@ class BrowserCache_Environment {
 
 		if ( $w3tc )
 			$headers_rules .= "         Header set X-Powered-By \"" .
-				Util_Environment::w3tc_header( $config ) . "\"\n";
+				Util_Environment::w3tc_header() . "\"\n";
 
 		if ( strlen( $headers_rules ) > 0 ) {
 			$rules .= "    <IfModule mod_headers.c>\n";
@@ -643,7 +643,7 @@ class BrowserCache_Environment {
 
 			if ( $w3tc ) {
 				$add_header_rules .= "    add_header X-Powered-By \"" .
-					Util_Environment::w3tc_header( $config ) . "\";\n";
+					Util_Environment::w3tc_header() . "\";\n";
 			}
 
 			$rules .= $add_header_rules;

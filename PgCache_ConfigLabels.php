@@ -4,8 +4,8 @@ namespace W3TC;
 class PgCache_ConfigLabels {
 	public function config_labels( $config_labels ) {
 		return array_merge( $config_labels, array(
-				'pgcache.engine' => __( 'Page cache method:', 'w3-total-cache' ),
-				'pgcache.enabled' => __( 'Page cache:', 'w3-total-cache' ),
+				'pgcache.engine' => __( 'Page Cache Method:', 'w3-total-cache' ),
+				'pgcache.enabled' => __( 'Page Cache:', 'w3-total-cache' ),
 				'pgcache.debug' =>  __( 'Page Cache', 'w3-total-cache' ),
 				'pgcache.cache.home' => get_option( 'show_on_front' ) == 'posts' ? __( 'Cache front page', 'w3-total-cache' ): __( 'Cache posts page', 'w3-total-cache' ),
 				'pgcache.reject.front_page' => __( 'Don\'t cache front page', 'w3-total-cache' ),
@@ -19,7 +19,7 @@ class PgCache_ConfigLabels {
 				'pgcache.prime.interval' => __( 'Update interval:', 'w3-total-cache' ),
 				'pgcache.prime.limit' => __( 'Pages per interval:', 'w3-total-cache' ),
 				'pgcache.prime.sitemap' =>__( 'Sitemap <acronym title="Uniform Resource Indicator">URL</acronym>:', 'w3-total-cache' ),
-				'pgcache.prime.post.enabled' => __( 'Preload the post cache upon publish events.', 'w3-total-cache' ),
+				'pgcache.prime.post.enabled' => __( 'Preload the post cache upon publish events', 'w3-total-cache' ),
 				'pgcache.purge.front_page' => __( 'Front page', 'w3-total-cache' ),
 				'pgcache.purge.home' => get_option( 'show_on_front' ) == 'posts' ? __( 'Front page', 'w3-total-cache' ): __( 'Posts page', 'w3-total-cache' ),
 				'pgcache.purge.post' => __( 'Post page', 'w3-total-cache' ),
@@ -34,10 +34,10 @@ class PgCache_ConfigLabels {
 				'pgcache.purge.archive.monthly' => __( 'Monthly archive pages', 'w3-total-cache' ),
 				'pgcache.purge.archive.yearly' => __( 'Yearly archive pages', 'w3-total-cache' ),
 				'pgcache.purge.feed.types' =>  __( 'Specify the feed types to purge:', 'w3-total-cache' ),
-				'pgcache.purge.postpages_limit' =>  __( 'Purge Limit:', 'w3-total-cache' ),
+				'pgcache.purge.postpages_limit' =>  __( 'Purge limit:', 'w3-total-cache' ),
 				'pgcache.purge.pages' =>  __( 'Additional pages:', 'w3-total-cache' ),
 				'pgcache.purge.sitemap_regex' =>  __( 'Purge sitemaps:', 'w3-total-cache' ),
-				'pgcache.compatibility' => __( 'Enable compatibility mode', 'w3-total-cache' ),
+				'pgcache.compatibility' => __( 'Enable', 'w3-total-cache' ),
 				'pgcache.remove_charset' =>  __( 'Disable UTF-8 blog charset support' , 'w3-total-cache' ),
 				'pgcache.reject.request_head' => __( ' Disable caching of HEAD <acronym title="Hypertext Transfer Protocol">HTTP</acronym> requests', 'w3-total-cache' ),
 				'pgcache.lifetime' =>  __( 'Maximum lifetime of cache objects:', 'w3-total-cache' ),

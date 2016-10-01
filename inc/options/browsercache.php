@@ -57,8 +57,8 @@ if ( !defined( 'W3TC' ) )
                 <th colspan="2">
                     <label><input id="browsercache_etag" type="checkbox"
                         <?php Util_Ui::sealing_disabled( 'browsercache.' ) ?>
-                        name="etag" value="1"<?php checked( $browsercache_etag, true ); ?> /> <?php _e( 'Set entity tag (eTag)', 'w3-total-cache' ); ?></label>
-                    <br /><span class="description"><?php _e( 'Set the Etag header to encourage browser caching of files.', 'w3-total-cache' ); ?></span>
+                        name="etag" value="1"<?php checked( $browsercache_etag, true ); ?> /> <?php _e( 'Set entity tag (ETag)', 'w3-total-cache' ); ?></label>
+                    <br /><span class="description"><?php _e( 'Set the ETag header to encourage browser caching of files.', 'w3-total-cache' ); ?></span>
                 </th>
             </tr>
             <tr>
@@ -122,14 +122,13 @@ Util_Ui::config_item( array(
 		'key' => 'browsercache.rewrite',
 		'disabled' => Util_Ui::sealing_disabled( 'browsercache.' ),
 		'control' => 'checkbox',
-		'checkbox_label' => __( 'Rewrite URL structure of objects', 'w3-total-cache' ),
-		'description' => __( 'Generate unique URI for each file protected from caching by browser.', 'w3-total-cache' ),
+		'checkbox_label' => __( 'Rewrite <acronym title="Universal Resource Locator">URL</acronym> structure of objects', 'w3-total-cache' ),
+		'description' => __( 'Generate unique <acronym title="Universal Resource Indicator">URI</acronym> for each file protected from caching by browser.', 'w3-total-cache' ),
 		'style' => '2'
 	) );
 Util_Ui::config_item( array(
 		'key' => 'browsercache.hsts',
-		'disabled' => Util_Ui::sealing_disabled( 'browsercache.' ) || !Util_Environment::is_https(),
-		'value' => ( Util_Environment::is_https() ? null : false ),
+		'disabled' => Util_Ui::sealing_disabled( 'browsercache.' ),
 		'control' => 'checkbox',
 		'checkbox_label' => __( 'Apply <acronym title="Hypertext Transfer Protocol">HTTP</acronym> Strict Transport Security policy', 'w3-total-cache' ),
 		'description' => __( 'Set the <acronym title="HTTP Strict Transport Security">HSTS</acronym> header to maximize <acronym title="Secure Sockets Layer">SSL</acronym> security.', 'w3-total-cache' ),
@@ -196,7 +195,7 @@ Util_Ui::config_item( array(
             <tr>
                 <th colspan="2">
                     <?php $this->checkbox( 'browsercache.cssjs.etag' ) ?> <?php Util_Ui::e_config_label( 'browsercache.cssjs.etag' ) ?></label>
-                    <br /><span class="description"><?php _e( 'Set the Etag header to encourage browser caching of files.', 'w3-total-cache' ); ?></span>
+                    <br /><span class="description"><?php _e( 'Set the ETag header to encourage browser caching of files.', 'w3-total-cache' ); ?></span>
                 </th>
             </tr>
             <tr>
@@ -283,7 +282,7 @@ Util_Ui::config_item( array(
             <tr>
                 <th colspan="2">
                     <?php $this->checkbox( 'browsercache.html.etag' ) ?> <?php Util_Ui::e_config_label( 'browsercache.html.etag' ) ?></label>
-                    <br /><span class="description"><?php _e( 'Set the Etag header to encourage browser caching of files.', 'w3-total-cache' ); ?></span>
+                    <br /><span class="description"><?php _e( 'Set the ETag header to encourage browser caching of files.', 'w3-total-cache' ); ?></span>
                 </th>
             </tr>
             <tr>
@@ -356,7 +355,7 @@ Util_Ui::config_item( array(
             <tr>
                 <th colspan="2">
                     <?php $this->checkbox( 'browsercache.other.etag' ) ?> <?php Util_Ui::e_config_label( 'browsercache.other.etag' ) ?></label>
-                    <br /><span class="description"><?php _e( 'Set the Etag header to encourage browser caching of files.', 'w3-total-cache' ); ?></span>
+                    <br /><span class="description"><?php _e( 'Set the ETag header to encourage browser caching of files.', 'w3-total-cache' ); ?></span>
                 </th>
             </tr>
             <tr>

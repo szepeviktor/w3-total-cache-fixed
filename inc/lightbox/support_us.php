@@ -90,7 +90,7 @@ echo Util_Ui::action_button(
             </label>
             </p>
     </div>
-    <div class="footer">
+    <div class="w3tc_overlay_footer">
         <p>
             <?php wp_nonce_field( 'w3tc' ) ?>
             <input type="submit" class="btn w3tc-size image w3tc-button-save btn-primary outset save palette-turquoise " value="Save &amp; close">

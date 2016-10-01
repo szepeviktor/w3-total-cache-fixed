@@ -32,7 +32,7 @@ Util_Ui::config_item( array(
 
 Util_Ui::config_item( array(
 		'key' => 'opcache.validate_timestamps',
-		'label' => 'Validate Timestamps',
+		'label' => 'Validate timestamps:',
 		'control' => 'checkbox',
 		'disabled' => true,
 		'value' => $validate_timestamps,

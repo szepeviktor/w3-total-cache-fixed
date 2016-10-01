@@ -101,7 +101,7 @@ echo sprintf( __( 'To rebuild the page cache use the %s operation', 'w3-total-ca
 Util_Ui::config_item( array(
 		'key' => 'pgcache.mirrors.enabled',
 		'control' => 'checkbox',
-		'label' => __( 'Cache Alias Hostnames:', 'w3-total-cache' ),
+		'label' => __( 'Cache alias hostnames:', 'w3-total-cache' ),
 		'checkbox_label' => __( 'Enable', 'w3-total-cache' ),
 		'enabled' => !Util_Environment::is_wpmu_subdomain(),
 		'description' => __( 'If the same Wordpress content is accessed from different domains',
@@ -110,9 +110,9 @@ Util_Ui::config_item( array(
 Util_Ui::config_item( array(
 		'key' => 'pgcache.mirrors.home_urls',
 		'control' => 'textarea',
-		'label' => __( 'Additional Home URLs:', 'w3-total-cache' ),
+		'label' => __( 'Additional home <acronym title="Uniform Resource Locator">URL</acronym>s:', 'w3-total-cache' ),
 		'enabled' => !Util_Environment::is_wpmu_subdomain(),
-		'description' => __( 'Specify full home URLs of your mirrors so that plugin will flush it\'s cache when content is changed. For example:<br /> http://my-site.com<br />http://www.my-site.com<br />https://my-site.com',
+		'description' => __( 'Specify full home <acronym title="Uniform Resource Locator">URL</acronym>s of your mirrors so that plugin will flush it\'s cache when content is changed. For example:<br /> http://my-site.com<br />http://www.my-site.com<br />https://my-site.com',
 			'w3-total-cache' )
 	) );
 ?>
@@ -151,7 +151,7 @@ Util_Ui::config_item( array(
 					<input id="pgcache_prime_sitemap" type="text" name="pgcache__prime__sitemap"
 						<?php Util_Ui::sealing_disabled( 'pgcache.' ) ?>
 						value="<?php echo esc_attr( $this->_config->get_string( 'pgcache.prime.sitemap' ) ); ?>" size="100" /><br />
-					<span class="description"><?php _e( 'A <a href="http://www.xml-sitemaps.com/validate-xml-sitemap.html" target="_blank">compliant</a> sitemap can be used to specify the pages to maintain in the primed cache. Pages will be cached according to the priorities specified in the <acronym title="Extensible Markup Language">XML</acronym> file. Due to its completeness and integrations, <a href="http://wordpress.org/extend/plugins/wordpress-seo/" target="_blank">Yoast SEO</a> is recommended for use with this feature.', 'w3-total-cache' ); ?></span>
+					<span class="description"><?php _e( 'A <a href="http://www.xml-sitemaps.com/validate-xml-sitemap.html" target="_blank">compliant</a> sitemap can be used to specify the pages to maintain in the primed cache. Pages will be cached according to the priorities specified in the <acronym title="Extensible Markup Language">XML</acronym> file.', 'w3-total-cache' ); ?></span>
 				</td>
 			</tr>
 			<tr>
@@ -262,7 +262,7 @@ Util_Ui::postbox_header( __( 'Purge Policy: ', 'w3-total-cache' ) . implode( ', 
 				<td>
 					<input type="hidden" name="pgcache__late_caching" value="0" />
 					<label><input id="pgcache_late_caching" type="checkbox" name="pgcache__late_caching" value="1"<?php checked( $this->_config->get_string( 'pgcache.engine' ) != 'file_generic' && $this->_config->get_boolean( 'pgcache.late_caching' ) ); ?> <?php disabled( $this->_config->get_string( 'pgcache.engine' ), 'file_generic' ) ?> /> <?php _e( 'Enable', 'w3-total-cache' ); ?></label>
-					<br /><span class="description"><?php _e( 'Allows to overwrite page caching key via custom filters by postponing entry extraction to the init action', 'w3-total-cache' )?></span>
+					<br /><span class="description"><?php _e( 'Allows overwriting of page caching key via custom filters by postponing entry extraction in the init action.', 'w3-total-cache' )?></span>
 				</td>
 			</tr>
 			<?php
@@ -276,7 +276,7 @@ if ( $this->_config->get_string( 'pgcache.engine' ) == 'memcached' ) {
 ?>
 			<?php if ( $this->_config->get_string( 'pgcache.engine' ) == 'file_generic' ): ?>
 			<tr>
-				<th><label><?php _e( 'Compatibility mode', 'w3-total-cache' ); ?></label></th>
+				<th><label><?php _e( 'Compatibility mode:', 'w3-total-cache' ); ?></label></th>
 				<td>
 					<?php $this->checkbox( 'pgcache.compatibility' ) ?> <?php Util_Ui::e_config_label( 'pgcache.compatibility' ) ?></label><br />
 					<span class="description"><?php _e( 'Decreases performance by ~20% at scale in exchange for increasing interoperability with more hosting environments and WordPress idiosyncrasies. This option should be enabled for most sites', 'w3-total-cache' ); ?></span>
@@ -299,7 +299,7 @@ if ( $this->_config->get_string( 'pgcache.engine' ) == 'memcached' ) {
 					<?php else: ?>
 					<?php $this->checkbox( 'pgcache.reject.request_head', false, '', false ) ?><?php Util_Ui::e_config_label( 'pgcache.reject.request_head' ) ?><br />
 					<?php endif; ?>
-					<span class="description"><?php _e( 'If disabled, HEAD requests can often be cached resulting in "empty pages" being returned for subsequent requests for a <acronym title="Uniform Resource Indicator">URL</acronym>.', 'w3-total-cache' ); ?></span>
+					<span class="description"><?php _e( 'If disabled, HEAD requests can often be cached resulting in "empty pages" being returned for subsequent requests for a <acronym title="Uniform Resource Locator">URL</acronym>.', 'w3-total-cache' ); ?></span>
 				</td>
 			</tr>
 			<?php endif; ?>
@@ -336,7 +336,7 @@ if ( $this->_config->get_string( 'pgcache.engine' ) == 'memcached' ) {
 					<textarea id="pgcache_accept_qs" name="pgcache__accept__qs"
 						<?php Util_Ui::sealing_disabled( 'pgcache.' ) ?>
 							  cols="40" rows="5"><?php echo esc_textarea( implode( "\r\n", $this->_config->get_array( 'pgcache.accept.qs' ) ) ); ?></textarea><br />
-					<span class="description"><?php _e( 'Always cache URLs with these query strings.', 'w3-total-cache' ); ?></span>
+					<span class="description"><?php _e( 'Always cache <acronym title="Uniform Resource Locator">URL</acronym>s with these query strings.', 'w3-total-cache' ); ?></span>
 				</td>
 			</tr>
 			<tr>

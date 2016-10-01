@@ -26,17 +26,17 @@ class Cdn_GoogleDrive_AdminActions {
 		$access_token = stripslashes( $_POST['access_token'] );
 		$refresh_token = stripslashes( $_POST['refresh_token'] );
 
-		$client = new \Google_Client();
+		$client = new \W3TCG_Google_Client();
 		$client->setClientId( $client_id );
 		$client->setAccessToken( $access_token );
 
 		//
 		// get folder details
 		//
-		$service = new \Google_Service_Drive( $client );
+		$service = new \W3TCG_Google_Service_Drive( $client );
 
 		if ( empty( $_POST['folder'] ) ) {
-			$file = new \Google_Service_Drive_DriveFile( array(
+			$file = new \W3TCG_Google_Service_Drive_DriveFile( array(
 					'title' => $_POST['folder_new'],
 					'mimeType' => 'application/vnd.google-apps.folder' ) );
 
@@ -46,7 +46,7 @@ class Cdn_GoogleDrive_AdminActions {
 			$used_folder_id = $_POST['folder'];
 		}
 
-		$permission = new \Google_Service_Drive_Permission();
+		$permission = new \W3TCG_Google_Service_Drive_Permission();
 		$permission->setValue( '' );
 		$permission->setType( 'anyone' );
 		$permission->setRole( 'reader' );

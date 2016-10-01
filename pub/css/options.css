@@ -104,12 +104,6 @@ input.w3tc-error, textarea.w3tc-error {
     text-indent: 20px;
 }
 
-#w3tc h2 span {
-    font-size: 0.6em;
-    font-style: normal;
-    text-shadow: none;
-}
-
 #w3tc h5 {
     margin: 0
 }
@@ -438,4 +432,14 @@ td.w3tc_config_value_text {
 
 .w3tc_popup_form {
     padding: 20px;
+}
+
+
+/*---*/
+/* js bound to id */
+
+th.w3tc_extensions_manage_column_check {
+    padding: 0 0 0 5px;
+    vertical-align: middle;
+    width: 2.2em;
 }

@@ -163,7 +163,7 @@ class Extension_FragmentCache_WpObjectCache {
 		}
 
 		if ( is_object( $value ) ) {
-			$value = clone( $value );
+			$value = clone $value;
 		}
 
 		$this->cache[$fragment_group][$key] = $value;
@@ -214,7 +214,7 @@ class Extension_FragmentCache_WpObjectCache {
 		$key = $this->_get_cache_key( $id );
 
 		if ( is_object( $data ) ) {
-			$data = clone( $data );
+			$data = clone $data;
 		}
 
 		list( $fragment_group, $fragment_group_expiration, $fragment_group_global ) =

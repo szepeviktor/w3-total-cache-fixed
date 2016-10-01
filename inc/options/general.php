@@ -519,7 +519,7 @@ Util_Ui::config_item( array(
 
         <table class="form-table">
             <tr>
-                <th><?php _e( 'Debug Mode:', 'w3-total-cache' ); ?></th>
+                <th><?php _e( 'Debug mode:', 'w3-total-cache' ); ?></th>
                 <td>
                     <?php $this->checkbox_debug( 'pgcache.debug' ) ?> <?php Util_Ui::e_config_label( 'pgcache.debug' ) ?></label><br />
                     <?php $this->checkbox_debug( 'minify.debug' ) ?> <?php Util_Ui::e_config_label( 'minify.debug' ) ?></label><br />

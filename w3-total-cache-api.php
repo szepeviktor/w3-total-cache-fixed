@@ -5,12 +5,10 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 define( 'W3TC', true );
-define( 'W3TC_VERSION', '0.9.5' );
+define( 'W3TC_VERSION', '0.9.5.1' );
 define( 'W3TC_POWERED_BY', 'W3 Total Cache' );
 define( 'W3TC_EMAIL', 'w3tc@w3-edge.com' );
 define( 'W3TC_TEXT_DOMAIN', 'w3-total-cache' );
-define( 'W3TC_PAYPAL_URL', 'https://www.paypal.com/cgi-bin/webscr' );
-define( 'W3TC_PAYPAL_BUSINESS', 'w3tc-team@w3-edge.com' );
 define( 'W3TC_LINK_URL', 'https://www.w3-edge.com/wordpress-plugins/' );
 define( 'W3TC_LINK_NAME', 'W3 EDGE, Optimization Products for WordPress' );
 define( 'W3TC_FEED_URL', 'http://feeds.feedburner.com/W3TOTALCACHE' );
@@ -22,6 +20,7 @@ define( 'W3TC_SUPPORT_US_TIMEOUT', 2592000 );   // 30 days
 define( 'W3TC_SUPPORT_US_TWEET', 'YES! I optimized the user experience of my website with the W3 Total Cache #WordPress #plugin by @w3edge! http://bit.ly/TeSBL3' );
 define( 'W3TC_EDGE_TIMEOUT', 7 * 24 * 60 * 60 );
 define( 'W3TC_SUPPORT_REQUEST_URL', 'https://www.w3-edge.com/w3tc-support/extra' );
+define( 'W3TC_SUPPORT_SERVICES_URL', 'https://www.w3-edge.com/w3tc/premium-widget.json' );
 define( 'W3TC_TRACK_URL', 'https://www.w3-edge.com/w3tc/track/' );
 define( 'W3TC_MAILLINGLIST_SIGNUP_URL', 'https://www.w3-edge.com/w3tc/emailsignup/' );
 define( 'NEWRELIC_SIGNUP_URL', 'http://bit.ly/w3tc-partner-newrelic-signup' );
@@ -129,10 +128,10 @@ function w3tc_class_autoload( $class ) {
 	} elseif ( substr( $class, 0, 8 ) == 'Minify0_' ) {
 		$base = W3TC_LIB_DIR . DIRECTORY_SEPARATOR . 'Minify' . DIRECTORY_SEPARATOR;
 		$class = substr( $class, 8 );
-	} elseif ( substr( $class, 0, 7 ) == 'Google_' &&
+	} elseif ( substr( $class, 0, 13 ) == 'W3TCG_Google_' &&
 		( !defined( 'W3TC_GOOGLE_LIBRARY' ) || W3TC_GOOGLE_LIBRARY ) ) {
 		// Google library
-		$classPath = explode( '_', $class );
+		$classPath = explode( '_', substr( $class, 6 ) );
 		if ( count( $classPath ) > 3 ) {
 			// Maximum class file path depth in this project is 3.
 			$classPath = array_slice( $classPath, 0, 3 );
@@ -140,45 +139,49 @@ function w3tc_class_autoload( $class ) {
 
 		$filePath = W3TC_LIB_DIR . DIRECTORY_SEPARATOR .
 			implode( '/', $classPath ) . '.php';
-		if ( file_exists( $filePath ) ) {
-                    require $filePath;
-                }
+
+		if ( file_exists( $filePath ) )
+			require $filePath;
 		return;
 	}
 
 	if ( !is_null( $base ) ) {
 		$file = $base . strtr( $class, "\\_",
 			DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR ) . '.php';
-		if ( file_exists( $file ) ) {
+		if ( file_exists( $file ) )
 			require_once $file;
-                }
 	} else if ( substr( $class, 0, 5 ) == 'W3TC\\' ) {
 			$filename = W3TC_DIR . DIRECTORY_SEPARATOR . substr( $class, 5 ) . '.php';
 
-                        if ( file_exists( $filename ) ) {
-                            require $filename;
-                        }
-                        else {
-                            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-                                    debug_print_backtrace();
-                            }
+			if ( file_exists( $filename ) ) {
+				require $filename;
+			} else {
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					echo 'Attempt to create object of class ' . 
+						$class . ' has been made, but file ' . 
+						$filename . ' doesnt exists';
+					debug_print_backtrace();
+				}
 			}
-			
-                        return;
 		}
 }
 
 spl_autoload_register( 'w3tc_class_autoload' );
-
-
 
 /**
  * W3 Total Cache plugins API
  */
 
 /**
- * Returns config
- * */
+ * Returns config.
+ *
+ * !!! NOTICE !!!
+ * 3rd party developers, please do not modify the plugin's configuration without
+ * notifying the user beforehand. As an alternative, throw a notification to the
+ * user like: "Configure W3 Total Cache for me" and allow the user to dismiss
+ * the notification.
+ * !!! NOTICE !!!
+ */
 function w3tc_config() {
 	$config = \W3TC\Dispatcher::config();
 	return $config;
@@ -492,4 +495,48 @@ function w3tc_opcache_flush_file( $file, $http = false ) {
 	}
 }
 
-require_once W3TC_DIR . '/legacy/W3_Config.php';
+/**
+ * Deprecated. Retained for 3rd parties that used it. see w3tc_config()
+ */
+class W3_Config extends \W3TC\Config {
+    public function __construct( $master = false, $blog_id = null ) {
+    	if ( $master )
+    		$blog_id = 0;
+
+        return parent::__construct($blog_id);
+    }
+}
+
+/**
+ * Deprecated. Retained for 3rd parties that use it. see w3tc_config()
+ */
+class W3_ConfigWriter {
+	public function __construct( $p1 = 0, $p2 = 0 ) {
+    }
+    public function set( $p1 = 0, $p2 = 0 ) {
+    }
+    public function save( $p1 = 0, $p2 = 0 ) {
+    }
+    public function refresh_w3tc() {
+    }
+}
+
+/**
+Deprecated. Retained for 3rd parties that use it. see w3tc_config()
+*/
+function w3_instance( $class ) {
+    $legacy_class_name = null;
+
+    if ( $class == 'W3_Config' )
+       	$legacy_class_name = 'Config';
+    elseif ( $class == 'W3_ObjectCacheBridge' )
+        $legacy_class_name = 'ObjectCache_WpObjectCache';
+    elseif ( $class == 'W3_PgCache' )
+        $legacy_class_name = 'PgCache_ContentGrabber';
+    elseif ( $class == 'W3_Redirect' )
+        $legacy_class_name = 'Mobile_Redirect';
+    else
+    	return null;
+
+    return \W3TC\Dispatcher::component( $legacy_class_name );
+}

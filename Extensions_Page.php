@@ -3,6 +3,17 @@ namespace W3TC;
 
 
 
+/* todo - sort by name
+function extensions_sort_cmp_name($a, $b)
+{
+    if ($a['name'] == $b['name']) {
+        return 0;
+    }
+    return ($a['name'] < $b['name']) ? -1 : 1;
+}*/
+
+
+
 class Extensions_Page extends Base_Page_Settings {
 	/**
 	 * Current page
@@ -37,7 +48,6 @@ class Extensions_Page extends Base_Page_Settings {
 
 		if ( $extension && $view ) {
 			$all_settings = $this->_config->get_array( 'extensions.settings' );
-			$extensions_active = Extensions_Util::get_active_extensions( $this->_config );
 			$meta = $extensions_active[$extension];
 			$sub_view = 'settings';
 		} else {
@@ -45,6 +55,9 @@ class Extensions_Page extends Base_Page_Settings {
 			$extensions_inactive = Extensions_Util::get_inactive_extensions( $this->_config );
 			$var = "extensions_{$extension_status}";
 			$extensions = $$var;
+			$extension_keys = array_keys($extensions);
+			sort($extension_keys);
+
 			$sub_view = 'list';
 			$page = 1;
 		}

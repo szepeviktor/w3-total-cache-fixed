@@ -184,9 +184,8 @@ class Util_Environment {
 	/**
 	 * Returns header W3TC adds to responses powered by itself
 	 */
-	static public function w3tc_header( $config ) {
+	static public function w3tc_header() {
 		return W3TC_POWERED_BY .
-			( Util_Environment::is_w3tc_pro( $config ) ? ' Pro' : '' ) .
 			'/' . W3TC_VERSION;
 	}
 
@@ -330,7 +329,7 @@ class Util_Environment {
 	 * @return string
 	 */
 	static public function cache_dir( $section ) {
-		return W3TC_CACHE_DIR . '/' . $section;
+		return W3TC_CACHE_DIR . DIRECTORY_SEPARATOR . $section;
 	}
 
 	/**
@@ -347,11 +346,11 @@ class Util_Environment {
 			if ( is_null( $blog_id ) )
 				$blog_id = Util_Environment::blog_id();
 
-			$postfix = '/' . sprintf( '%d', $blog_id );
+			$postfix = DIRECTORY_SEPARATOR . sprintf( '%d', $blog_id );
 
 			if ( defined( 'W3TC_BLOG_LEVELS' ) ) {
 				for ( $n = 0; $n < W3TC_BLOG_LEVELS; $n++ )
-					$postfix = '/' .
+					$postfix = DIRECTORY_SEPARATOR .
 						substr( $postfix, strlen( $postfix ) - 1 - $n, 1 ) .
 						$postfix;
 			}
@@ -486,7 +485,7 @@ class Util_Environment {
 			}
 		}
 
-		return str_replace( '\\', '/', $home_path );
+		return str_replace( '\\', DIRECTORY_SEPARATOR, $home_path );
 	}
 
 
@@ -674,7 +673,7 @@ class Util_Environment {
 	static public function wp_config_path() {
 		$search = array(
 			ABSPATH . 'wp-config.php',
-			dirname( ABSPATH ) . '/wp-config.php'
+			dirname( ABSPATH ) . DIRECTORY_SEPARATOR . 'wp-config.php'
 		);
 
 		foreach ( $search as $path ) {
@@ -805,7 +804,8 @@ class Util_Environment {
 			// common encoded characters
 			$path_relative_to_home = str_replace( '%20', ' ', $path_relative_to_home );
 
-			$full_filename = $home_path . '/' . trim( $path_relative_to_home, '/' );
+			$full_filename = $home_path . DIRECTORY_SEPARATOR . 
+				trim( $path_relative_to_home, DIRECTORY_SEPARATOR );
 
 			$docroot = Util_Environment::document_root();
 			if ( substr( $full_filename, 0, strlen( $docroot ) ) == $docroot )
@@ -817,9 +817,9 @@ class Util_Environment {
 		// sometimes urls (coming from other plugins/themes)
 		// contain multiple "/" like "my-folder//myfile.js" which
 		// fails to recognize by filesystem, while url is accessible
-		$docroot_filename = str_replace( '//', '/', $docroot_filename );
+		$docroot_filename = str_replace( '//', DIRECTORY_SEPARATOR, $docroot_filename );
 
-		return ltrim( $docroot_filename, '/' );
+		return ltrim( $docroot_filename, DIRECTORY_SEPARATOR );
 	}
 
 	/**

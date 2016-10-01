@@ -22,12 +22,12 @@
  * @author Chris Chabot <chabotc@google.com>
  * @author Chirag Shah <chirags@google.com>
  */
-class Google_Auth_Simple extends Google_Auth_Abstract
+class W3TCG_Google_Auth_Simple extends W3TCG_Google_Auth_Abstract
 {
   private $key = null;
   private $client;
 
-  public function __construct(Google_Client $client, $config = null)
+  public function __construct(W3TCG_Google_Client $client, $config = null)
   {
     $this->client = $client;
   }
@@ -38,17 +38,17 @@ class Google_Auth_Simple extends Google_Auth_Abstract
    * (which can modify the request in what ever way fits the auth mechanism)
    * and then calls apiCurlIO::makeRequest on the signed request
    *
-   * @param Google_Http_Request $request
-   * @return Google_Http_Request The resulting HTTP response including the
+   * @param W3TCG_Google_Http_Request $request
+   * @return W3TCG_Google_Http_Request The resulting HTTP response including the
    * responseHttpCode, responseHeaders and responseBody.
    */
-  public function authenticatedRequest(Google_Http_Request $request)
+  public function authenticatedRequest(W3TCG_Google_Http_Request $request)
   {
     $request = $this->sign($request);
     return $this->io->makeRequest($request);
   }
 
-  public function sign(Google_Http_Request $request)
+  public function sign(W3TCG_Google_Http_Request $request)
   {
     $key = $this->client->getClassConfig($this, 'developer_key');
     if ($key) {

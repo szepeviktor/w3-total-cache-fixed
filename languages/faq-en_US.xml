@@ -35,7 +35,7 @@
 					<li>Optional embedding of <acronym title="JavaScript">JS</acronym> just above &lt;/body&gt;</li>
 					<li>Support for caching pages, posts, feeds, database objects, <acronym title="Cascading Style Sheet">CSS</acronym>, <acronym title="JavaScript">JS</acronym> in memory with an opcode cache or memcached or both</li>
 					<li>Caching of feeds (comments, page and site), <acronym title="Uniform Resource Indicator">URL</acronym>s with query string variables (like search result pages), Database queries, Pages, Posts, <acronym title="Cascading Style Sheet">CSS</acronym> and <acronym title="JavaScript">JS</acronym></li>
-					<li>Complete header management including Etags</li>
+					<li>Complete header management including ETags</li>
 					<li>Increased web server concurrency and reduced resource consumption, increased scale</li>
 				</ul>
 				<p>In essence, anything that can be automated to squeeze out every bit of server performance and minimize bandwidth utilization has been done, leaving your readers with an optimized user experience.</p> ]]></answer>
@@ -420,16 +420,12 @@ Note: To disable page caching of specific theme templates or plugin files you ne
             </answer>
         </entry>
         <entry>
-            <question><![CDATA[	How can I host my favicon with my <acronym title="Content Delivery Network">CDN</acronym>? ]]></question>
+            <question><![CDATA[	How can I host my favicon with my (origin push) <acronym title="Content Delivery Network">CDN</acronym>? ]]></question>
             <answer><![CDATA[ <p>If the file exists in your document root (i.e. http://domain.com/favicon.ico), the plugin can take care of that for you using custom upload options. If the file is in your theme directory you can also have the plugin uploaded from there.</p> ]]></answer>
         </entry>
         <entry>
             <question><![CDATA[ What about the wp-includes files, can those be served from the <acronym title="Content Delivery Network">CDN</acronym>? ]]></question>
             <answer><![CDATA[ <p>Yes, you can specify which file types you would like served by <acronym title="Content Delivery Network">CDN</acronym> and they will be uploaded and always downloaded from that location. This includes the smilies, JavaScript files et al. By default we take care of them all.</p> ]]></answer>
-        </entry>
-        <entry>
-            <question><![CDATA[ What if I don't want to work with a	<acronym title="Content Delivery Network">CDN</acronym>	right now, is there any other use for this feature? ]]></question>
-            <answer><![CDATA[ <p>Yes! You can take advantage of the <a href="http://www.mozilla.org/projects/netlib/http/pipelining-faq.html">pipelining</a> support in some browsers by creating a sub-domain for the static content for your site. So you could select the "Origin Push / Self-hosted" method of the General Settings tab. Create static.domain.com on your server (and update your <acronym title="Domain Name System">DNS</acronym> zone) and then specify the <acronym title="File Transfer Protocol">FTP</acronym> details for it in the plugin configuration panel and you're done. If you disable the scripting options on your server you'll find that your server will actually respond slightly faster from that sub-domain because it's just sending files and not processing them.</p> ]]></answer>
         </entry>
         <entry>
             <question><![CDATA[	Are minified files uploaded to my <acronym title="Content Delivery Network">CDN</acronym> provider? ]]></question>
@@ -466,61 +462,15 @@ Note: To disable page caching of specific theme templates or plugin files you ne
 				<p>As always, it never hurts to back up your database first.</p>
 			]]></answer>
         </entry>
-        <entry>
-            <tag>cdn-fsd-maxcdn</tag>
-            <question><![CDATA[ How do I set up Full Site Delivery with MaxCDN? ]]></question>
-            <answer><![CDATA[
-<p>
-Full site mirroring is available in Edge Mode, so make sure you have enabled it. If not - click on "Enable Edge Mode" link in General Settings page.
-Full site mirroring is available in Paid version only.
-</p>
-
-<p>
-<ol>
-    <li>Select CDN provider of your choice in a "Full site mirroring" group of "CDN type" dropdown on "General Settings" page, select MaxCDN there.</li>
-    <li>Go to "CDN" page.</li>
-    <li>Click "Authorize" button</li>
-    <li>Type in API key of your account. You can obtain by following a link in a popup. Opening that link will you will be prompted for your MaxCDN login and password.
-Select Zone from the list or choose "Add new" to create new zone (type in some friendly name of zone in that case)</li>
-    <li>In a zone setup form you will be notified with the settings required for zone. Tou have only 1 editable field is IP address of your Wordpress host. W3 Total Cache tries to guess it, but its not possible to know that in all possible cases.</li>
-    <li>You get success page with information about DNS changes. Now you need to change record of your wordpress host from IP address and replace it to CNAME to specified hostname.</li>
-    <li>It works</li>
-</ol>
-</p>
-            ]]></answer>
-        </entry>
-        <entry>
-            <tag>cdn-fsd-cloudfront</tag>
-            <question><![CDATA[ How do I set up Full Site Delivery with CloudFront? ]]></question>
-            <answer><![CDATA[
-<p>
-Full site mirroring is available in Edge Mode, so make sure you have enabled it. If not - click on "Enable Edge Mode" link in General Settings page.
-Full site mirroring is available in Paid version only.
-</p>
-
-<p>
-<ol>
-    <li>Select CDN provider of your choice in a "Full site mirroring" group of "CDN type" dropdown on "General Settings" page, select CloudFront there.</li>
-    <li>Go to "CDN" page.</li>
-    <li>Click "Authorize" button</li>
-    <li>Type in Access Key and Secret Key of your account.</li>
-    <li>Select Distribution from the list or choose "Add new" to create new zone (type in some friendly name of zone in that case - that will not be visible anywhere except your AWS control panel)</li>
-    <li>In a distribution setup form you will be notified with the settings required. Tou have only 1 editable field is alternative hostname of your Wordpress host. For example if your have myblog.com website with A record pointint to 1.2.3.4 IP, create another one origin.myblog.com DNS record with A record pointint to 1.2.3.4 IP and type in "origin.myblog.com" in this form.</li>
-    <li>You get success page with information about DNS changes. Now you need to change record of your wordpress host from IP address and replace it to CNAME to specified hostname.</li>
-    <li>It works</li>
-</ol>
-</p>
-            ]]></answer>
-        </entry>
     </section>
     <section name="Browser Cache">
         <entry>
-            <question><![CDATA[ What's an Etag and why do I need one? ]]></question>
-            <answer><![CDATA[ <p>Entity tags were created to add more reliability to client side caching my providing a simple method for a browser to verify that a file had not changed since last it was downloaded. Using them helps enables your server return 304 or "not modified" responses instead of a 200 "ok" response which are much much slower (because the file is sent). The result is a visitor viewing multiple pages of your site would have that "instant loading" experience that we all definitely enjoy. Don't worry we don't use inodes to create our Etags so this solution is reliable for multi server hosting solutions.</p> ]]></answer>
+            <question><![CDATA[ What's an ETag and why do I need one? ]]></question>
+            <answer><![CDATA[ <p>Entity tags were created to add more reliability to client side caching my providing a simple method for a browser to verify that a file had not changed since last it was downloaded. Using them helps enables your server return 304 or "not modified" responses instead of a 200 "ok" response which are much much slower (because the file is sent). The result is a visitor viewing multiple pages of your site would have that "instant loading" experience that we all definitely enjoy. Don't worry we don't use inodes to create our ETags so this solution is reliable for multi server hosting solutions.</p> ]]></answer>
         </entry>
         <entry>
-            <question><![CDATA[ What about Etags? ]]></question>
-            <answer><![CDATA[ <p>Yes, we have Etags covered. Even if you have a clustered hosting environment, your <a href="http://en.wikipedia.org/wiki/HTTP_ETag" target="_blank">Etags</a> will be consistent (across multiple servers in your cluster) so you don't have to worry about using special session cookies when you introduce our plugin. If you would like to specify headers for various reasons, you can do that as well.</p> ]]></answer>
+            <question><![CDATA[ What about ETags? ]]></question>
+            <answer><![CDATA[ <p>Yes, we have ETags covered. Even if you have a clustered hosting environment, your <a href="http://en.wikipedia.org/wiki/HTTP_ETag" target="_blank">Etags</a> will be consistent (across multiple servers in your cluster) so you don't have to worry about using special session cookies when you introduce our plugin. If you would like to specify headers for various reasons, you can do that as well.</p> ]]></answer>
         </entry>
         <entry>
             <question><![CDATA[ Which encodings do you support? ]]></question>
@@ -647,7 +597,7 @@ FacebookExternalHit/1.0</pre>
         </entry>
         <entry>
             <question><![CDATA[ What version of	<acronym title="Hypertext Preprocessor">PHP</acronym> do I need for this thing? ]]></question>
-            <answer><![CDATA[ <p>  Version 5.2+ </p> ]]></answer>
+            <answer><![CDATA[ <p>  Version 5.3+ </p> ]]></answer>
         </entry>
         <entry>
             <question><![CDATA[ What version of mySQL is needed? ]]></question>
@@ -857,6 +807,7 @@ function custom_extension($extensions) {
             'author_uri' => 'http://example.com',
             'extension_uri' => 'http://example.com',
             'extension_id' => 'some.theme',
+            'settings_exists' => false,
             'version' => '0.1',
             'enabled' => true,
             'requirements' => array(),

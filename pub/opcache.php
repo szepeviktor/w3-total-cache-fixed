@@ -18,7 +18,7 @@ if ( !defined( 'W3TC_DIR' ) ) {
 
 if ( !@is_dir( W3TC_DIR ) || !file_exists( W3TC_DIR . '/w3-total-cache-api.php' ) ) {
 	@header( 'X-Robots-Tag: noarchive, noodp, nosnippet' );
-	echo sprintf( '<strong>W3 Total Cache Error:</strong> some files appear to be missing or out of place. Please re-install plugin or remove <strong>%s</strong>.', dirname( __FILE__ ) );
+	echo sprintf( '<strong>W3 Total Cache Error:</strong> some files appear to be missing or out of place. Please re-install plugin or remove <strong>%s</strong>.<br />', dirname( __FILE__ ) );
 }
 
 

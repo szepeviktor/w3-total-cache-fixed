@@ -1,12 +1,13 @@
 <?php include W3TC_INC_DIR . '/options/common/header.php'; ?>
 
 <div id="wufoo-m5pom8z0qy59rm"></div>
+<form>
 
 <script type="text/javascript">var m5pom8z0qy59rm;(function(d, t) {
 var s = d.createElement(t);
 var options = {
 	'userName':'w3edge',
-	'formHash':'m5pom8z0qy59rm',
+	'formHash': w3tc_support_form_hash,
 	'autoResize':true,
 	'height':'1145',
 	'async':true,
@@ -20,6 +21,12 @@ var options = {
 		'&field9=' + encodeURI(w3tc_support_email),
 	'ssl':true
 };
+
+if (w3tc_support_field_name.length > 0)
+	options.defaultValues += '&' + 
+		encodeURI(w3tc_support_field_name) + '=' + 
+		encodeURI(w3tc_support_field_value);
+
 
 s.src = ('https:' == d.location.protocol ? 'https://' : 'http://') + 'www.wufoo.com/scripts/embed/form.js';
 s.onload = s.onreadystatechange = function() {

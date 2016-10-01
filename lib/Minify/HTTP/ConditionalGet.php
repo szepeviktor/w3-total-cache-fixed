@@ -117,7 +117,7 @@ class HTTP_ConditionalGet {
         
         $this->_headers['Pragma'] = $scope;
         
-        // backwards compatibility (can be removed later)
+        // For backwards compatibility (will be removed in the future)
         if (isset($spec['setExpires']) 
             && is_numeric($spec['setExpires'])
             && ! isset($spec['maxAge'])) {

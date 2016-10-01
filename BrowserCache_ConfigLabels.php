@@ -13,7 +13,7 @@ class BrowserCache_ConfigLabels {
 				'browsercache.cssjs.lifetime' => __( 'Expires header lifetime:', 'w3-total-cache' ),
 				'browsercache.cssjs.cache.control' => __( 'Set cache control header', 'w3-total-cache' ),
 				'browsercache.cssjs.cache.policy' => __( 'Cache Control policy:', 'w3-total-cache' ),
-				'browsercache.cssjs.etag' => __( 'Set entity tag (ETag)', 'w3-total-cache' ),
+				'browsercache.cssjs.etag' => __( 'Set entity tag (eTag)', 'w3-total-cache' ),
 				'browsercache.cssjs.w3tc' => __( 'Set W3 Total Cache header', 'w3-total-cache' ),
 				'browsercache.cssjs.compression' => __( 'Enable <acronym title="Hypertext Transfer Protocol">HTTP</acronym> (gzip) compression', 'w3-total-cache' ),
 				'browsercache.cssjs.replace' => __( 'Prevent caching of objects after settings change', 'w3-total-cache' ),

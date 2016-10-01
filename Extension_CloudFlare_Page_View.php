@@ -77,7 +77,7 @@ _e( 'Specify account credentials:',
 <?php if ( $state == 'not_configured' ): ?>
 <table class="form-table">
 <tr><td colspan="2">
-CloudFlare credentials not specified yet
+Authenticate your account in order to access settings.
 </td></tr>
 </table>
 <?php endif ?>
@@ -111,25 +111,25 @@ CloudFlare not available: <?php echo $error_message; ?>
 			)
 		);
 
-	Util_Ui::config_item( array(
-			'key' => array( 'cloudflare', 'widget_cache_mins' ),
-			'label' => __( 'Cache time:', 'w3-total-cache' ),
-			'control' => 'textbox',
-			'description' =>
-			'How many minutes data retrieved from CloudFlare ' .
-			'should be stored. Minimum is 1 minute.'
-		)
-	);
+		Util_Ui::config_item( array(
+				'key' => array( 'cloudflare', 'widget_cache_mins' ),
+				'label' => __( 'Cache time:', 'w3-total-cache' ),
+				'control' => 'textbox',
+				'description' =>
+				'How many minutes data retrieved from CloudFlare:' .
+				'should be stored. Minimum is 1 minute.'
+			)
+		);
 
-Util_Ui::config_item( array(
-		'key' => array( 'cloudflare', 'pagecache' ),
-		'label' => __( 'Page Caching:', 'w3-total-cache' ),
-		'control' => 'checkbox',
-		'checkbox_label' => 'Flush CloudFlare on Post Modifications',
-		'description' =>
-		'Enable when you have html pages cached on CloudFlare level.'
-	)
-);
+		Util_Ui::config_item( array(
+				'key' => array( 'cloudflare', 'pagecache' ),
+				'label' => __( 'Page caching:', 'w3-total-cache' ),
+				'control' => 'checkbox',
+				'checkbox_label' => 'Flush CloudFlare on Post Modifications:',
+				'description' =>
+				'Enable when you have html pages cached on CloudFlare level.'
+			)
+		);
 
 ?>
 </table>
@@ -163,12 +163,12 @@ self::cloudflare_selectbox( $settings, array(
 	) );
 self::cloudflare_checkbox( $settings, array(
 		'key' => 'sort_query_string_for_cache',
-		'label' => 'Query String Sorting',
+		'label' => 'Query string sorting:',
 		'description' => 'CloudFlare will treat files with the same query strings as the same file in cache, regardless of the order of the query strings.',
 	) );
 self::cloudflare_selectbox( $settings, array(
 		'key' => 'browser_cache_ttl',
-		'label' => 'Browser Cache TTL',
+		'label' => 'Browser cache <acronym title="Time-to-Live ">TTL</acronym>:',
 		'values' => array(
 			'' => '',
 			'30' => '30',
@@ -198,11 +198,11 @@ self::cloudflare_selectbox( $settings, array(
 			'16070400' => '16070400',
 			'31536000' => '31536000'
 		),
-		'description' => 'Browser Cache TTL (in seconds) specifies how long CloudFlare-cached resources will remain on your visitors\' computers.',
+		'description' => 'Browser cache <acronym title="Time-to-Live ">TTL</acronym> (in seconds) specifies how long CloudFlare-cached resources will remain on your visitors\' computers.',
 	) );
 self::cloudflare_selectbox( $settings, array(
 		'key' => 'challenge_ttl',
-		'label' => ' Challenge TTL',
+		'label' => 'Challenge <acronym title="Time-to-Live ">TTL</acronym>:',
 		'values' => array(
 			'' => '',
 			'300' => '300',
@@ -220,11 +220,11 @@ self::cloudflare_selectbox( $settings, array(
 			'2592000' => '2592000',
 			'31536000' => '31536000'
 		),
-		'description' => 'Specify how long a visitor is allowed access to your site after successfully completing a challenge (such as a CAPTCHA). After the TTL has expired the visitor will have to complete a new challenge.',
+		'description' => 'Specify how long a visitor is allowed access to your site after successfully completing a challenge (such as a CAPTCHA). After the <acronym title="Time-to-Live ">TTL</acronym> has expired the visitor will have to complete a new challenge.',
 	) );
 self::cloudflare_selectbox( $settings, array(
 		'key' => 'edge_cache_ttl',
-		'label' => 'Edge Cache TTL',
+		'label' => 'Edge cache TTL:',
 		'values' => array(
 			'' => '',
 			'300' => '300',
@@ -265,47 +265,47 @@ self::cloudflare_selectbox( $settings, array(
 	) );
 self::cloudflare_checkbox( $settings, array(
 		'key' => 'minify_js',
-		'label' => 'Minify JS',
+		'label' => 'Minify <acronym title="JavaScript">JS</acronym>:',
 		'description' => 'Minify JavaScript files.',
 	) );
 self::cloudflare_checkbox( $settings, array(
 		'key' => 'minify_css',
-		'label' => 'Minify CSS',
+		'label' => 'Minify <acronym title="Cascading Style Sheet">CSS</acronym>:',
 		'description' => 'Minify CSS files.',
 	) );
 self::cloudflare_checkbox( $settings, array(
 		'key' => 'minify_html',
-		'label' => 'Minify HTML',
-		'description' => 'Minify HTML content.',
+		'label' => 'Minify <acronym title="HyperText Markup Language">HTML</acronym>:',
+		'description' => 'Minify <acronym title="HyperText Markup Language">HTML</acronym> content.',
 	) );
 self::cloudflare_checkbox( $settings, array(
 		'key' => 'server_side_exclude',
-		'label' => 'Server Side Exclude',
+		'label' => 'Server side exclude:',
 		'description' => 'If there is sensitive content on your website that you want visible to real visitors, but that you want to hide from suspicious visitors, all you have to do is wrap the content with CloudFlare SSE tags.',
 	) );
 self::cloudflare_checkbox( $settings, array(
 		'key' => 'email_obfuscation',
-		'label' => 'Email obfuscation',
+		'label' => 'Email obfuscation:',
 		'description' => 'Encrypt email adresses on your web page from bots, while keeping them visible to humans. ',
 	) );
 self::cloudflare_checkbox( $settings, array(
 		'key' => 'response_buffering',
-		'label' => 'Response Buffering',
+		'label' => 'Response buffering"',
 		'description' => 'CloudFlare may buffer the whole payload to deliver it at once to the client versus allowing it to be delivered in chunks.',
 	) );
 self::cloudflare_checkbox( $settings, array(
 		'key' => 'prefetch_preload',
-		'label' => 'Prefetch Preload',
+		'label' => 'Prefetch preload:',
 		'description' => 'CloudFlare will prefetch any URLs that are included in the response headers.',
 	) );
 self::cloudflare_checkbox( $settings, array(
 		'key' => 'mobile_redirect',
-		'label' => 'Mobile Redirect',
+		'label' => 'Mobile redirect:',
 		'description' => 'Automatically redirect visitors on mobile devices to a mobile-optimized subdomain',
 	) );
 self::cloudflare_checkbox( $settings, array(
 		'key' => 'origin_error_page_pass_thru',
-		'label' => 'Enable Error Pages',
+		'label' => 'Enable error pages:',
 		'description' => 'CloudFlare will proxy customer error pages on any 502,504 errors on origin server instead of showing a default CloudFlare error page. This does not apply to 522 errors and is limited to Enterprise Zones.',
 	) );
 
@@ -319,12 +319,12 @@ echo '<table class="form-table">';
 
 self::cloudflare_checkbox( $settings, array(
 		'key' => 'hotlink_protection',
-		'label' => 'Hotlink Protection',
+		'label' => 'Hotlink protection:',
 		'description' => 'When enabled, the Hotlink Protection option ensures that other sites cannot suck up your bandwidth by building pages that use images hosted on your site.',
 	) );
 self::cloudflare_checkbox( $settings, array(
 		'key' => 'mirage',
-		'label' => 'Mirage',
+		'label' => 'Mirage:',
 		'description' => 'Automatically optimize image loading for website visitors on mobile devices',
 	) );
 self::cloudflare_selectbox( $settings, array(
@@ -349,7 +349,7 @@ echo '<table class="form-table">';
 
 self::cloudflare_selectbox( $settings, array(
 		'key' => 'security_level',
-		'label' => __( 'Security Level:', 'w3-total-cache' ),
+		'label' => __( 'Security level:', 'w3-total-cache' ),
 		'values' => array(
 			'' => '',
 			'essentially_off' => 'Off',
@@ -362,27 +362,27 @@ self::cloudflare_selectbox( $settings, array(
 	) );
 self::cloudflare_checkbox( $settings, array(
 		'key' => 'browser_check',
-		'label' => 'Browser Integrity Check',
+		'label' => 'Browser integrity check:',
 		'description' => 'Browser Integrity Check is similar to Bad Behavior and looks for common HTTP headers abused most commonly by spammers and denies access to your page. It will also challenge visitors that do not have a user agent or a non standard user agent (also commonly used by abuse bots, crawlers or visitors).',
 	) );
 self::cloudflare_checkbox( $settings, array(
 		'key' => 'always_online',
-		'label' => 'Always Online',
+		'label' => 'Always online:',
 		'description' => 'When enabled, Always Online will serve pages from our cache if your server is offline',
 	) );
 self::cloudflare_checkbox( $settings, array(
 		'key' => 'waf',
-		'label' => 'Web Application Firewall',
-		'description' => 'The WAF examines HTTP requests to your website. It inspects both GET and POST requests and applies rules to help filter out illegitimate traffic from legitimate website visitors.'
+		'label' => 'Web application firewall:',
+		'description' => 'The Web Application Firewall (WAF) examines HTTP requests to your website. It inspects both GET and POST requests and applies rules to help filter out illegitimate traffic from legitimate website visitors.'
 	) );
 self::cloudflare_checkbox( $settings, array(
 		'key' => 'advanced_ddos',
-		'label' => 'Advanced DDOS Protection',
+		'label' => 'Advanced <acronym title="Distributed Denial of Service">DDoS</acronym> protection:',
 		'description' => 'Advanced protection from Distributed Denial of Service (DDoS) attacks on your website.',
 	) );
 self::cloudflare_textbox( $settings, array(
 		'key' => 'max_upload',
-		'label' => 'Max Upload',
+		'label' => 'Max upload:',
 		'description' => 'Max size of file allowed for uploading',
 	) );
 
@@ -390,28 +390,23 @@ self::cloudflare_textbox( $settings, array(
 echo '</table>';
 self::cloudflare_button_save( 'protection' );
 Util_Ui::postbox_footer();
-Util_Ui::postbox_header( __( 'CloudFlare: IP', 'w3-total-cache' ), '', 'general' );
+Util_Ui::postbox_header( __( 'CloudFlare: <acronym title="Internet Protocol">IP</acronym>', 'w3-total-cache' ), '', 'general' );
 echo '<table class="form-table">';
 
 
 self::cloudflare_checkbox( $settings, array(
 		'key' => 'ip_geolocation',
-		'label' => 'IP Geolocation',
-		'description' => 'Enable IP Geolocation to have CloudFlare geolocate visitors to your website and pass the country code to you.',
+		'label' => '<acronym title="Internet Protocol">IP</acronym> geolocation:',
+		'description' => 'Enable <acronym title="Internet Protocol">IP</acronym> Geolocation to have CloudFlare geolocate visitors to your website and pass the country code to you.',
 	) );
 self::cloudflare_checkbox( $settings, array(
 		'key' => 'ipv6',
-		'label' => 'IPv6',
+		'label' => 'IPv6:',
 		'description' => 'Enable IPv6.',
 	) );
 self::cloudflare_checkbox( $settings, array(
-		'key' => 'pseudo_ipv4',
-		'label' => 'Pseudo IPv4',
-		'description' => 'Support for IPv6 addresses in legacy IPv4 applications.',
-	) );
-self::cloudflare_checkbox( $settings, array(
 		'key' => 'true_client_ip_header',
-		'label' => 'True Client IP',
+		'label' => 'True client IP:',
 		'description' => 'Allows customer to continue to use True Client IP (Akamai feature) in the headers we send to the origin.',
 	) );
 
@@ -419,36 +414,36 @@ self::cloudflare_checkbox( $settings, array(
 echo '</table>';
 self::cloudflare_button_save( 'ip' );
 Util_Ui::postbox_footer();
-Util_Ui::postbox_header( __( 'CloudFlare: SSL', 'w3-total-cache' ), '', 'general' );
+Util_Ui::postbox_header( __( 'CloudFlare: <acronym title="Secure Sockets Layer">SSL</acronym>', 'w3-total-cache' ), '', 'general' );
 echo '<table class="form-table">';
 
 
 self::cloudflare_selectbox( $settings, array(
 		'key' => 'ssl',
-		'label' => 'SSL',
+		'label' => '<acronym title="Secure Sockets Layer">SSL</acronym>:',
 		'values' => array(
 			'' => '',
 			'off' => 'Off',
-			'flexible' => 'Flexible (https to end-user only)',
+			'flexible' => 'Flexible (HTTPS to end-user only)',
 			'full' => 'Full (https everywhere)',
 			'full_strict' => 'Strict'
 		),
-		'description' => 'SSL encrypts your visitor\'s connection and safeguards credit card numbers and other personal data to and from your website.',
+		'description' => '<acronym title="Secure Sockets Layer">SSL</acronym> encrypts your visitor\'s connection and safeguards credit card numbers and other personal data to and from your website.',
 	) );
 self::cloudflare_checkbox( $settings, array(
 		'key' => 'security_header',
-		'label' => 'Security Header (HSTS)',
-		'description' => 'Enables or disables HSTS header.',
+		'label' => 'Security header (<acronym title="Secure Sockets Layer">SSL</acronym>):',
+		'description' => 'Enables or disables <acronym title="Secure Sockets Layer">SSL</acronym> header.',
 	) );
 self::cloudflare_checkbox( $settings, array(
 		'key' => 'tls_1_2_only',
-		'label' => 'TLS 1.2 Only',
-		'description' => 'Enable Crypto TLS 1.2 feature for this zone and prevent use of previous versions.',
+		'label' => '<acronym title="Transport Layer Security">TLS</acronym> 1.2 only:',
+		'description' => 'Enable Crypto <acronym title="Transport Layer Security">TLS</acronym> 1.2 feature for this zone and prevent use of previous versions.',
 	) );
 self::cloudflare_checkbox( $settings, array(
 		'key' => 'tls_client_auth',
-		'label' => 'TLS Client Auth',
-		'description' => 'TLS Client Auth requires CloudFlare to connect to your origin server using a client certificate',
+		'label' => '<acronym title="Transport Layer Security">TLS</acronym> client auth:',
+		'description' => '<acronym title="Transport Layer Security">TLS</acronym> Client authentication requires CloudFlare to connect to your origin server using a client certificate',
 	) );
 
 echo '</table>';

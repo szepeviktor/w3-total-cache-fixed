@@ -1615,6 +1615,16 @@ jQuery(function() {
         });
     });
 
+    // extensions page
+    jQuery('.w3tc_extensions_manage_input_checkall').click(function(v) {
+        var c = jQuery(this).is(':checked');
+
+        jQuery('.w3tc_extensions_manage_input_checkall').prop('checked', c);
+        jQuery('.w3tc_extensions_input_active').each(function(index) {
+            if (!jQuery(this).is(':disabled'))
+                jQuery(this).prop('checked', c);
+        });
+    });
 
     // google analytics events
     if (typeof ga != 'undefined') {

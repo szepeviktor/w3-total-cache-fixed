@@ -89,7 +89,7 @@ if ( $this->_config->get_string( 'dbcache.engine' ) == 'memcached' ) {
                 </td>
             </tr>
             <tr>
-                <th><label for="dbcache_reject_constants"><?php _e( 'Reject Constants:' ) ?></label></th>
+                <th><label for="dbcache_reject_constants"><?php _e( 'Reject constants:' ) ?></label></th>
                 <td>
                     <textarea id="dbcache_reject_constants" name="dbcache__reject__constants"
                         <?php Util_Ui::sealing_disabled( 'dbcache.' ) ?> cols="40" rows="5"><?php echo esc_textarea( implode( "\r\n", $this->_config->get_array( 'dbcache.reject.constants' ) ) ); ?></textarea><br />

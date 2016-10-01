@@ -24,7 +24,7 @@
  * @author Chirag Shah <chirags@google.com>
  *
  */
-class Google_Service_Resource
+class W3TCG_Google_Service_Resource
 {
   // Valid query parameters that work, but don't appear in discovery.
   private $stackParameters = array(
@@ -40,10 +40,10 @@ class Google_Service_Resource
       'mediaUpload' => array('type' => 'complex', 'location' => 'query'),
   );
 
-  /** @var Google_Service $service */
+  /** @var W3TCG_Google_Service $service */
   private $service;
 
-  /** @var Google_Client $client */
+  /** @var W3TCG_Google_Client $client */
   private $client;
 
   /** @var string $serviceName */
@@ -71,13 +71,13 @@ class Google_Service_Resource
    * @param $name
    * @param $arguments
    * @param $expected_class - optional, the expected class name
-   * @return Google_Http_Request|expected_class
-   * @throws Google_Exception
+   * @return W3TCG_Google_Http_Request|expected_class
+   * @throws W3TCG_Google_Exception
    */
   public function call($name, $arguments, $expected_class = null)
   {
     if (! isset($this->methods[$name])) {
-      throw new Google_Exception(
+      throw new W3TCG_Google_Exception(
           "Unknown function: " .
           "{$this->serviceName}->{$this->resourceName}->{$name}()"
       );
@@ -89,7 +89,7 @@ class Google_Service_Resource
     // document as parameter, but we abuse the param entry for storing it.
     $postBody = null;
     if (isset($parameters['postBody'])) {
-      if ($parameters['postBody'] instanceof Google_Model) {
+      if ($parameters['postBody'] instanceof W3TCG_Google_Model) {
         // In the cases the post body is an existing object, we want
         // to use the smart method to create a simple object for
         // for JSONification.
@@ -122,7 +122,7 @@ class Google_Service_Resource
     );
     foreach ($parameters as $key => $val) {
       if ($key != 'postBody' && ! isset($method['parameters'][$key])) {
-        throw new Google_Exception("($name) unknown parameter: '$key'");
+        throw new W3TCG_Google_Exception("($name) unknown parameter: '$key'");
       }
     }
 
@@ -131,7 +131,7 @@ class Google_Service_Resource
           $paramSpec['required'] &&
           ! isset($parameters[$paramName])
       ) {
-        throw new Google_Exception("($name) missing required param: '$paramName'");
+        throw new W3TCG_Google_Exception("($name) missing required param: '$paramName'");
       }
       if (isset($parameters[$paramName])) {
         $value = $parameters[$paramName];
@@ -146,12 +146,12 @@ class Google_Service_Resource
 
     $servicePath = $this->service->servicePath;
 
-    $url = Google_Http_REST::createRequestUri(
+    $url = W3TCG_Google_Http_REST::createRequestUri(
         $servicePath,
         $method['path'],
         $parameters
     );
-    $httpRequest = new Google_Http_Request(
+    $httpRequest = new W3TCG_Google_Http_Request(
         $url,
         $method['httpMethod'],
         null,
@@ -172,7 +172,7 @@ class Google_Service_Resource
     if (isset($parameters['data']) &&
         ($parameters['uploadType']['value'] == 'media' || $parameters['uploadType']['value'] == 'multipart')) {
       // If we are doing a simple media upload, trigger that as a convenience.
-      $mfu = new Google_Http_MediaFileUpload(
+      $mfu = new W3TCG_Google_Http_MediaFileUpload(
           $this->client,
           $httpRequest,
           isset($parameters['mimeType']) ? $parameters['mimeType']['value'] : 'application/octet-stream',

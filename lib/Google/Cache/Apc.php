@@ -23,12 +23,12 @@
  *
  * @author Chris Chabot <chabotc@google.com>
  */
-class Google_Cache_Apc extends Google_Cache_Abstract
+class W3TCG_Google_Cache_Apc extends W3TCG_Google_Cache_Abstract
 {
-  public function __construct(Google_Client $client)
+  public function __construct(W3TCG_Google_Client $client)
   {
     if (! function_exists('apc_add') ) {
-      throw new Google_Cache_Exception("Apc functions not available");
+      throw new W3TCG_Google_Cache_Exception("Apc functions not available");
     }
   }
 
@@ -55,7 +55,7 @@ class Google_Cache_Apc extends Google_Cache_Abstract
   {
     $rc = apc_store($key, array('time' => time(), 'data' => $value));
     if ($rc == false) {
-      throw new Google_Cache_Exception("Couldn't store data");
+      throw new W3TCG_Google_Cache_Exception("Couldn't store data");
     }
   }
 

@@ -5,9 +5,6 @@ namespace W3TC;
 
 class UsageStatistics_Plugin_Admin {
 	function run() {
-		$config_labels = new UsageStatistics_ConfigLabels();
-		add_filter( 'w3tc_config_labels', array( $config_labels, 'config_labels' ) );
-
 		add_action( 'w3tc_settings_general_boxarea_miscellaneous_content',
 			array( $this, 'w3tc_settings_general_boxarea_miscellaneous_content' ) );
 

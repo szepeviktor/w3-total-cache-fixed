@@ -30,3 +30,11 @@ td.cloudflare_td_value {
     text-align: right;
     color: #333;
 }
+
+.w3tc_cloudflare_widget_logo {
+    float: left;
+    width: 220px;
+    height: 35px;
+    background: url("Extension_CloudFlare_Widget_Logo.png") no-repeat;
+    background-size: contain;
+}

@@ -107,9 +107,18 @@ class Extension_CloudFlare_Api {
 
 
 
-	public function zones() {
-		return $this->_wp_remote_request( 'GET',
-			self::$_root_uri . '/zones' );
+	public function zones($page = 1) {
+		return $this->_wp_remote_request_with_meta( 'GET',
+			self::$_root_uri . '/zones?page=' . urlencode($page) );
+	}
+
+
+
+	public function zone($id) {
+		$a = $this->_wp_remote_request( 'GET',
+			self::$_root_uri . '/zones/' . $id );
+
+		return $a;
 	}
 
 
@@ -192,6 +201,52 @@ class Extension_CloudFlare_Api {
 
 		if ( isset( $response_json['result'] ) ) {
 			return $response_json['result'];
+		}
+
+		return array();
+	}
+
+
+
+	private function _wp_remote_request_with_meta( $method, $url, $body = array() ) {
+		$result = wp_remote_request( $url, array(
+				'method' => $method,
+				'headers' => array(
+					'Content-Type' => 'application/json',
+					'X-Auth-Key' => $this->_key,
+					'X-Auth-Email' => $this->_email
+				),
+				'timeout' => $this->_timelimit_api_request,
+				'body' => $body
+			) );
+
+		if ( is_wp_error( $result ) )
+			throw new \Exception( 'Failed to reach API endpoint' );
+
+		$response_json = @json_decode( $result['body'], true );
+		if ( is_null( $response_json ) || !isset( $response_json['success'] ) ) {
+			throw new \Exception(
+				'Failed to reach API endpoint, got unexpected response ' .
+				$result['body'] );
+		}
+
+		if ( !$response_json['success'] ) {
+			$errors = array();
+			if ( isset( $response_json['errors'] ) ) {
+				foreach ( $response_json['errors'] as $e ) {
+					if ( !empty( $e['message'] ) )
+						$errors[] = $e['message'];
+				}
+			}
+
+			if ( empty( $errors ) )
+				$errors[] = 'Request failed';
+
+			throw new \Exception( implode( ', ', $errors ) );
+		}
+
+		if ( isset( $response_json['result'] ) ) {
+			return $response_json;
 		}
 
 		return array();

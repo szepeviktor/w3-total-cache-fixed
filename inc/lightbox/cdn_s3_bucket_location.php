@@ -11,9 +11,7 @@
     </label>
 </p>
 <p>
+    <input class="button" type="button" value="<?php _e( 'Close', 'w3-total-cache' ); ?>" style="float: right" />
     <input id="cdn_create_container" class="button-primary {type: '<?php echo $type; ?>', nonce: '<?php echo wp_create_nonce( 'w3tc' ); ?>'}" type="button" value="<?php _e( 'Create bucket', 'w3-total-cache' ); ?>" />
     <span id="cdn_create_container_status" class="w3tc-status w3tc-process"></span>
-</p>
-<p style="text-align: center;">
-    <input class="button" type="button" value="<?php _e( 'Close', 'w3-total-cache' ); ?>" />
 </p>

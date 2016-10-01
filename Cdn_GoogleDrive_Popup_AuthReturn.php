@@ -16,12 +16,12 @@ class Cdn_GoogleDrive_Popup_AuthReturn {
 		);
 		$access_token = json_encode( $token_array );
 
-		$client = new \Google_Client();
+		$client = new \W3TCG_Google_Client();
 		$client->setClientId( $client_id );
 		$client->setAccessToken( $access_token );
 
 
-		$service = new \Google_Service_Drive( $client );
+		$service = new \W3TCG_Google_Service_Drive( $client );
 
 		$items = $service->files->listFiles( array(
 				'q' => "mimeType = 'application/vnd.google-apps.folder'"

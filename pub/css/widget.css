@@ -27,21 +27,18 @@
     margin-right:10px;
 }
 
-#w3tc_services label {
+.w3tc_generic_widgetservice_label {
     font-weight: bold;
     margin-left: 10px;
     display: inline-block;
     width: 270px;
 }
 
-#w3tc_services label span {
-    font-weight: normal;
+.w3tc_generic_widgetservice_radio_outer {
+    float: left;
+    margin-top: 1px;
 }
 
-#w3tc_services  input.w3tc-service {
-    float: left;
-    line-height: 40px;
-}
 #w3tc_spreadtheword .inside {
     margin-right: 30px;
 }

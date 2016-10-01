@@ -25,16 +25,6 @@ class Util_UsageStatistics {
 
 
 
-	static public function float( $a, $p1, $p2 = null ) {
-		$v = self::v( $a, $p1, $p2 );
-		if ( is_null( $v ) )
-			return 'n/a';
-		else
-			return sprintf( '%.1f', $v );
-	}
-
-
-
 	static public function percent( $v1, $v2 ) {
 		if ( $v2 == 0 )
 			return '0 %';

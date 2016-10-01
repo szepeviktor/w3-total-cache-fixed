@@ -27,7 +27,7 @@ class Licensing_AdminActions {
 
 	function w3tc_licensing_check_key() {
 		delete_transient( 'w3tc_license_status' );
-		edd_w3edge_w3tc_activate_license( $this->_config->get_string( 'plugin.license_key' ), W3TC_VERSION );
+		Licensing_Core::activate_license( $this->_config->get_string( 'plugin.license_key' ), W3TC_VERSION );
 		Util_Admin::redirect( array(), true );
 	}
 
@@ -35,9 +35,9 @@ class Licensing_AdminActions {
 		$license_key = $this->_config->get_string( 'plugin.license_key' );
 
 		delete_transient( 'w3tc_license_status' );
-		edd_w3edge_w3tc_activate_license( $license_key, W3TC_VERSION );
+		Licensing_Core::activate_license( $license_key, W3TC_VERSION );
 
-		$license = edd_w3edge_w3tc_check_license( $license_key, W3TC_VERSION );
+		$license = Licensing_Core::check_license( $license_key, W3TC_VERSION );
 		if ( $license ) {
 			$status = $license->license_status;
 			if ( substr( $status . '.', 0, 7 ) == 'active.' ) {
@@ -47,7 +47,7 @@ class Licensing_AdminActions {
 			}
 		}
 
-		$r = edd_w3edge_w3tc_reset_rooturi(
+		$r = Licensing_Core::reset_rooturi(
 			$this->_config->get_string( 'plugin.license_key' ), W3TC_VERSION );
 
 		if ( isset( $r->status ) && $r->status == 'done' ) {

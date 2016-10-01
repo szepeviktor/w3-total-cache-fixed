@@ -151,7 +151,7 @@ _e( 'Select user roles that <acronym title="Real User Monitoring">RUM</acronym> 
         <tr>
             <th>
                 <label for="newrelic_include_rum"><?php
-_e( 'Include <acronym title="Real User Monitoring">RUM</acronym> in compressed or cached pages', 'w3-total-cache' )
+_e( 'Include <acronym title="Real User Monitoring">RUM</acronym> in compressed or cached pages:', 'w3-total-cache' )
 ?></label>
             </th>
             <td>
@@ -170,7 +170,7 @@ _e( 'Include <acronym title="Real User Monitoring">RUM</acronym> in compressed o
         <tr>
             <th>
                 <label for="newrelic_use_php_function"><?php
-_e( 'Use PHP function to set application name:', 'w3-total-cache' )
+_e( 'Use <acronym title=\"Hypertext Preprocessor\">PHP</acronym> function to set application name:', 'w3-total-cache' )
 ?></label></th>
             <td>
                 <?php if ( Util_Environment::is_wpmu() ): ?>
@@ -189,7 +189,7 @@ _e( 'Use PHP function to set application name:', 'w3-total-cache' )
         <tr>
             <th>
                 <label for="newrelic_enable_xmit"><?php
-		_e( 'Enable XMIT', 'w3-total-cache' )
+		_e( 'Enable XMIT:', 'w3-total-cache' )
 		?></label>
             </th>
             <td><input name="" type="hidden" value="0" />

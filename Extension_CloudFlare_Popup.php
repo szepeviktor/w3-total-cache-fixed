@@ -34,7 +34,10 @@ class Extension_CloudFlare_Popup {
 	public function w3tc_ajax_extension_cloudflare_intro_done() {
 		$this->_render_extension_cloudflare_zones( array(
 				'email' => $_REQUEST['email'],
-				'key' => $_REQUEST['key'] ) );
+				'key' => $_REQUEST['key'],
+				'page' => empty( $_REQUEST['page'] ) ? 1 : (int) $_REQUEST['page']
+			) 
+		);
 	}
 
 
@@ -42,25 +45,30 @@ class Extension_CloudFlare_Popup {
 	private function _render_extension_cloudflare_zones( $details ) {
 		$email = $details['email'];
 		$key = $details['key'];
+		$page = $details['page'];
 
 		$details = array(
 			'email' => $email,
-			'key' => $key
+			'key' => $key,
+			'page' => $page,
+			'zones' => array(),
+			'total_pages' => 1
 		);
 
 		try {
 			$api = new Extension_CloudFlare_Api( array(
 					'email' => $email,
 					'key' => $key ) );
-			$zones = $api->zones();
+			$r = $api->zones( $page );
+			$details['zones'] = $r['result'];
+
+			$details['total_pages'] = $r['result_info']['total_pages'];
 		} catch ( \Exception $ex ) {
 			$details['error_message'] = 'Can\'t authenticate: ' .
 				$ex->getMessage();
 			include  W3TC_DIR . '/Extension_CloudFlare_Popup_View_Intro.php';
 			exit();
 		}
-
-		$details['zones'] = $zones;
 
 		include  W3TC_DIR . '/Extension_CloudFlare_Popup_View_Zones.php';
 		exit();
@@ -83,15 +91,13 @@ class Extension_CloudFlare_Popup {
 
 		$zone_name = '';
 
+		// get zone name
 		try {
 			$api = new Extension_CloudFlare_Api( array(
 					'email' => $email,
 					'key' => $key ) );
-			$zones = $api->zones();
-			foreach ( $zones as $z ) {
-				if ( $z['id'] == $zone_id )
-					$zone_name = $z['name'];
-			}
+			$zone = $api->zone($zone_id);
+			$zone_name = $zone['name'];
 		} catch ( \Exception $ex ) {
 			$details['error_message'] = 'Can\'t authenticate: ' .
 				$ex->getMessage();

@@ -105,9 +105,6 @@ th.minify-files-add, td.minify-files-add {
 .w3tc-overlay .content {
     padding: 10px 10px 10px 10px;
 }
-.w3tc-overlay .footer {
-    padding: 0 10px 10px 10px;
-}
 .w3tc-overlay p, .w3tc-overlay label, .w3tc-overlay input, .w3tc-overlay option {
     font-family:Arial, Verdana,sans-serif;
     color:#88898a;
@@ -216,7 +213,7 @@ fieldset[disabled] .btn {
     height:32px;
     width:250px;
     margin:0;
-    padding:0px 5px 0 5px;
+    padding:0px 5px 0px 5px;
     font-weight: normal;
     border: 2px solid #bdc3c7;
     color: #34495e;
@@ -339,41 +336,10 @@ fieldset[disabled] .btn {
     margin-right: 20px;
 }
 .w3tc-overlay #w3tc-upgrade li {
-    background: url(../img/overlay/list-check.png) no-repeat 0 3px;
+    background: url(../img/overlay/list-check.png) no-repeat 0px 3px;
     color: #444;
     list-style-type: none;
     padding: 0 0 1px 20px;
-}
-
-.w3tc-overlay #w3tc-upgrade header {
-    height:265px;
-    padding: 10px 10px 10px 10px;
-}
-.w3tc-overlay #w3tc-upgrade header img {
-    margin-right:20px;
-}
-.w3tc-overlay #w3tc-upgrade header .description {
-    clear: both;
-}
-.w3tc-overlay #w3tc-upgrade img {
-    float:left;
-}
-
-.w3tc-overlay #w3tc-upgrade .left h2{
-    font-weight: bold;
-    font-size: 1.4em;
-}
-
-.w3tc-overlay #w3tc-upgrade .right h2{
-    font-weight: bold;
-    font-size: 2.0em;
-}
-.w3tc-overlay #w3tc-upgrade .right h2 span{
-    font-weight: normal;
-}
-
-#w3tc-upgrade .footer {
-    clear:both;
 }
 
 .w3tc-overlay #w3tc-support-us header h2, header h3 {
@@ -443,4 +409,60 @@ padding: 10px 20px 20px 20px;
     font-family: Arial, Verdana,sans-serif;
     color: #88898a;
     font-size: 13px;
+}
+
+
+/* isolated styles */
+.w3tc_overlay_footer {
+    padding: 0 10px 10px 10px;
+    clear:both;
+}
+
+.w3tc_overlay_content {
+    padding: 10px 10px 10px 10px;
+}
+.w3tc_overlay_upgrade_header {
+    padding: 10px 10px 10px 10px;
+    background-color: #f3f3f3;
+    color: #cacaca;
+    border-bottom: dashed 1px #c0c0c0;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    -webkit-border-top-left-radius: 6px;
+    -webkit-border-top-right-radius: 6px;
+}
+
+.w3tc_overlay_upgrade_content_l {
+    width: 290px;
+    float:left;
+}
+.w3tc_overlay_upgrade_content_r {
+    width: calc(100% - 310px);
+    padding-left: 20px;
+    float: left;
+}
+
+.w3tc_overlay_upgrade_description {
+    clear: both;
+}
+
+.w3tc_overlay_upgrade_left_h {
+    font-weight: bold;
+    font-size: 1.4em;
+    float: left;
+    margin: 1em 0;
+    color: #23282d;
+    line-height: 29px;
+}
+
+.w3tc_overlay_upgrade_right_h {
+    font-weight: bold;
+    float: right;
+    margin: 1em 0;
+    color: #23282d;
+    font-size: 2.0em;
+}
+
+.w3tc_overlay_upgrade_right_text {
+    font-weight: normal;
 }

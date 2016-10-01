@@ -526,7 +526,7 @@
 * Added configuration file import / export
 * Database caching now disabled by default to improve compatibility with some shared hosting environments
 * Default page caching method now disk enhanced
-* Improved HTTP Compression inter-operability
+* Improved HTTP Compression interoperability
 * Improved compatibility with Multi Site Manager
 * Improved apache compatibility
 * Improved .htaccess directives

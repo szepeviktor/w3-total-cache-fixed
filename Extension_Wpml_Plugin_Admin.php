@@ -19,7 +19,7 @@ class Extension_Wpml_Plugin_Admin {
 
 			if ( !$state->get_boolean( 'wpml.hide_note_language_negotiation_type' ) ) {
 				$notes[] = sprintf(
-					__( 'W3 Total Cache\'s Page caching can not work effectively when WPML Language URL format "Language name added as a parameter" used. Please consider another URL format, you may change it at WPML -&gt; Languages page. %s' ,
+					__( 'W3 Total Cache\'s Page caching cannot work effectively when WPML Language URL formatis "Language name added as a parameter" used. Please consider another URL format. Visit the WPML -&gt; Languages settings. %s' ,
 						'w3-total-cache' ),
 					Util_Ui::button_hide_note2( array(
 							'w3tc_default_config_state' => 'y',
@@ -39,7 +39,7 @@ class Extension_Wpml_Plugin_Admin {
 
 		$requirements = array();
 		if ( !$base_plugin_active )
-			$requirements[] = 'Ensure "WPML" plugin compatibility, which is not active';
+			$requirements[] = 'Ensure "WPML" plugin compatibility, which is not currently active.';
 		if ( empty( $requirements ) && !Util_Environment::is_w3tc_pro( $config ) ) {
 			$enabled = false;
 			$requirements[] = 'Available after <a href="#" class="button-buy-plugin">upgrade</a>';
@@ -47,13 +47,14 @@ class Extension_Wpml_Plugin_Admin {
 		}
 
 		$extensions['wpml'] = array(
-			'name' => 'WPML.org',
+			'name' => 'WPML',
 			'author' => 'W3 EDGE',
-			'description' => __( 'Configures W3 Total Cache to comply with WPML requirements automatically.',
+			'description' => __( 'Improves page caching interoperability with WPML.',
 				'w3-total-cache' ),
 			'author_uri' => 'https://www.w3-edge.com/',
 			'extension_uri' => 'https://www.w3-edge.com/',
 			'extension_id' => 'wpml',
+			'settings_exists' => false,
 			'version' => '0.1',
 			'enabled' => $enabled,
 			'disabled_message' => $disabled_message,
@@ -114,7 +115,7 @@ class Extension_Wpml_Plugin_Admin {
 		}
 
 		$notes[$extension_id] = sprintf(
-			__( 'It appears that activating the <a href="%s">WPML</a> extension for W3 Total Cache will be helpful for your site. %s%s',
+			__( 'Activating the <a href="%s">WPML</a> extension for W3 Total Cache may be helpful for your site. %s%s',
 				'w3-total-cache' ),
 			Util_Ui::admin_url( 'admin.php?page=w3tc_extensions#' . $extension_id ),
 			$activate_text,

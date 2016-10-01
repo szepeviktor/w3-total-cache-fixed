@@ -69,20 +69,20 @@ class Licensing_Plugin_Admin {
 	 */
 	function possible_state_change( $config, $old_config ) {
 		if ( $old_config->get_string( 'plugin.license_key' ) !='' &&  $config->get_string( 'plugin.license_key' ) == '' ) {
-			$result = edd_w3edge_w3tc_deactivate_license( $old_config->get_string( 'plugin.license_key' ) );
+			$result = Licensing_Core::deactivate_license( $old_config->get_string( 'plugin.license_key' ) );
 			if ( $result ) {
 				$this->site_inactivated = true;
 			}
 			delete_transient( 'w3tc_license_status' );
 		} elseif ( $old_config->get_string( 'plugin.license_key' ) =='' &&  $config->get_string( 'plugin.license_key' ) != '' ) {
-			$result = edd_w3edge_w3tc_activate_license( $config->get_string( 'plugin.license_key' ), W3TC_VERSION );
+			$result = Licensing_Core::activate_license( $config->get_string( 'plugin.license_key' ), W3TC_VERSION );
 			if ( $result ) {
 				$this->site_activated = true;
 				$config->set( 'common.track_usage', true );
 			}
 			delete_transient( 'w3tc_license_status' );
 		} elseif ( $old_config->get_string( 'plugin.license_key' ) != $config->get_string( 'plugin.license_key' ) ) {
-			$result = edd_w3edge_w3tc_activate_license( $config->get_string( 'plugin.license_key' ), W3TC_VERSION );
+			$result = Licensing_Core::activate_license( $config->get_string( 'plugin.license_key' ), W3TC_VERSION );
 			if ( $result ) {
 				$this->site_activated = true;
 			}
@@ -194,7 +194,7 @@ class Licensing_Plugin_Admin {
 		$plugin_type = '';
 
 		if ( !empty( $license_key ) || defined( 'W3TC_LICENSE_CHECK' ) ) {
-			$license = edd_w3edge_w3tc_check_license( $license_key, W3TC_VERSION );
+			$license = Licensing_Core::check_license( $license_key, W3TC_VERSION );
 
 			if ( $license ) {
 				$status = $license->license_status;
@@ -238,7 +238,7 @@ class Licensing_Plugin_Admin {
 		$license = Util_Request::get_string( 'license_key', '' );
 
 		if ( $license ) {
-			$status = edd_w3edge_w3tc_check_license( $license, W3TC_VERSION );
+			$status = Licensing_Core::check_license( $license, W3TC_VERSION );
 			echo $status->license_status;
 		} else {
 			echo 'invalid';

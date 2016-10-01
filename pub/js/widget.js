@@ -33,37 +33,18 @@ jQuery(function() {
             }, 500);
         }
 
-        jQuery('.w3tc-service').click(function () {
-            var request_type = jQuery(this);
-            var type = request_type.val();
-            var service = jQuery('#buy-w3-service');
-            service.attr("disabled", "disabled");
-            jQuery.getJSON(ajaxurl +'?action=w3tc_action_payment_code&request_type=' + type + '&_wpnonce=' + request_type.metadata().nonce,
-                function(data) {
-                    var area = jQuery('#buy-w3-service-area');
-                    area.empty();
-                    jQuery.each(data, function (key, val) {
-                        jQuery('<input>').attr({
-                            type: 'hidden',
-                            id: key,
-                            name: key,
-                            value: val.replace(/&amp;/g, '&')
-                        }).appendTo('#buy-w3-service-area');
-                    })
-                }
-            );
-            service.removeAttr("disabled");
+        jQuery('.w3tc_generic_widgetservice_radio').click(function () {
+            var o = jQuery(this);
 
+            jQuery('#w3tc_generic_widgetservices_name').val(o.attr('data-name'));
+            jQuery('#w3tc_generic_widgetservices_value').val(o.attr('data-value'));
+            jQuery('#w3tc_generic_widgetservices_form_hash').val(o.attr('data-form_hash'));
         });
 
         jQuery('#buy-w3-service-cancel').live('click', function() {
             jQuery('input:radio[name=service]:checked').prop('checked', false);
             jQuery('#buy-w3-service-area').empty();
             jQuery('#buy-w3-service').attr("disabled", "disabled");
-        });
-
-        jQuery('#buy-w3-service').live('click', function() {
-            alert('Do not forget to fill out the support form after purchasing.');
         });
     });
 });

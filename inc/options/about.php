@@ -26,7 +26,7 @@ if ( !defined( 'W3TC' ) )
 		<li><?php _e( 'Caching of search results pages (i.e. <acronym title="Uniform Resource Identifier">URI</acronym>s with query string variables) in memory or on disk', 'w3-total-cache' ); ?></li>
 		<li><?php _e( 'Minification of posts / pages and feeds', 'w3-total-cache' ); ?></li>
 		<li><?php _e( 'Minification (concatenation and white space removal) of inline, external or 3rd party JavaScript / <acronym title="Cascading Style Sheet">CSS</acronym> with automated updates', 'w3-total-cache' ); ?></li>
-		<li><?php _e( 'Complete header management including <a href="http://en.wikipedia.org/wiki/HTTP_ETag">Etags</a>', 'w3-total-cache' ); ?></li>
+		<li><?php _e( 'Complete header management including <a href="http://en.wikipedia.org/wiki/HTTP_ETag">ETags</a>', 'w3-total-cache' ); ?></li>
 		<li><?php _e( 'JavaScript embedding group and location management', 'w3-total-cache' ); ?></li>
 		<li><?php _e( 'Import post attachments directly into the Media Library (and <acronym title="Content Delivery Network">CDN</acronym>)', 'w3-total-cache' ); ?></li>
     </ul>

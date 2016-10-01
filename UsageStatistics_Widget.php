@@ -22,7 +22,10 @@ class UsageStatistics_Widget {
 
 	function w3tc_widget_setup() {
 		Util_Widget::add( 'w3tc_usage_statistics',
-			__( 'Usage Statistics', 'w3-total-cache' ),
+			'<div class="w3tc-widget-w3tc-logo"></div>' .
+			'<div class="w3tc-widget-text">' .
+			__( 'Caching Statistics', 'w3-total-cache' ) .
+			'</div>',			
 			array( $this, 'widget_form' ),
 			Util_Ui::admin_url( 'admin.php?page=w3tc_general#miscellaneous' ),
 			'normal' );
@@ -34,7 +37,7 @@ class UsageStatistics_Widget {
 		$storage = new UsageStatistics_StorageReader();
 		$summary_promise = $storage->get_history_summary_promise();
 		$c = Dispatcher::config();
-		if ( $c->get_boolean( 'stats.enabled' ) )
+		if ( $c->get_boolean( 'stats.enabled' ) && Util_Environment::is_w3tc_pro( $c ) )
 			include  W3TC_DIR . '/UsageStatistics_Widget_View.php';
 		else
 			include  W3TC_DIR . '/UsageStatistics_Widget_View_Disabled.php';

@@ -378,13 +378,15 @@ function w3tc_lightbox_upgrade(nonce) {
     height: 350,
     url: 'admin.php?page=w3tc_dashboard&w3tc_licensing_upgrade&_wpnonce=' + nonce,
     callback: function(lightbox) {
-      jQuery('.button-primary', lightbox.container).click(function() {
-        lightbox.close();
-      });
-      jQuery('#w3tc-purchase', lightbox.container).click(function() {
-        lightbox.close();
-        w3tc_lightbox_buy_plugin(nonce);
-      });
+        lightbox.options.height = jQuery('#w3tc-upgrade').height() - 57;
+        jQuery('.button-primary', lightbox.container).click(function() {
+            lightbox.close();
+        });
+        jQuery('#w3tc-purchase', lightbox.container).click(function() {
+            lightbox.close();
+            w3tc_lightbox_buy_plugin(nonce);
+        });
+        lightbox.resize();
     }
   });
 }

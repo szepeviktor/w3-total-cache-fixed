@@ -41,7 +41,7 @@ class Minify_MinifiedFileRequestHandler {
 		$rewrite_marker = 'rewrite_test.css';
 		if ( substr( $file, strlen( $file ) - strlen( $rewrite_marker ) ) ==
 			$rewrite_marker ) {
-			echo 'OK';
+			echo 'Minify OK';
 			exit();
 		}
 
@@ -207,7 +207,7 @@ class Minify_MinifiedFileRequestHandler {
 		 * Send X-Powered-By header
 		 */
 		if ( !$quiet && $browsercache && $this->_config->get_boolean( 'browsercache.cssjs.w3tc' ) ) {
-			@header( 'X-Powered-By: ' . Util_Environment::w3tc_header( $this->_config ) );
+			@header( 'X-Powered-By: ' . Util_Environment::w3tc_header() );
 		}
 
 		if ( empty( $_GET['f_array'] ) && empty( $_GET['g'] ) ) {
@@ -281,6 +281,12 @@ class Minify_MinifiedFileRequestHandler {
 	 */
 	function flush() {
 		$cache = $this->_get_cache();
+		// used to debug - which plugin calls flush all the time and breaks
+		// performance
+		if ( $this->_config->get_boolean( 'minify.debug' ) ) {
+			Minify_Core::log( 'Minify flush called from' );
+			Minify_Core::log( json_encode( debug_backtrace () ) );
+		}
 
 		return $cache->flush();
 	}

@@ -1307,7 +1307,7 @@ class PgCache_ContentGrabber {
 
 			if ( $this->_config->get_boolean( 'browsercache.html.w3tc' ) ) {
 				$headers = array_merge( $headers, array(
-						'X-Powered-By' => Util_Environment::w3tc_header( $this->_config )
+						'X-Powered-By' => Util_Environment::w3tc_header()
 					) );
 			}
 		}

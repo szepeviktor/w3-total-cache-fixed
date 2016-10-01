@@ -1,6 +1,6 @@
 <?php
 
-class Google_Service_Exception extends Google_Exception
+class W3TCG_Google_Service_Exception extends W3TCG_Google_Exception
 {
   /**
    * Optional list of errors returned in a JSON body of an HTTP error response.

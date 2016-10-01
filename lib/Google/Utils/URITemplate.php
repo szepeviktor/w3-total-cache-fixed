@@ -19,7 +19,7 @@
  * Implementation of levels 1-3 of the URI Template spec. 
  * @see http://tools.ietf.org/html/rfc6570
  */
-class Google_Utils_URITemplate
+class W3TCG_Google_Utils_URITemplate
 {
   const TYPE_MAP = "1";
   const TYPE_LIST = "2";

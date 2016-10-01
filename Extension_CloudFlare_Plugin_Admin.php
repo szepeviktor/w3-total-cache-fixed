@@ -32,6 +32,7 @@ class Extension_CloudFlare_Plugin_Admin {
 			'author_uri' => 'https://www.w3-edge.com/',
 			'extension_uri' => 'https://www.w3-edge.com/',
 			'extension_id' => 'cloudflare',
+			'settings_exists' => true,
 			'version' => '0.3',
 			'enabled' => true,
 			'requirements' => implode( ', ', $message ),

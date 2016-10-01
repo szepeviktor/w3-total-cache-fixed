@@ -18,7 +18,7 @@
 /**
  * A class to contain the library configuration for the Google API client.
  */
-class Google_Config
+class W3TCG_Google_Config
 {
   const GZIP_DISABLED = true;
   const GZIP_ENABLED = false;
@@ -28,7 +28,7 @@ class Google_Config
   protected $configuration;
 
   /**
-   * Create a new Google_Config. Can accept an ini file location with the
+   * Create a new W3TCG_Google_Config. Can accept an ini file location with the
    * local configuration. For example:
    *     application_name="My App"
    *
@@ -41,9 +41,9 @@ class Google_Config
       'application_name' => '',
 
       // Which Authentication, Storage and HTTP IO classes to use.
-      'auth_class'    => 'Google_Auth_OAuth2',
+      'auth_class'    => 'W3TCG_Google_Auth_OAuth2',
       'io_class'      => self::USE_AUTO_IO_SELECTION,
-      'cache_class'   => 'Google_Cache_File',
+      'cache_class'   => 'W3TCG_Google_Cache_File',
 
       // Don't change these unless you're working against a special development
       // or testing environment.
@@ -51,10 +51,10 @@ class Google_Config
 
       // Definition of class specific values, like file paths and so on.
       'classes' => array(
-        'Google_IO_Abstract' => array(
+        'W3TCG_Google_IO_Abstract' => array(
           'request_timeout_seconds' => 100,
         ),
-        'Google_Http_Request' => array(
+        'W3TCG_Google_Http_Request' => array(
           // Disable the use of gzip on calls if set to true. Defaults to false.
           'disable_gzip' => self::GZIP_ENABLED,
 
@@ -66,7 +66,7 @@ class Google_Config
         ),
         // If you want to pass in OAuth 2.0 settings, they will need to be
         // structured like this.
-        'Google_Auth_OAuth2' => array(
+        'W3TCG_Google_Auth_OAuth2' => array(
           // Keys for OAuth 2.0 access, see the API console at
           // https://developers.google.com/console
           'client_id' => '',
@@ -90,8 +90,8 @@ class Google_Config
               'https://www.googleapis.com/oauth2/v1/certs',
         ),
         // Set a default directory for the file cache.
-        'Google_Cache_File' => array(
-          'directory' => sys_get_temp_dir() . '/Google_Client'
+        'W3TCG_Google_Cache_File' => array(
+          'directory' => sys_get_temp_dir() . '/W3TCG_Google_Client'
         )
       ),
     );
@@ -105,7 +105,7 @@ class Google_Config
 
   /**
    * Set configuration specific to a given class.
-   * $config->setClassConfig('Google_Cache_File',
+   * $config->setClassConfig('W3TCG_Google_Cache_File',
    *   array('directory' => '/tmp/cache'));
    * @param $class string The class name for the configuration
    * @param $config string key or an array of configuration values

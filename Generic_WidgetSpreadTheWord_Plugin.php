@@ -43,9 +43,9 @@ class Generic_WidgetSpreadTheWord_Plugin {
 	 */
 	function wp_dashboard_setup() {
 		Util_Widget::add( 'w3tc_spreadtheword',
-			'<div class="w3tc-widget-spreadtheword-logo"></div>' .
+			'<div class="w3tc-widget-w3tc-logo"></div>' .
 			'<div class="w3tc-widget-text">' .
-			__( 'Spread The Word', 'w3-total-cache' ) .
+			__( 'Spread the Word', 'w3-total-cache' ) .
 			'</div>',
 			array( $this, 'widget_form' ),
 			null,
@@ -90,7 +90,7 @@ class Generic_WidgetSpreadTheWord_Plugin {
 		if ( $value ) {
 			_e( 'Thank you for linking to us!', 'w3-total-cache' );
 		} else {
-			_e( 'You are no longer linking to us. Please support us in other ways instead.', 'w3-total-cache' );
+			_e( 'You are no longer linking to us. Please support us in other ways instead!', 'w3-total-cache' );
 		}
 		die();
 	}

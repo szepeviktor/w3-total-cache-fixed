@@ -13,7 +13,7 @@ class Util_Rule {
 	static public function filename_to_uri( $filename ) {
 		$url = Util_Environment::filename_to_url( $filename );
 		$parsed = parse_url( $url );
-		$uri = isset( $parsed['path'] ) ? ltrim( $parsed['path'], '/' ) : '';
+		$uri = isset( $parsed['path'] ) ? ltrim( $parsed['path'], DIRECTORY_SEPARATOR ) : '';
 		$uri = '/' . $uri;
 
 		return $uri;
@@ -107,7 +107,7 @@ class Util_Rule {
 		switch ( true ) {
 		case Util_Environment::is_apache():
 		case Util_Environment::is_litespeed():
-			return W3TC_CACHE_MINIFY_DIR . '/.htaccess';
+			return W3TC_CACHE_MINIFY_DIR . DIRECTORY_SEPARATOR . '.htaccess';
 
 		case Util_Environment::is_nginx():
 			return Util_Rule::get_nginx_rules_path();
@@ -125,7 +125,7 @@ class Util_Rule {
 		switch ( true ) {
 		case Util_Environment::is_apache():
 		case Util_Environment::is_litespeed():
-			return W3TC_CACHE_MINIFY_DIR . '/.htaccess';
+			return W3TC_CACHE_MINIFY_DIR . DIRECTORY_SEPARATOR . '.htaccess';
 
 		case Util_Environment::is_nginx():
 			return Util_Rule::get_nginx_rules_path();
@@ -218,7 +218,9 @@ class Util_Rule {
 	 * @return string
 	 */
 	static public function erase_rules( $rules, $start, $end ) {
-		$rules = preg_replace( '~' . Util_Environment::preg_quote( $start ) . "\n.*?" . Util_Environment::preg_quote( $end ) . "\n*~s", '', $rules );
+		$r = '~' . Util_Environment::preg_quote( $start ) . "\n.*?" . Util_Environment::preg_quote( $end ) . "\n*~s";
+
+		$rules = preg_replace( $r, '', $rules );
 		$rules = Util_Rule::trim_rules( $rules );
 
 		return $rules;
@@ -380,12 +382,12 @@ class Util_Rule {
 				if ( preg_match( '~http(s)?://(.+?)(/)?$~', $url, $match ) ) {
 					$home_path = $match[2];
 
-					return W3TC_CACHE_PAGE_ENHANCED_DIR . '/' .
-						$home_path . '/.htaccess';
+					return W3TC_CACHE_PAGE_ENHANCED_DIR . DIRECTORY_SEPARATOR .
+						$home_path . DIRECTORY_SEPARATOR . '.htaccess';
 				}
 			}
 
-			return W3TC_CACHE_PAGE_ENHANCED_DIR . '/.htaccess';
+			return W3TC_CACHE_PAGE_ENHANCED_DIR . DIRECTORY_SEPARATOR . '.htaccess';
 
 		case Util_Environment::is_nginx():
 			return Util_Rule::get_nginx_rules_path();

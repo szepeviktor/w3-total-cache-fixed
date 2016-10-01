@@ -26,8 +26,8 @@ else
 Util_Ui::config_item( array(
 		'key' => array( 'feedburner', 'urls' ),
 		'control' => 'textarea',
-		'label' => __( 'Additional URLs:', 'w3-total-cache' ),
-		'description' => __( 'Specify any additional feed URLs to ping on FeedBurner.',
+		'label' => __( 'Additional <acronym title="Uniform Resource Locator">URL</acronym>s:', 'w3-total-cache' ),
+		'description' => __( 'Specify any additional feed <acronym title="Uniform Resource Locator">URL</acronym>s to ping on FeedBurner.',
 			'w3-total-cache' )
 	) )
 ?>

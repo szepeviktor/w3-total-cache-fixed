@@ -4,7 +4,7 @@ namespace W3TC;
 class Minify_ConfigLabels {
 	public function config_labels( $config_labels ) {
 		return array_merge( $config_labels, array(
-				'minify.engine' => __( 'Minify cache method:', 'w3-total-cache' ),
+				'minify.engine' => __( 'Minify Cache Method:', 'w3-total-cache' ),
 				'minify.enabled' => __( 'Minify:', 'w3-total-cache' ),
 				'minify.debug' =>  __( 'Minify', 'w3-total-cache' ),
 				'minify.html.engine' => __( '<acronym title="Hypertext Markup Language">HTML</acronym> minifier:', 'w3-total-cache' ),

@@ -392,7 +392,7 @@ class CdnEngine_Base {
 
 			if ( $this->cache_config[$mime_type]['w3tc'] ) {
 				$headers['X-Powered-By'] =
-					Util_Environment::w3tc_header( $this->_config );
+					Util_Environment::w3tc_header();
 			}
 
 

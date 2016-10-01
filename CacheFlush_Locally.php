@@ -81,7 +81,9 @@ class CacheFlush_Locally {
 	}
 
 	function minifycache_flush_all( $extras = array() ) {
-		delete_option( 'w3tc_minify' );
+		if ( $extras['minify'] == 'purge_map' )
+			delete_option( 'w3tc_minify' );
+		
 		$this->minifycache_flush( $extras );
 	}
 

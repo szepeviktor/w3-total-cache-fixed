@@ -28,16 +28,18 @@ class CdnEngine_GoogleDrive extends CdnEngine_Base {
 		$this->_root_url = rtrim( $config['root_url'], '/' ) . '/';
 		$this->_new_access_token_callback = $config['new_access_token_callback'];
 
+		try {
 		$this->_init_service( $config['access_token'] );
+		} catch ( \Exception $e ) {}
 	}
 
 
 
 	private function _init_service( $access_token ) {
-		$client = new \Google_Client();
+		$client = new \W3TCG_Google_Client();
 		$client->setClientId( $this->_client_id );
 		$client->setAccessToken( $access_token );
-		$this->_service = new \Google_Service_Drive( $client );
+		$this->_service = new \W3TCG_Google_Service_Drive( $client );
 	}
 
 
@@ -113,7 +115,7 @@ class CdnEngine_GoogleDrive extends CdnEngine_Base {
 				if ( $listed_files[$m]->title == $title_to_search ) {
 					try {
 						$this->_service->files->delete( $listed_files[$m]->id );
-					} catch ( \Google_Service_Exception $e ) {
+					} catch ( \W3TCG_Google_Service_Exception $e ) {
 						$errors = $e->getErrors();
 						$details = '';
 						if ( count( $errors ) >= 1 ) {
@@ -156,7 +158,7 @@ class CdnEngine_GoogleDrive extends CdnEngine_Base {
 
 				$mtime = @filemtime( $local_path );
 
-				$p = new \Google_Service_Drive_Property();
+				$p = new \W3TCG_Google_Service_Drive_Property();
 				$p->key = 'mtime';
 				$p->value = $mtime;
 				$properties[] = $p;
@@ -184,11 +186,11 @@ class CdnEngine_GoogleDrive extends CdnEngine_Base {
 				$content = file_get_contents( $local_path );
 			}
 
-			$file = new \Google_Service_Drive_DriveFile();
+			$file = new \W3TCG_Google_Service_Drive_DriveFile();
 			$file->setTitle( $title );
 			$file->setProperties( $properties );
 
-			$parent = new \Google_Service_Drive_ParentReference();
+			$parent = new \W3TCG_Google_Service_Drive_ParentReference();
 			$parent->setId( $parent_id );
 			$file->setParents( array( $parent ) );
 
@@ -209,7 +211,7 @@ class CdnEngine_GoogleDrive extends CdnEngine_Base {
 								'uploadType' => 'media'
 							) );
 
-						$permission = new \Google_Service_Drive_Permission();
+						$permission = new \W3TCG_Google_Service_Drive_Permission();
 						$permission->setValue( '' );
 						$permission->setType( 'anyone' );
 						$permission->setRole( 'reader' );
@@ -217,7 +219,7 @@ class CdnEngine_GoogleDrive extends CdnEngine_Base {
 						$this->_service->permissions->insert( $created_file->id,
 							$permission );
 					}
-				} catch ( \Google_Auth_Exception $e ) {
+				} catch ( \W3TCG_Google_Auth_Exception $e ) {
 					if ( $allow_refresh_token )
 						return 'refresh_required';
 
@@ -227,7 +229,7 @@ class CdnEngine_GoogleDrive extends CdnEngine_Base {
 				$results[] = $this->_get_result( $file_descriptor['local_path'],
 					$file_descriptor['remote_path'], W3TC_CDN_RESULT_OK,
 					'OK', $file_descriptor );
-			} catch ( \Google_Service_Exception $e ) {
+			} catch ( \W3TCG_Google_Service_Exception $e ) {
 				$errors = $e->getErrors();
 				$details = '';
 				if ( count( $errors ) >= 1 ) {
@@ -332,7 +334,7 @@ class CdnEngine_GoogleDrive extends CdnEngine_Base {
 				if ( !is_null( $timeout_time ) && time() > $timeout_time )
 					return array( 'timeout', array() );
 			}
-		} catch ( \Google_Auth_Exception $e ) {
+		} catch ( \W3TCG_Google_Auth_Exception $e ) {
 			if ( $allow_refresh_token )
 				return array( 'refresh_required', array() );
 
@@ -352,7 +354,7 @@ class CdnEngine_GoogleDrive extends CdnEngine_Base {
 						'and trashed = false'
 					)
 				);
-			} catch ( \Google_Auth_Exception $e ) {
+			} catch ( \W3TCG_Google_Auth_Exception $e ) {
 				if ( $allow_refresh_token )
 					return array( 'refresh_required', array() );
 
@@ -426,18 +428,18 @@ class CdnEngine_GoogleDrive extends CdnEngine_Base {
 			$id = $items[0]->id;
 		} else {
 			// create folder
-			$file = new \Google_Service_Drive_DriveFile( array(
+			$file = new \W3TCG_Google_Service_Drive_DriveFile( array(
 					'title' => $folder,
 					'mimeType' => 'application/vnd.google-apps.folder' ) );
 
-			$parent = new \Google_Service_Drive_ParentReference();
+			$parent = new \W3TCG_Google_Service_Drive_ParentReference();
 			$parent->setId( $root_id );
 			$file->setParents( array( $parent ) );
 
 			$created_file = $this->_service->files->insert( $file );
 			$id = $created_file->id;
 
-			$permission = new \Google_Service_Drive_Permission();
+			$permission = new \W3TCG_Google_Service_Drive_Permission();
 			$permission->setValue( '' );
 			$permission->setType( 'anyone' );
 			$permission->setRole( 'reader' );
