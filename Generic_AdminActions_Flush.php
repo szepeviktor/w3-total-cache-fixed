@@ -308,6 +308,16 @@ class Generic_AdminActions_Flush {
 	}
 
 	/**
+	 * Flush Posts/Pages cache
+	 *
+	 * @return void
+	 */
+	function flush_pgcache() {
+		$flusher = Dispatcher::component( 'CacheFlush' );
+		$flusher->flush_posts();
+	}
+
+        /**
 	 * Flush object cache
 	 *
 	 * @return void
