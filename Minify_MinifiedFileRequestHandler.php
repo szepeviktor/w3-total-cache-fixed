@@ -549,7 +549,7 @@ class Minify_MinifiedFileRequestHandler {
 
 		$message = '<h1>W3TC Minify Error</h1>';
 
-		$debug = false;
+		$debug = $this->_config->get_boolean( 'minify.debug' );
 		if ( $debug ) {
 			$message .= sprintf( '<p>%s.</p>', $error );
 		} else {
