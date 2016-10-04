@@ -247,7 +247,7 @@ class Generic_AdminActions_Flush {
 			$state_note->set( 'common.show_note.flush_posts_needed', false );
 			$state_note->set( 'common.show_note.plugins_updated', false );
 
-			$this->w3tc_flush_pgcache();
+			$this->flush_pgcache();
 		}
 
 		if ( $this->_config->get_string( 'dbcache.engine' ) == $type && $this->_config->get_boolean( 'dbcache.enabled' ) ) {
@@ -308,6 +308,16 @@ class Generic_AdminActions_Flush {
 	}
 
 	/**
+	 * Flush Posts/Pages cache
+	 *
+	 * @return void
+	 */
+	function flush_pgcache() {
+		$flusher = Dispatcher::component( 'CacheFlush' );
+		$flusher->flush_posts();
+	}
+
+        /**
 	 * Flush object cache
 	 *
 	 * @return void
