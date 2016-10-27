@@ -85,7 +85,7 @@ class W3_Plugin_PgCacheAdmin extends W3_Plugin {
      * @param integer $start
      * @return void
      */
-    function prime($start = 0) {
+    function prime($start = 0,$user_interval=-1,$user_limit=-1,$user_sitemap="") {
         $start = (int) $start;
 
         /**
@@ -98,21 +98,24 @@ class W3_Plugin_PgCacheAdmin extends W3_Plugin {
                 foreach ($hooks as $hook => $keys) {
                     foreach ($keys as $key => $data) {
                         if ($hook == 'w3_pgcache_prime' && count($data['args'])) {
-                            return;
+                            return false;
                         }
                     }
                 }
             }
         }
-
-        $interval = $this->_config->get_integer('pgcache.prime.interval');
-        $limit = $this->_config->get_integer('pgcache.prime.limit');
-        $sitemap = $this->_config->get_string('pgcache.prime.sitemap');
-
+	
+        $interval = $user_interval==-1?$this->_config->get_integer('pgcache.prime.interval'):$user_interval;
+        $limit = $user_limit==-1?$this->_config->get_integer('pgcache.prime.limit'):$user_limit;
+        $sitemap = empty($user_sitemap)?$this->_config->get_string('pgcache.prime.sitemap'):$user_sitemap;
+        
         /**
          * Parse XML sitemap
          */
         $urls = $this->parse_sitemap($sitemap);
+        if (count($urls) == 0) {
+        	return "";
+        }
 
         /**
          * Queue URLs
@@ -121,7 +124,10 @@ class W3_Plugin_PgCacheAdmin extends W3_Plugin {
 
         if (count($urls) > ($start + $limit)) {
             wp_schedule_single_event(time() + $interval, 'w3_pgcache_prime', array(
-                $start + $limit
+                $start + $limit,
+                $user_interval,
+                $user_limit,
+                $user_sitemap
             ));
         }
 
@@ -133,8 +139,11 @@ class W3_Plugin_PgCacheAdmin extends W3_Plugin {
 
         // use empty user-agent since by default we use W3TC-powered by
         // which blocks caching
-        foreach ($queue as $url)
+        foreach ($queue as $url) {
             w3_http_get($url, array('user-agent' => ''));
+        }
+            
+        return "($limit pages every $interval secs - sitemap: $sitemap)";
     }
 
     /**

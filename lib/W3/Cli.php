@@ -9,11 +9,22 @@
  */
 class W3TotalCache_Command extends WP_CLI_Command {
 
-	/**
-	 * Clear something from the cache
+        /**
+	 * Flushes the whole cache or specific items based on provided arguments
 	 *
-	 * @param array $args
-	 * @param array $vars
+	 * ## OPTIONS
+	 *
+	 * [<post|database|minify|object>]
+	 * : post     = Flush a specific post using --postid or --permalink
+	 * database = Flush the database cache
+	 * object   = Flush the object cache
+	 * minify   = Flush the minify cache
+	 *
+	 * [--postid=<id>]
+	 * : Flush a specific post ID
+	 *
+	 * [--permalink=<url>]
+	 * : Flush a specific permalink
 	 */
 	function flush($args = array(), $vars = array()) {
 		$args = array_unique($args);
@@ -31,7 +42,7 @@ class W3TotalCache_Command extends WP_CLI_Command {
 				catch (Exception $e) {
  				  WP_CLI::error(__('Flushing the DB cache failed.', 'w3-total-cache'));
 				}
-				WP_CLI::success(__('The DB cache is flushed successfully.', 'w3-total-cache'));
+				WP_CLI::success(__('The DB cache has flushed successfully.', 'w3-total-cache'));
 				break;
 
 			case 'minify':
@@ -40,9 +51,9 @@ class W3TotalCache_Command extends WP_CLI_Command {
  					$w3_minify->minifycache_flush();
 				}
 				catch (Exception $e) {
- 				  WP_CLI::error(__('Flushing the minify cache failed.', 'w3-total-cache'));
+ 				  WP_CLI::error("Flushing the minify cache failed: $e");
 				}
-				WP_CLI::success(__('The minify cache is flushed successfully.', 'w3-total-cache'));
+				WP_CLI::success(__('The minify cache has flushed successfully.', 'w3-total-cache'));
 				break;
 
 			case 'object':
@@ -51,45 +62,45 @@ class W3TotalCache_Command extends WP_CLI_Command {
  					$w3_objectcache->objectcache_flush();
 				}
 				catch (Exception $e) {
- 				  WP_CLI::error(__('Flushing the object cache failed.', 'w3-total-cache'));
+ 				  WP_CLI::error("Flushing the object cache failed: $e");
 				}
-				WP_CLI::success(__('The object cache is flushed successfully.', 'w3-total-cache'));
+				WP_CLI::success(__('The object cache has flushed successfully.', 'w3-total-cache'));
 				break;
 
 			case 'post':
 			default:
-				if (isset($vars['post_id'])) {
-					if (is_numeric($vars['post_id'])) {
+				if (isset($vars['postid'])) {
+					if (is_numeric($vars['postid'])) {
 					  try {
-                        $w3_cacheflush = w3_instance('W3_CacheFlush');
-                        $w3_cacheflush->pgcache_flush_post($vars['post_id']);
-                        $w3_cacheflush->varnish_flush_post($vars['post_id']);
-                      }
-  				  catch (Exception $e) {
-   					  WP_CLI::error(__('Flushing the page from cache failed.', 'w3-total-cache'));
-   					}
-   					WP_CLI::success(__('The page is flushed from cache successfully.', 'w3-total-cache'));
+                        			$w3_cacheflush = w3_instance('W3_CacheFlush');
+                        			$w3_cacheflush->pgcache_flush_post($vars['postid']);
+                        			$w3_cacheflush->varnish_flush_post($vars['postid']);
+                      			  }
+  				  	  catch (Exception $e) {
+   					  	WP_CLI::error("Flushing the page from cache failed: $e");
+   					  }
+   					  WP_CLI::success(__('The page has been flushed from cache successfully.', 'w3-total-cache'));
 					} else {
 						WP_CLI::error(__('This is not a valid post id.', 'w3-total-cache'));
 					}
 
-					w3tc_pgcache_flush_post($vars['post_id']);
+					w3tc_pgcache_flush_post($vars['postid']);
 				}
 				elseif (isset($vars['permalink'])) {
 					$id = url_to_postid($vars['permalink']);
 
 					if (is_numeric($id)) {
 						try {
-  					      $w3_cacheflush = w3_instance('W3_CacheFlush');
-  					      $w3_cacheflush->pgcache_flush_post($id);
-                          $w3_cacheflush->varnish_flush_post($id);
-  				  }
-  				  catch (Exception $e) {
-   					  WP_CLI::error(__('Flushing the page from cache failed.', 'w3-total-cache'));
-   					}
-   					WP_CLI::success(__('The page is flushed from cache successfully.', 'w3-total-cache'));
+  					      		$w3_cacheflush = w3_instance('W3_CacheFlush');
+  					      		$w3_cacheflush->pgcache_flush_post($id);
+                          		     		$w3_cacheflush->varnish_flush_post($id);
+  				  		}
+  				  		catch (Exception $e) {
+   					 		 WP_CLI::error("Flushing the page from cache failed: $e");
+   						}
+   						WP_CLI::success(__('The page has been flushed from cache successfully.', 'w3-total-cache'));
 					} else {
-						WP_CLI::error(__('There is no post with this permalink.', 'w3-total-cache'));
+						WP_CLI::error(__('There is no post with that permalink.', 'w3-total-cache'));
 					}
 				} else {
 					if (isset($flushed_page_cache) && $flushed_page_cache)
@@ -97,19 +108,85 @@ class W3TotalCache_Command extends WP_CLI_Command {
 
 					$flushed_page_cache = true;
 					try {
-                      $w3_cacheflush = w3_instance('W3_CacheFlush');
-                      $w3_cacheflush->pgcache_flush();
-                      $w3_cacheflush->varnish_flush();
+					      $w3_cacheflush = w3_instance('W3_CacheFlush');
+					      $w3_cacheflush->pgcache_flush();
+					      $w3_cacheflush->varnish_flush();
  					}
  					catch (Exception $e) {
-   					WP_CLI::error(__('Flushing the page cache failed.', 'w3-total-cache'));
-   			  }
- 				  WP_CLI::success(__('The page cache is flushed successfully.', 'w3-total-cache'));
+   						WP_CLI::error("Flushing the page cache failed: $e");
+   			  		}
+ 				  	WP_CLI::success(__('The page cache has been flushed successfully.', 'w3-total-cache'));
 				}
 			}
 		} while (!empty($args));
 	} 
 
+        /**
+	 * Prime the page cache (cache preloader)
+	 *
+	 * ## OPTIONS
+	 *
+	 * [<stop>]
+	 * : Stop the active page cache priming session.
+         *
+	 * [--interval=<seconds>]
+	 * : Number of seconds to wait before creating another batch. If not set, the 
+	 * value given in W3TC's Page Cache > Update Interval field is used.
+	 *
+	 * [--batch=<size>]
+	 * : Max number of pages to create per batch. If not set, the value given in
+	 * W3TC's Page Cache > Pages per Interval field is used.
+	 *
+	 * [--sitemap=<url>]
+	 * : The sitemap url specifying the pages to prime cache. If not set, the value
+	 * given in W3TC's Page Cache > Sitemap URL field is used.
+	 */
+	function prime($args = array(), $vars = array())
+	{
+		try
+		{
+			$action = array_shift($args);
+
+			if ($action == 'stop') {
+				if (clear_hook_crons('w3_pgcache_prime') === false) {
+  					WP_CLI::error('No page cache priming session to stop.');
+  				}
+  				else {
+					WP_CLI::success('Page cache priming has been stopped.');
+				}
+			}
+			else
+			{
+				$user_interval = -1;
+				$user_limit = -1;
+				$user_sitemap = "";
+				
+				if (isset($vars['interval']) && is_numeric($vars['interval'])) {
+					$user_interval = intval($vars['interval']);
+				}
+				if (isset($vars['batch']) && is_numeric($vars['batch'])) {
+					$user_limit = intval($vars['batch']);
+				}
+				if (isset($vars['sitemap']) && !empty($vars['sitemap'])) {
+					$user_sitemap = trim($vars['sitemap']);
+				}
+			
+  				$w3_prime = w3_instance('W3_Plugin_PgCacheAdmin');
+  				if (($res=$w3_prime->prime(0,$user_interval,$user_limit,$user_sitemap))===false) {
+  					WP_CLI::error('Page cache currently being primed.');
+  				}
+  				else if (empty($res)) {
+  					WP_CLI::error('No sitemap found in W3TC prefs nor provided. A sitemap is needed to prime the page cache.');
+  				}
+  				
+  				WP_CLI::success("Page cache priming has successfully started $res.");
+  			}
+  		}
+		catch (Exception $e)
+		{
+  			WP_CLI::error("$e");
+		}
+	}
 
 	/**
 	 * Update query string function
@@ -326,30 +403,74 @@ class W3TotalCache_Command extends WP_CLI_Command {
 	/**
 	 * Help function for this command
 	 */
-	public static function help() {
+	public function help() {
 		WP_CLI::line( <<<EOB
-usage: wp w3-total-cache flush [post|database|minify|object] [--post_id=<post-id>] [--permalink=<post-permalink>] 
-  or : wp w3-total-cache querystring
-  or : wp w3-total-cache cdn_purge <file> [<file2>]...
-  or : wp w3-total-cache pgcache_cleanup
 
-			 flush    			   flushes whole cache or specific items based on provided arguments
-			 querystring			 update query string for all static files
-			 cdn_purge         Purges command line provided files from Varnish and the CDN
-			 pgcache_cleanup   Generally triggered from a cronjob, allows for manual Garbage collection of page cache to be triggered
-             apc_reload_files SNS/local file.php file2.php file3.php Tells apc to compile files
-             apc_delete_based_on_regex SNS/local expression Tells apc to delete files that match a RegEx mask
-			 opcache_reload_files SNS/local file.php file2.php file3.php Tells opcache to compile files
-             opcache_delete_based_on_regex SNS/local expression Tells opcache to delete files that match a RegEx mask
-Available flush sub-commands:
-			 --post_id=<id>                  flush a specific post ID
-			 --permalink=<post-permalink>    flush a specific permalink
-			 database                        flush the database cache
-			 object                          flush the object cache
-			 minify                          flush the minify cache
+usage: wp w3-total-cache flush [post|database|minify|object] [--postid=<id>] [--permalink=<url>] 
+       wp w3-total-cache querystring
+       wp w3-total-cache cdn_purge <file> [<file>...]
+       wp w3-total-cache pgcache_cleanup
+       wp w3-total-cache prime [stop] [--interval=<seconds>] [--batch=<size>] [--sitemap=<url>]
+       wp w3-total-cache apc_reload_files (SNS|local) <file.php> [<file.php>...]
+       wp w3-total-cache apc_delete_based_on_regex (SNS|local) <expression>
+       wp w3-total-cache opcache_reload_files
+       wp w3-total-cache opcache_delete_based_on_regex (SNS|local) <expression>
+  
+Sub-Commands:
+
+  flush                         Flushes the whole cache or specific items based on provided arguments
+  
+                                post       Flush a post via ... 
+                                           --postid=<id>             Flush a specific post ID
+                                           --permalink=<url>         Flush a specific permalink
+                                           
+                                database   Flush the database cache
+                                object     Flush the object cache
+                                minify     Flush the minify cache
+                                
+  querystring                   Update query string for all static files
+  cdn_purge                     Purges command line provided files from Varnish and the CDN
+  pgcache_cleanup               Generally triggered from a cronjob, allows for manual Garbage collection of page cache to be triggered
+  
+  prime                         Prime the page cache
+
+                                stop                   Stop an active priming session
+                                --interval=<seconds>   Number of seconds to wait before creating another batch
+                                                       (this defaults to w3tc prefs when missing)
+                                --batch=<size>         Max number of pages to create per batch
+                                                       (this defaults to w3tc prefs when missing)
+                                --sitemap=<url>        The sitemap url specifying the pages to prime cache
+                                                       (this defaults to w3tc prefs when missing)                                
+
+  apc_reload_files              Tells apc to compile files
+  apc_delete_based_on_regex     Tells apc to delete files that match a RegEx mask
+  opcache_reload_files          Tells opcache to compile files
+  opcache_delete_based_on_regex Tells opcache to delete files that match a RegEx mask
+  
 EOB
 		);
 	}
+}
+
+function clear_hook_crons($hook) 
+{
+    $res = false;    
+    $crons = _get_cron_array();
+    if ( empty( $crons ) ) {
+        return false;
+    }
+    foreach( $crons as $timestamp => $cron ) {
+        if ( ! empty( $cron[$hook] ) )  {
+            unset( $crons[$timestamp][$hook] );
+            $res = true;
+        }
+
+        if ( empty( $crons[$timestamp] ) ) {
+            unset( $crons[$timestamp] );
+        }
+    }
+    _set_cron_array( $crons );
+    return $res;
 }
 
 if (method_exists('WP_CLI','add_command')) {
