@@ -1,6 +1,6 @@
 # Fix W3TC (W3 Total Cache) [![Build Status](https://travis-ci.org/szepeviktor/fix-w3tc.svg?branch=master)](https://travis-ci.org/szepeviktor/fix-w3tc)
 
-A community driven build of W3 Total Cache, originally developed by [@ftownes](https://github.com/ftownes).  The aim is to continuously incorporate fixes, improvements, and enhancements over the official Wordpress release of [W3 Total Cache](https://wordpress.org/plugins/w3-total-cache/).
+A community driven build of W3 Total Cache originally developed by [@ftownes](https://github.com/ftownes).  The aim is to continuously incorporate fixes, improvements, and enhancements over the official Wordpress release of [W3 Total Cache](https://wordpress.org/plugins/w3-total-cache/).
 
 [DONE]: http://i65.tinypic.com/2dbjpn6.png "Feature Integrated"
 [PENDING]: http://i68.tinypic.com/25000tw.png "Still Pending"
