@@ -5,6 +5,7 @@
 * Support for WEBP image format
 * New feature to allow embedding of minified JS and CSS content directly into the HTML page (good for AMP, Service Workers, and prefetching)
 * Fixed bug where it was attempting to delete an addin object cache file before knowing if it existed
+* Added in the FIX-W3TC dashboard a widget with the latest release
 
 = 0.9.4.5.5 =
 * Adds a new "Hide Plugin Update Notification" checkbox under General Settings' Miscellaneous area
