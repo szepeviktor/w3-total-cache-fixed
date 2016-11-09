@@ -645,8 +645,7 @@ function wpcli_stop_prime(&$result = "")
             {
                 @posix_kill($pid, SIGTERM);
             }
-            else
-            if (w3_cmd_enabled("exec"))
+            else if (w3_cmd_enabled("exec"))
             {
                 @exec("kill -9 $pid >/dev/null 2>&1");
             }
