@@ -26,4 +26,5 @@ _**Note:** This list does not reflect all of the myriad of fixes/changes -- just
 ![DONE] AMP Support<br>
 ![DONE] Redis Support<br>
 ![DONE] Removed Nag Screens, Obsolete Widgets, & Licensing<br>
-![PENDING] Improved CloudFlare Support (**_Status_**: [Half-done](https://github.com/szepeviktor/w3-total-cache-fixed/issues/68))
+
+Improved CloudFlare Support is available in the 0.9.5.* version
