@@ -4,7 +4,7 @@
 * Added new AWS regions and endpoints
 * Can change cache directory location without php warnings
 * Rebranded internally to the w3-total-cache-fixed folder
-* Update notifications and future installs of this plugin are now done directly from within the WP plugin page
+* Update notifications and future installs of this plugin are now done directly within the WP plugin page
 * Prevents activation (with admin notice) when another W3TC install is active
 * Corrected export setting to have a .json extension
 
