@@ -75,9 +75,9 @@ if (!defined('W3TC_IN_MINIFY')) {
 
 function plugin_update_init()
 {
-	if (is_admin()) {
-		w3_require_once(W3TC_DIR . '/updater.php');
+	w3_require_once(W3TC_DIR . '/updater.php');
 
+	if (is_admin()) {
 		$config = array(
 			'slug' 				 => plugin_basename(__FILE__), 	// this is the slug of your plugin
 			'proper_folder_name' => W3TC_UPDATER_FOLDER_NAME, 	// this is the name of the folder your plugin lives in
