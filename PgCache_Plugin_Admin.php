@@ -144,10 +144,10 @@ class PgCache_Plugin_Admin {
 
 
 
-		// use empty user-agent since by default we use W3TC-powered by
+		// use user-agent "Wordpress" since by default we use W3TC-powered by
 		// which blocks caching
 		foreach ( $queue as $url )
-			Util_Http::get( $url, array( 'user-agent' => '' ) );
+			Util_Http::get( $url, array( 'user-agent' => 'Wordpress' ) );
 	}
 
 	/**
@@ -221,7 +221,7 @@ class PgCache_Plugin_Admin {
 
 		// Make HTTP requests and prime cache
 		foreach ( $post_urls as $url ) {
-			$result = Util_Http::get( $url, array( 'user-agent' => '' ) );
+			$result = Util_Http::get( $url, array( 'user-agent' => 'Wordpress' ) );
 			if ( is_wp_error( $result ) )
 				return false;
 		}
@@ -341,3 +341,4 @@ class PgCache_Plugin_Admin {
 		return $summary;
 	}
 }
+
