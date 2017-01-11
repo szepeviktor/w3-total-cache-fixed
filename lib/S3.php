@@ -1940,6 +1940,7 @@ class S3
 	*/
 	public static function getTime()
 	{
+		self::setTimeCorrectionOffset();	// Set correct offset
 		return time() + self::$__timeOffset;
 	}
 
@@ -2014,9 +2015,11 @@ class S3
 		// payload
 		$payloadHash = isset($amzHeaders['x-amz-content-sha256']) ? $amzHeaders['x-amz-content-sha256'] :  hash('sha256', $data);
 
+		$uriQmPos = strpos($uri, '?');
+
 		// CanonicalRequests
 		$amzRequests[] = $method;
-		$amzRequests[] = $uri;
+		$amzRequests[] = ($uriQmPos === false ? $uri : substr($uri, 0, $uriQmPos));
 		$amzRequests[] = http_build_query($parameters);		
 		// add header as string to requests
 		foreach ( $amzHeaders as $k => $v ) {
