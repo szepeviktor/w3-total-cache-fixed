@@ -327,9 +327,6 @@
 
         <?php echo $this->postbox_header(__('<acronym title="Content Delivery Network">CDN</acronym>', 'w3-total-cache'), '', 'cdn'); ?>
         <p><?php _e('Host static files with your content delivery network provider to reduce page load time.', 'w3-total-cache'); ?>
-        <?php if(!$cdn_enabled): ?>
-        <?php printf(__('If you do not have a <acronym title="Content Delivery Network">CDN</acronym> provider try MaxCDN. <a href="%s" target="_blank">Sign up and save 25&#37;</a>.', 'w3-total-cache'), wp_nonce_url(w3_admin_url('admin.php?page=w3tc_dashboard&w3tc_cdn_maxcdn_signup'), 'w3tc')); ?>
-        <?php endif ?>
         </p>
         <table class="form-table">
             <tr>
@@ -641,20 +638,6 @@
                     <br /><span class="description"><?php _e('Try this option if your hosting environment uses a network based file system for a possible performance improvement.', 'w3-total-cache'); ?></span>
                 </th>
             </tr>
-            <?php if (is_network_admin() || !w3_is_multisite()): ?>
-            <tr id="edge_mode">
-                <th colspan="2">
-                    <?php
-                    if (!w3tc_edge_mode()):
-                        echo '<a href="' . w3_admin_url('admin.php?page='. $this->_page .'&w3tc_edge_mode_enable').'"><strong>' . __('Enable Edge mode', 'w3-total-cache') . '</strong></a>';
-                    else:
-                        echo '<a href="' . w3_admin_url('admin.php?page='. $this->_page .'&w3tc_edge_mode_disable').'"><strong>' . __('Disable Edge mode', 'w3-total-cache') . '</strong></a>';
-                    endif;
-                    ?>
-                    <br /><span class="description"><?php _e('Enable this to try out new functionality under development. Might cause issues on some sites. If you have issues and can\'t access wp-admin, remove "define(\'W3TC_EDGE_MODE\', true);" from your wp-config.php file and edge mode features will be disabled.', 'w3-total-cache'); ?></span>
-                </th>
-            </tr>
-            <?php endif; ?>
         </table>
 
         <p class="submit">
