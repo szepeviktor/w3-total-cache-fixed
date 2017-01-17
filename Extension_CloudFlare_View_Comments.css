@@ -1,0 +1,17 @@
+.cloudflare_ip_check {
+    padding-left: 10px;
+}
+
+img.cloudflare_ip_check_img {
+    float: none;
+    vertical-align:middle;
+    padding-bottom: 2px;
+}
+
+.cloudflare_ip_check_error {
+	color: #990000;
+}
+
+.cloudflare_ip_check_success {
+	color: #009900;
+}

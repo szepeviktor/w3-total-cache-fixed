@@ -1,0 +1,70 @@
+.w3tcps_error {
+    position: absolute;
+}
+
+.w3tc-widget-ps-rules {
+    margin: 1em 0;
+    background: #fff url(pub/img/ps_bar.gif) repeat-y;
+}
+
+.w3tc-widget-ps-rules a {
+    color: #00f;
+    text-decoration: none;
+}
+
+.w3tc-widget-ps-rules li,
+.w3tc-widget-ps-rules p {
+    margin: 0;
+}
+
+.w3tc-widget-ps-rule {
+    line-height: 20px;
+    clear: left;
+}
+
+.w3tc-widget-ps-rule p {
+    margin-left: 40px;
+    line-height: 20px;
+    height: 20px;
+    overflow: hidden;
+}
+
+.w3tc-widget-ps-icon {
+    width: 31px;
+    height: 20px;
+    position: relative;
+    float: left;
+}
+
+.w3tc-widget-ps-icon div {
+    display: block;
+    background: url(pub/img/ps_scores.png);
+    width: 14px;
+    height: 14px;
+    position: relative;
+    top: 3px;
+    left: 8px;
+}
+
+.w3tc-widget-ps-priority-high .w3tc-widget-ps-icon div {
+    background-position: 0;
+}
+
+.w3tc-widget-ps-priority-medium .w3tc-widget-ps-icon div {
+    background-position: -14px;
+}
+
+.w3tc-widget-ps-priority-low .w3tc-widget-ps-icon div {
+    background-position: -28px;
+}
+
+.w3tc-widget-ps-expand {
+    float: left;
+    width: 30px;
+    height: 20px;
+    text-align: center;
+}
+
+.w3tc-widget-ps-expand a {
+    color: #66d;
+}

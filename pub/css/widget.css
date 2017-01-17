@@ -1,0 +1,147 @@
+.w3tc-manual-link {
+    background-color: #efefef;
+}
+.w3tc-manual-link p {
+    margin: 10px;
+    padding:0;
+    font-size:12px;
+}
+#w3tc-dashboard-widgets ul {
+    margin: 0;
+    padding: 0;
+}
+#w3tc-dashboard-widgets li {
+    list-style-type: none;
+    margin-bottom: 15px;
+}
+
+#w3tc-dashboard-widgets #normal-sortables #w3tc_spreadtheword label{
+    display: block;
+    width: 70px;
+    float: left;
+    line-height: 30px;
+}
+
+#w3tc-dashboard-widgets h3.hndle img {
+    vertical-align: middle;
+    margin-right:10px;
+}
+
+.w3tc_generic_widgetservice_label {
+    font-weight: bold;
+    margin-left: 10px;
+    display: inline-block;
+    width: 270px;
+}
+
+.w3tc_generic_widgetservice_radio_outer {
+    float: left;
+    margin-top: 1px;
+}
+
+#w3tc_spreadtheword .inside {
+    margin-right: 30px;
+}
+
+#w3tc_services p {
+    margin-left: 30px;
+}
+
+#w3tc-dashboard-widgets #normal-sortables .postbox {
+    width:360px;
+}
+
+#w3tc-dashboard-widgets #side-sortables .postbox {
+    border:none;
+    box-shadow:none;
+    -webkit-box-shadow: none;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+}
+
+#postbox-container-right {
+    width: 196px;
+    white-space: nowrap;
+    display: inline-block;
+    float: right;
+    margin-left: -200px;
+}
+#w3tc-dashboard-widgets #postbox-container-3 {
+    width: 100%;white-space: normal;
+}
+.w3tc-enabled {
+    color: #090;
+    font-weight: 700
+}
+
+.w3tc-disabled {
+    color: #f00;
+    font-weight: 700
+}
+
+#normal-sortables  #w3tc_new_relic {
+    width: 360px;
+}
+.maxcdn-netdna-widget-base h4 {
+    text-align: center;
+}
+.maxcdn-netdna-widget-base .summary h4 {
+    color: #8F8F8F;
+    text-align: left;
+}
+.maxcdn-netdna-widget-base .status,.maxcdn-netdna-widget-base .summary {
+    border-bottom: 1px solid #d2d2d2;
+}
+
+.maxcdn-netdna-widget-base .wrapper {
+    margin-left: -10px;
+    margin-right: -10px;
+}
+.maxcdn-netdna-widget-base  .area {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+
+.maxcdn-netdna-widget-base .tools {
+    margin-top:15px;
+}
+.maxcdn-netdna-widget-base .tools li {
+    display:inline-block;
+    margin-right:10px;
+}
+.maxcdn-netdna-widget-base .summary li.large span {
+    width: 210px;
+}
+.maxcdn-netdna-widget-base  ul.file_hits li {
+    line-height: 12px;
+    font-size:10px;
+}
+.maxcdn-netdna-widget-base  ul.file_hits li span{
+    color: #fff;
+    padding-top: 2px;
+    padding-left: 5px;
+}
+.maxcdn-netdna-widget-base .status p,  .maxcdn-netdna-widget-base .charts p{
+    color:#8F8F8F
+}
+.maxcdn-netdna-widget-base .account_status  {
+    font-weight: bold;
+    color: #000;
+}
+.maxcdn-netdna-widget-base .content-zone {
+    color: #c0d9e4
+}
+.maxcdn-netdna-widget-base.sign-up h4 {
+    text-align: left;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+.maxcdn-netdna-widget-base.sign-up p{
+    margin-top: 4px;
+    padding-top: 0;
+
+}
+.maxcdn-netdna-widget-base.sign-up p span.desc {
+    color:#8F8F8F;
+}

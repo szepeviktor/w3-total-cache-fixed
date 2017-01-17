@@ -1,0 +1,45 @@
+.ustats_p {
+    text-align: center;
+}
+
+.ustats_header {
+    font-weight: bold;
+}
+
+.ustats_table {
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+td.ustats_td {
+    padding: 0;
+    padding-right: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+td.ustats_td_header_name {
+    padding: 0;
+    padding-right: 5px;
+    padding-top: 5px;
+    text-align: left;
+    font-weight: bold;
+    color: #333;
+}
+
+td.ustats_td_header {
+    padding: 0;
+    padding-right: 5px;
+    padding-top: 5px;
+    text-align: right;
+    font-weight: bold;
+    color: #333;
+}
+
+td.ustats_td_value {
+    padding: 0;
+    padding-right: 8px;
+    text-align: right;
+    color: #333;
+}
