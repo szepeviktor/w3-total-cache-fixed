@@ -63,8 +63,19 @@ class Minify_Core {
 			if ( Util_Environment::is_url( $file ) ) {
 				$c = Dispatcher::config();
 				$external = $c->get_array( 'minify.cache.files' );
+				$external_regexp = $c->get_boolean( 'minify.cache.files_regexp' );
+
 				foreach ( $external as $ext ) {
-					if ( preg_match( '#'.Util_Environment::get_url_regexp( $ext ).'#', $file ) && !$verified ) {
+					if ( empty( $ext ) )
+						continue;
+
+					if ( !$external_regexp &&
+						preg_match( '~^' . Util_Environment::get_url_regexp( $ext ) . '~', $file ) && 
+						!$verified ) {
+						$verified = true;
+					}
+					if ( $external_regexp && 
+						preg_match( '~' . $ext . '~', $file ) && !$verified ) {
 						$verified = true;
 					}
 				}
@@ -156,8 +167,8 @@ class Minify_Core {
 				'persistent' => $c->get_boolean( 'minify.memcached.persistent' ),
 				'aws_autodiscovery' =>
 				$c->get_boolean( 'minify.memcached.aws_autodiscovery' ),
-				'username' => $c->get_boolean( 'minify.memcached.username' ),
-				'password' => $c->get_boolean( 'minify.memcached.password' )
+				'username' => $c->get_string( 'minify.memcached.username' ),
+				'password' => $c->get_string( 'minify.memcached.password' )
 			);
 			break;
 
@@ -165,8 +176,8 @@ class Minify_Core {
 			$engineConfig = array(
 				'servers' => $c->get_array( 'minify.redis.servers' ),
 				'persistent' => $c->get_boolean( 'minify.redis.persistent' ),
-				'dbid' => $c->get_boolean( 'minify.redis.dbid' ),
-				'password' => $c->get_boolean( 'minify.redis.password' )
+				'dbid' => $c->get_integer( 'minify.redis.dbid' ),
+				'password' => $c->get_string( 'minify.redis.password' )
 			);
 			break;
 

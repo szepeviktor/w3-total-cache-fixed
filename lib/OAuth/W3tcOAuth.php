@@ -646,5 +646,3 @@ class W3tcOAuthUtil {
     return implode('&', $pairs);
   }
 }
-
-?>

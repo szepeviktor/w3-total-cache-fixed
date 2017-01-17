@@ -344,12 +344,15 @@ class Minify0_Minify {
         }
         
         // add headers
-        $headers['Content-Length'] = $cacheIsReady
-            ? $cacheContentLength
-            : ((function_exists('mb_strlen') && ((int)ini_get('mbstring.func_overload') & 2))
-                ? mb_strlen($content['content'], '8bit')
-                : strlen($content['content'])
-            );
+        if ( !defined( 'W3TC_MINIFY_CONTENT_LENGTH_OFF' ) ) {
+            $headers['Content-Length'] = $cacheIsReady
+                ? $cacheContentLength
+                : ((function_exists('mb_strlen') && ((int)ini_get('mbstring.func_overload') & 2))
+                    ? mb_strlen($content['content'], '8bit')
+                    : strlen($content['content'])
+                );
+        }
+        
         $headers['Content-Type'] = self::$_options['contentTypeCharset']
             ? self::$_options['contentType'] . '; charset=' . self::$_options['contentTypeCharset']
             : self::$_options['contentType'];
@@ -374,12 +377,13 @@ class Minify0_Minify {
                 echo $content['content'];
             }
         } else {
+            if ($cacheIsReady)
+                $content = self::$_cache->fetch($fullCacheId);
+            
             return array(
                 'success' => true
                 ,'statusCode' => 200
-                ,'content' => $cacheIsReady
-                    ? self::$_cache->fetch($fullCacheId)
-                    : $content['content']
+                ,'content' => $content['content']
                 ,'headers' => $headers
             );
         }

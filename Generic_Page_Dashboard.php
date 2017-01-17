@@ -24,7 +24,7 @@ class Generic_Page_Dashboard extends Base_Page_Settings {
 	function view() {
 		$module_status = Dispatcher::component( 'ModuleStatus' );
 		Util_Widget::setup();
-		global $current_user;
+		$current_user = wp_get_current_user();
 		$config_master = $this->_config_master;
 
 		$browsercache_enabled = $module_status->is_enabled( 'browsercache' );

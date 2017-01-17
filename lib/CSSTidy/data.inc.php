@@ -469,5 +469,3 @@ $GLOBALS['csstidy']['predefined_templates']['low_compression'][] = '	';
 $GLOBALS['csstidy']['predefined_templates']['low_compression'][] = '<span class="comment">'; // before comment
 $GLOBALS['csstidy']['predefined_templates']['low_compression'][] = '</span>'."\n"; // after comment
 $GLOBALS['csstidy']['predefined_templates']['low_compression'][] = "\n";
-
-?>

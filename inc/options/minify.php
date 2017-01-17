@@ -311,6 +311,17 @@ if ( file_exists( $js_engine_file2 ) ) {
                 </td>
             </tr>
             <?php endif; ?>
+            <?php
+Util_Ui::config_item( array(
+        'key' => 'minify.js.http2push',
+        'label' => 'HTTP/2 push',
+        'control' => 'checkbox',
+        'checkbox_label' => __( 'Enable', 'w3-total-cache' ),
+        'description' => __( 'For better performance, send files to browser before they are requested when using the HTTP/2 protocol.',
+            'w3-total-cache' ) .
+            ( $this->_config->get_string( 'pgcache.engine' ) != 'file_generic' ? '' :
+                __( ' <br /><b>Not supported by "Disk: Enhanced" page cache engine</b>', 'w3-total-cache' ) )
+    ) ); ?>
         </table>
 
         <?php Util_Ui::button_config_save( 'minify_js' ); ?>
@@ -425,6 +436,17 @@ if ( file_exists( $css_engine_file2 ) ) {
                 </td>
             </tr>
             <?php endif; ?>
+            <?php
+Util_Ui::config_item( array(
+        'key' => 'minify.css.http2push',
+        'label' => 'HTTP/2 push',
+        'control' => 'checkbox',
+        'checkbox_label' => __( 'Enable', 'w3-total-cache' ),
+        'description' => __( 'For better performance, send files to browser before they are requested when using the HTTP/2 protocol.',
+            'w3-total-cache' ) .
+            ( $this->_config->get_string( 'pgcache.engine' ) != 'file_generic' ? '' :
+                __( ' <br /><b>Not supported by "Disk: Enhanced" page cache engine</b>', 'w3-total-cache' ) )
+    ) ); ?>
         </table>
 
         <?php Util_Ui::button_config_save( 'minify_css' ); ?>
@@ -464,7 +486,7 @@ if ( $this->_config->get_string( 'minify.engine' ) == 'memcached' ) {
                 <td>
                     <textarea id="minify_reject_uri" name="minify__reject__uri"
                         <?php Util_Ui::sealing_disabled( 'minify.' ) ?> cols="40" rows="5"><?php echo esc_textarea( implode( "\r\n", $this->_config->get_array( 'minify.reject.uri' ) ) ); ?></textarea><br />
-                    <span class="description"><?php _e( 'Always ignore the specified pages / directories. Use relative paths. Omit: protocol, hostname, leading forward slash anduery strings.', 'w3-total-cache' ); ?></span>
+                    <span class="description"><?php _e( 'Always ignore the specified pages / directories. Use relative paths. Omit: protocol, hostname, leading forward slash and query strings.', 'w3-total-cache' ); ?></span>
                 </td>
             </tr>
             <tr>
@@ -472,7 +494,7 @@ if ( $this->_config->get_string( 'minify.engine' ) == 'memcached' ) {
                 <td>
                     <textarea id="minify_reject_files_js" name="minify__reject__files__js"
                         <?php Util_Ui::sealing_disabled( 'minify.' ) ?> cols="40" rows="5"><?php echo esc_textarea( implode( "\r\n", $this->_config->get_array( 'minify.reject.files.js' ) ) ); ?></textarea><br />
-                    <span class="description"><?php _e( 'Always ignore the specified <acronym title="JavaScript">JS</acronym> files. Use relative paths. Omit: protocol, hostname, leading forward slash anduery strings.', 'w3-total-cache' ); ?></span>
+                    <span class="description"><?php _e( 'Always ignore the specified <acronym title="JavaScript">JS</acronym> files. Use relative paths. Omit: protocol, hostname, leading forward slash and query strings.', 'w3-total-cache' ); ?></span>
                 </td>
             </tr>
             <tr>
@@ -480,7 +502,7 @@ if ( $this->_config->get_string( 'minify.engine' ) == 'memcached' ) {
                 <td>
                     <textarea id="minify_reject_files_css" name="minify__reject__files__css"
                         <?php Util_Ui::sealing_disabled( 'minify.' ) ?> cols="40" rows="5"><?php echo esc_textarea( implode( "\r\n", $this->_config->get_array( 'minify.reject.files.css' ) ) ); ?></textarea><br />
-                    <span class="description"><?php _e( 'Always ignore the specified <acronym title="Cascading Style Sheet">CSS</acronym> files. Use relative paths. Omit: protocol, hostname, leading forward slash anduery strings.', 'w3-total-cache' ); ?></span>
+                    <span class="description"><?php _e( 'Always ignore the specified <acronym title="Cascading Style Sheet">CSS</acronym> files. Use relative paths. Omit: protocol, hostname, leading forward slash and query strings.', 'w3-total-cache' ); ?></span>
                 </td>
             </tr>
             <tr>
@@ -501,6 +523,13 @@ if ( $this->_config->get_string( 'minify.engine' ) == 'memcached' ) {
                               cols="40" rows="5"><?php echo esc_textarea( implode( "\r\n", $this->_config->get_array( 'minify.cache.files' ) ) ); ?></textarea><br />
                     <span class="description"><?php _e( 'Specify external files/libraries that should be combined.', 'w3-total-cache' ); ?></span>
                 </td>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    <?php $this->checkbox( 'minify.cache.files_regexp', false, '', true, null ); ?>
+                    <?php _e( 'Use Regular Expression for matching', 'w3-total-cache' ) ?><br />
+                    <span class="description"><?php _e( '', 'w3-total-cache' ); ?></span>
+                </th>
             </tr>
             <?php endif; ?>
         </table>

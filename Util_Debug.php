@@ -45,7 +45,7 @@ class Util_Debug {
 		$filename = $dir_path . '/' . $postfix . '/' . $module . '.log';
 		if ( !is_dir( dirname( $filename ) ) ) {
 
-			Util_File::mkdir_from( dirname( $filename ), $from_dir );
+			Util_File::mkdir_from_safe( dirname( $filename ), $from_dir );
 		}
 
 		return $filename;

@@ -524,7 +524,7 @@ class Util_PageUrls {
 		if ( isset( $GLOBALS['post'] ) && is_object( $GLOBALS['post'] ) ) {
 			$old_post = &$GLOBALS['post'];
 		} else {
-			$GLOBALS['post'] = new stdClass();
+			$GLOBALS['post'] = new \stdClass();
 			$old_post = null;
 		}
 

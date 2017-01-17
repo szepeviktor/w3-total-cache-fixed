@@ -5,11 +5,19 @@ namespace W3TC;
  * widget with stats
  */
 class UsageStatistics_Widget {
-	function init() {
+	private $enabled = false;
+
+	public function init() {
+		$c = Dispatcher::config();
+		$this->enabled = ( $c->get_boolean( 'stats.enabled' ) && 
+			Util_Environment::is_w3tc_pro( $c ) );
+
 		add_action( 'admin_print_styles-toplevel_page_w3tc_dashboard',
 			array( $this, 'admin_print_styles_w3tc_dashboard' ) );
-		add_action( 'admin_print_scripts-toplevel_page_w3tc_dashboard',
-			array( $this, 'admin_print_scripts_w3tc_dashboard' ) );
+
+		if ( $this->enabled )
+			add_action( 'admin_print_scripts-toplevel_page_w3tc_dashboard',
+				array( $this, 'admin_print_scripts_w3tc_dashboard' ) );
 
 		add_action( 'w3tc_widget_setup', array(
 				$this,
@@ -20,7 +28,7 @@ class UsageStatistics_Widget {
 
 
 
-	function w3tc_widget_setup() {
+	public function w3tc_widget_setup() {
 		Util_Widget::add( 'w3tc_usage_statistics',
 			'<div class="w3tc-widget-w3tc-logo"></div>' .
 			'<div class="w3tc-widget-text">' .
@@ -33,11 +41,11 @@ class UsageStatistics_Widget {
 
 
 
-	function widget_form() {
+	public function widget_form() {
 		$storage = new UsageStatistics_StorageReader();
 		$summary_promise = $storage->get_history_summary_promise();
-		$c = Dispatcher::config();
-		if ( $c->get_boolean( 'stats.enabled' ) && Util_Environment::is_w3tc_pro( $c ) )
+
+		if ( $this->enabled )
 			include  W3TC_DIR . '/UsageStatistics_Widget_View.php';
 		else
 			include  W3TC_DIR . '/UsageStatistics_Widget_View_Disabled.php';

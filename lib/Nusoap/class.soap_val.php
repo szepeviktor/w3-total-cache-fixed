@@ -101,8 +101,3 @@ class soapval extends nusoap_base {
 		return $this->value;
 	}
 }
-
-
-
-
-?>

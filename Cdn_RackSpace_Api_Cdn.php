@@ -81,8 +81,8 @@ class Cdn_RackSpace_Api_Cdn {
 			$url_base = $this->_access_region_descriptor['cdn.publicURL'];
 
 			$result = wp_remote_get( $url_base . $uri . '?format=json', array(
-					'headers' => 'X-Auth-Token: ' . $this->_access_token,
-					'sslcertificates' => dirname( __FILE__ ) . '/Cdn_RackSpace_Api_CaCert.pem'
+					'headers' => 'X-Auth-Token: ' . $this->_access_token
+					//'sslcertificates' => dirname( __FILE__ ) . '/Cdn_RackSpace_Api_CaCert.pem'
 				) );
 
 			$r = self::_decode_response_json( $result );
@@ -104,7 +104,7 @@ class Cdn_RackSpace_Api_Cdn {
 			$result = wp_remote_post( $url_base . $uri, array(
 					'headers' => $headers,
 					'body' => $body,
-					'sslcertificates' => dirname( __FILE__ ) . '/Cdn_RackSpace_Api_CaCert.pem',
+					//'sslcertificates' => dirname( __FILE__ ) . '/Cdn_RackSpace_Api_CaCert.pem',
 					'method' => 'PATCH'
 				) );
 
@@ -129,8 +129,8 @@ class Cdn_RackSpace_Api_Cdn {
 
 			$result = wp_remote_post( $url_base . $uri, array(
 					'headers' => $headers,
-					'body' => $body,
-					'sslcertificates' => dirname( __FILE__ ) . '/Cdn_RackSpace_Api_CaCert.pem'
+					'body' => $body
+					//'sslcertificates' => dirname( __FILE__ ) . '/Cdn_RackSpace_Api_CaCert.pem'
 				) );
 
 			$r = self::_decode_response( $result );
@@ -154,7 +154,7 @@ class Cdn_RackSpace_Api_Cdn {
 
 			$result = wp_remote_post( $url_base . $uri, array(
 					'headers' => $headers,
-					'sslcertificates' => dirname( __FILE__ ) . '/Cdn_RackSpace_Api_CaCert.pem',
+					//'sslcertificates' => dirname( __FILE__ ) . '/Cdn_RackSpace_Api_CaCert.pem',
 					'method' => 'DELETE'
 				) );
 
@@ -164,7 +164,7 @@ class Cdn_RackSpace_Api_Cdn {
 		}
 
 		$new_object = call_user_func( $this->_new_access_required );
-		return $new_object->_wp_remote_delete( $uri, $body );
+		return $new_object->_wp_remote_delete( $uri, array() );
 	}
 
 
@@ -176,6 +176,12 @@ class Cdn_RackSpace_Api_Cdn {
 		if ( empty( $result['body'] ) )
 			$response_json = array();
 		else {
+			if ( $result['body'] == 'Unauthorized' )
+				return array( 
+					'response_json' => array(), 
+					'auth_required' => true 
+				);
+
 			$response_json = @json_decode( $result['body'], true );
 			if ( is_null( $response_json ) )
 				throw new \Exception(
@@ -189,7 +195,10 @@ class Cdn_RackSpace_Api_Cdn {
 			$result['response']['code'] != '204' )
 			throw new \Exception( $result['body'] );
 
-		return array( 'response_json' => $response_json, 'auth_required' => false );
+		return array( 
+			'response_json' => $response_json, 
+			'auth_required' => false 
+		);
 	}
 
 
@@ -202,6 +211,13 @@ class Cdn_RackSpace_Api_Cdn {
 			$result['response']['code'] != '201' &&
 			$result['response']['code'] != '202' &&
 			$result['response']['code'] != '204' ) {
+
+			if ( $result['response']['message'] == 'Unauthorized' )
+				return array( 
+					'response_json' => array(), 
+					'auth_required' => true 
+				);
+			
 			// try to decode response
 			$response_json = @json_decode( $result['body'], true );
 			if ( is_null( $response_json ) ||

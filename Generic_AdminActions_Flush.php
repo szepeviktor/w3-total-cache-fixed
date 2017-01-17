@@ -102,9 +102,7 @@ class Generic_AdminActions_Flush {
 	 * @return void
 	 */
 	function w3tc_flush_pgcache() {
-		$pgcacheflush = Dispatcher::component( 'PgCache_Flush' );
-		$pgcacheflush->flush();
-		$pgcacheflush->flush_post_cleanup();
+		w3tc_flush_posts();
 
 		$state_note = Dispatcher::config_state_note();
 		$state_note->set( 'common.show_note.flush_posts_needed', false );
@@ -247,7 +245,9 @@ class Generic_AdminActions_Flush {
 			$state_note->set( 'common.show_note.flush_posts_needed', false );
 			$state_note->set( 'common.show_note.plugins_updated', false );
 
-			$this->flush_pgcache();
+			$pgcacheflush = Dispatcher::component( 'PgCache_Flush' );
+			$pgcacheflush->flush();
+			$pgcacheflush->flush_post_cleanup();
 		}
 
 		if ( $this->_config->get_string( 'dbcache.engine' ) == $type && $this->_config->get_boolean( 'dbcache.enabled' ) ) {

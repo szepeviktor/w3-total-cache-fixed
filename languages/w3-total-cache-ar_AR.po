@@ -2934,7 +2934,7 @@ msgid "Specify user agents that will never receive minified content."
 msgstr ""
 
 #: inc/options/minify.php:485
-msgid "Include external files/libaries:"
+msgid "Include external files/libraries:"
 msgstr ""
 
 #: inc/options/minify.php:490

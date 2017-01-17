@@ -6,7 +6,7 @@
 return array(
 	'html|htm' => 'text/html',
 	'rtf|rtx' => 'text/richtext',
-	'svg|svgz' => 'image/svg+xml',
+	'svg' => 'image/svg+xml',
 	'txt' => 'text/plain',
 	'xsd' => 'text/xsd',
 	'xsl' => 'text/xsl',

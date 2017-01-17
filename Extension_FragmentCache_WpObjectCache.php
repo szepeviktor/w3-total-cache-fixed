@@ -520,8 +520,8 @@ class Extension_FragmentCache_WpObjectCache {
 					'servers' => $this->_config->get_array( array( 'fragmentcache', 'memcached.servers' ) ),
 					'persistent' => $this->_config->get_boolean( array( 'fragmentcache', 'memcached.persistent' ) ),
 					'aws_autodiscovery' => $this->_config->get_boolean( array( 'fragmentcache', 'memcached.aws_autodiscovery' ) ),
-					'username' => $this->_config->get_boolean( array( 'fragmentcache', 'memcached.username' ) ),
-					'password' => $this->_config->get_boolean( array( 'fragmentcache', 'memcached.password' ) )
+					'username' => $this->_config->get_string( array( 'fragmentcache', 'memcached.username' ) ),
+					'password' => $this->_config->get_string( array( 'fragmentcache', 'memcached.password' ) )
 				);
 				break;
 
@@ -529,8 +529,8 @@ class Extension_FragmentCache_WpObjectCache {
 				$engineConfig = array(
 					'servers' => $this->_config->get_array( array( 'fragmentcache', 'redis.servers' ) ),
 					'persistent' => $this->_config->get_boolean( array( 'fragmentcache', 'redis.persistent' ) ),
-					'dbid' => $this->_config->get_boolean( array( 'fragmentcache', 'redis.dbid' ) ),
-					'password' => $this->_config->get_boolean( array( 'fragmentcache', 'redis.password' ) )
+					'dbid' => $this->_config->get_integer( array( 'fragmentcache', 'redis.dbid' ) ),
+					'password' => $this->_config->get_string( array( 'fragmentcache', 'redis.password' ) )
 				);
 				break;
 

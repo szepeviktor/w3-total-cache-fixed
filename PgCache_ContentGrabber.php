@@ -237,7 +237,7 @@ class PgCache_ContentGrabber {
 		if ( !$this->_set_extract_page_key( $mobile_group, $referrer_group,
 				$encryption, $compression, '', $with_filter ) ) {
 			$data = null;
-		} else { 
+		} else {
 			$data = $cache->get_with_old( $this->_page_key, $group );
 			list( $data, $this->_old_exists ) = $data;
 		}
@@ -246,11 +246,11 @@ class PgCache_ContentGrabber {
 		 * Try to get uncompressed version of cache
 		 */
 		if ( $compression && !$data ) {
-			if ( $this->_set_extract_page_key( $mobile_group,
+			if ( !$this->_set_extract_page_key( $mobile_group,
 					$referrer_group, $encryption, false, '', $with_filter ) ) {
 				$data = null;
 			} else {
-				$data = $cache->get_with_old( $this->_page_key );
+				$data = $cache->get_with_old( $this->_page_key, $group );
 				list( $data, $this->_old_exists ) = $data;
 				$compression = false;
 			}
@@ -309,7 +309,6 @@ class PgCache_ContentGrabber {
 		$headers = $data['headers'];
 		$content = $data['content'];
 		$has_dynamic = isset( $data['has_dynamic'] ) && $data['has_dynamic'];
-
 		$etag = md5( $content );
 
 		if ( $has_dynamic ) {
@@ -370,15 +369,32 @@ class PgCache_ContentGrabber {
 		if ( $can_cache ) {
 			$buffer = $this->_maybe_save_cached_result( $buffer, $has_dynamic );
 		} else {
+			if ( $has_dynamic ) {
+				// send common headers since output will be compressed
+				$compression_header = $this->_get_compression();
+				if ( defined( 'W3TC_PAGECACHE_OUTPUT_COMPRESSION_OFF' ) )
+					$compression_header = false;
+				$headers = $this->_get_common_headers( $compression_header );
+				$this->_headers( $headers );
+			}
+
+			// remove cached entries if its not cached anymore
 			if ( $this->cache_reject_reason ) {
 				if ( $this->_old_exists ) {
-					/**
-					 *
-					 *
-					 * @var W3_Cache_File_Generic $cache
-					 */
 					$cache = $this->_get_cache();
-					$cache->hard_delete( $this->_page_key );
+
+					$mobile_group = $this->_get_mobile_group();
+					$referrer_group = $this->_get_referrer_group();
+					$encryption = $this->_get_encryption();
+					$compressions_to_store = $this->_get_compressions();
+					$content_type = '';
+
+					foreach ( $compressions_to_store as $_compression ) {
+						$_page_key = $this->_get_page_key( $mobile_group,
+							$referrer_group, $encryption, $_compression,
+							$content_type );
+						$cache->hard_delete( $_page_key );
+					}
 				}
 			}
 		}
@@ -406,7 +422,7 @@ class PgCache_ContentGrabber {
 	 *
 	 * @return void
 	 */
-	function shutdown() {
+	public function shutdown() {
 		$compression = $this->_get_compression();
 
 		// Parse dynamic content
@@ -421,7 +437,7 @@ class PgCache_ContentGrabber {
 	 *
 	 * @return boolean
 	 */
-	function _can_cache() {
+	private function _can_cache() {
 		/**
 		 * Don't cache in console mode
 		 */
@@ -439,6 +455,12 @@ class PgCache_ContentGrabber {
 
 			return false;
 		}
+
+		if ( !$this->_config->get_boolean('pgcache.cache.ssl') && Util_Environment::is_https() ) {
+            $this->cache_reject_reason = 'SSL caching disabled';
+
+        	return false;
+        }
 
 		/**
 		 * Skip if posting
@@ -522,7 +544,7 @@ class PgCache_ContentGrabber {
 	 * @param string  $buffer
 	 * @return boolean
 	 */
-	function _can_cache2( $buffer ) {
+	private function _can_cache2( $buffer ) {
 		/**
 		 * Skip if caching is disabled
 		 */
@@ -613,8 +635,8 @@ class PgCache_ContentGrabber {
 				'servers' => $this->_config->get_array( 'pgcache.memcached.servers' ),
 				'persistent' => $this->_config->get_boolean( 'pgcache.memcached.persistent' ),
 				'aws_autodiscovery' => $this->_config->get_boolean( 'pgcache.memcached.aws_autodiscovery' ),
-				'username' => $this->_config->get_boolean( 'pgcache.memcached.username' ),
-				'password' => $this->_config->get_boolean( 'pgcache.memcached.password' )
+				'username' => $this->_config->get_string( 'pgcache.memcached.username' ),
+				'password' => $this->_config->get_string( 'pgcache.memcached.password' )
 			);
 			break;
 
@@ -622,8 +644,8 @@ class PgCache_ContentGrabber {
 			$engineConfig = array(
 				'servers' => $this->_config->get_array( 'pgcache.redis.servers' ),
 				'persistent' => $this->_config->get_boolean( 'pgcache.redis.persistent' ),
-				'dbid' => $this->_config->get_boolean( 'pgcache.redis.dbid' ),
-				'password' => $this->_config->get_boolean( 'pgcache.redis.password' )
+				'dbid' => $this->_config->get_integer( 'pgcache.redis.dbid' ),
+				'password' => $this->_config->get_string( 'pgcache.redis.password' )
 			);
 			break;
 
@@ -656,8 +678,8 @@ class PgCache_ContentGrabber {
 					'servers' => $this->_config->get_array( 'pgcache.memcached.servers' ),
 					'persistent' => $this->_config->get_boolean( 'pgcache.memcached.persistent' ),
 					'aws_autodiscovery' => $this->_config->get_boolean( 'pgcache.memcached.aws_autodiscovery' ),
-					'username' => $this->_config->get_boolean( 'pgcache.memcached.username' ),
-					'password' => $this->_config->get_boolean( 'pgcache.memcached.password' )
+					'username' => $this->_config->get_string( 'pgcache.memcached.username' ),
+					'password' => $this->_config->get_string( 'pgcache.memcached.password' )
 				);
 				break;
 
@@ -665,8 +687,8 @@ class PgCache_ContentGrabber {
 				$engineConfig = array(
 					'servers' => $this->_config->get_array( 'pgcache.redis.servers' ),
 					'persistent' => $this->_config->get_boolean( 'pgcache.redis.persistent' ),
-					'dbid' => $this->_config->get_boolean( 'pgcache.redis.dbid' ),
-					'password' => $this->_config->get_boolean( 'pgcache.redis.password' )
+					'dbid' => $this->_config->get_integer( 'pgcache.redis.dbid' ),
+					'password' => $this->_config->get_string( 'pgcache.redis.password' )
 				);
 				break;
 
@@ -944,7 +966,9 @@ class PgCache_ContentGrabber {
 			false
 		);
 
-		if ( $this->_config->get_boolean( 'browsercache.enabled' ) && $this->_config->get_boolean( 'browsercache.html.compression' ) && function_exists( 'gzencode' ) ) {
+		if ( $this->_config->get_boolean( 'browsercache.enabled' ) &&
+			$this->_config->get_boolean( 'browsercache.html.compression' ) &&
+			function_exists( 'gzencode' ) ) {
 			$compressions[] = 'gzip';
 		}
 
@@ -957,7 +981,8 @@ class PgCache_ContentGrabber {
 	 * @return array
 	 */
 	function _get_response_headers() {
-		$headers = array();
+		$headers_kv = array();
+		$headers_plain = array();
 
 		if ( function_exists( 'headers_list' ) ) {
 			$headers_list = headers_list();
@@ -966,17 +991,24 @@ class PgCache_ContentGrabber {
 					$pos = strpos( $header, ':' );
 					if ( $pos ) {
 						$header_name = substr( $header, 0, $pos );
-						$header_value = substr( $header, $pos+1 );
+						$header_value = substr( $header, $pos + 1 );
 					} else {
 						$header_name = $header;
 						$header_value = '';
 					}
-					$headers[$header_name] = $header_value;
+					$headers_kv[$header_name] = $header_value;
+					$headers_plain[] = array(
+						'name' => $header_name,
+						'value' => $header_value
+					);
 				}
 			}
 		}
 
-		return $headers;
+		return array(
+			'kv' => $headers_kv,
+			'plain' => $headers_plain
+		);
 	}
 
 	/**
@@ -1010,13 +1042,34 @@ class PgCache_ContentGrabber {
 			$this->_config->get_array( 'pgcache.cache.headers' )
 		);
 
-		if ( function_exists( 'http_response_code' ) )   // php5.3 compatibility
+		if ( function_exists( 'http_response_code' ) ) {   // php5.3 compatibility
 			$data_headers['Status-Code'] = http_response_code();
+		}
 
-		foreach ( $response_headers as $header_name => $header_value ) {
+		$repeating_headers = array(
+			'link',
+			'cookie',
+			'set-cookie'
+		);
+		$repeating_headers = apply_filters( 'w3tc_repeating_headers',
+			$repeating_headers );
+
+		foreach ( $response_headers as $i ) {
+			$header_name = $i['name'];
+			$header_value = $i['value'];
+
 			foreach ( $cache_headers as $cache_header_name ) {
 				if ( strcasecmp( $header_name, $cache_header_name ) == 0 ) {
-					$data_headers[$header_name] = $header_value;
+					$header_name_lo = strtolower( $header_name );
+					if ( in_array($header_name_lo, $repeating_headers) ) {
+						// headers may repeat
+						$data_headers[] = array(
+							'n' => $header_name,
+							'v' => $header_value
+						);
+					} else {
+						$data_headers[$header_name] = $header_value;
+					}
 				}
 			}
 		}
@@ -1160,11 +1213,13 @@ class PgCache_ContentGrabber {
 
 			$headers = $this->_get_response_headers();
 
-			if ( count( $headers ) ) {
+			if ( count( $headers['plain'] ) ) {
 				$strings[] = "Header info:";
 
-				foreach ( $headers as $header_name => $header_value ) {
-					$strings[] = sprintf( "%s%s", str_pad( $header_name . ': ', 20 ), Util_Content::escape_comment( $header_value ) );
+				foreach ( $headers['plain'] as $i ) {
+					$strings[] = sprintf( "%s%s",
+						str_pad( $i['name'] . ': ', 20 ),
+						Util_Content::escape_comment( $i['value'] ) );
 				}
 			}
 		}
@@ -1182,17 +1237,28 @@ class PgCache_ContentGrabber {
 		if ( headers_sent() )
 			return false;
 
-		// status first
-		if ( isset( $headers['Status'] ) )
-			@header( $headers['Status'] );
-		else if ( isset( $headers['Status-Code'] ) &&
-				function_exists( 'http_response_code' ) )   // php5.3 compatibility)
-				@http_response_code( $headers['Status-Code'] );
-
-			foreach ( $headers as $name => $value ) {
-				if ( $name != 'Status' && $name != 'Status-Code' )
-					@header( $name . ': ' . $value );
+		$repeating = array();
+		// headers are sent as name->value and array(n=>, v=>)
+		// to support repeating headers
+		foreach ( $headers as $name0 => $value0 ) {
+			if ( isset( $value0['n'] ) ) {
+				$name = $value0['n'];
+				$value = $value0['v'];
+			} else {
+				$name = $name0;
+				$value = $value0;
 			}
+
+			if ( $name == 'Status' ) {
+				@header( $headers['Status'] );
+			} elseif ( $name == 'Status-Code' ) {
+				if ( function_exists( 'http_response_code' ) )   // php5.3 compatibility)
+					@http_response_code( $headers['Status-Code'] );
+			} else {
+				@header( $name . ': ' . $value, !isset( $repeating[$name] ) );
+				$repeating[$name] = true;
+			}
+		}
 
 		return true;
 	}
@@ -1215,23 +1281,19 @@ class PgCache_ContentGrabber {
 		$bc_lifetime = $this->_config->get_integer(
 			'browsercache.html.lifetime' );
 
-		$expires = ( is_null( $time )? $curr_time: $time ) + $bc_lifetime;
+		$expires = ( is_null( $time ) ? $curr_time : $time ) + $bc_lifetime;
 		$max_age = ( $expires > $curr_time ? $expires - $curr_time : 0 );
 
 		if ( $is_404 ) {
 			/**
 			 * Add 404 header
 			 */
-			$headers = array_merge( $headers, array(
-					'Status' => 'HTTP/1.1 404 Not Found'
-				) );
+			$headers['Status'] = 'HTTP/1.1 404 Not Found';
 		} elseif ( ( !is_null( $time ) && $this->_check_modified_since( $time ) ) || $this->_check_match( $etag ) ) {
 			/**
 			 * Add 304 header
 			 */
-			$headers = array_merge( $headers, array(
-					'Status' => 'HTTP/1.1 304 Not Modified'
-				) );
+			$headers['Status'] = 'HTTP/1.1 304 Not Modified';
 
 			/**
 			 * Don't send content if it isn't modified
@@ -1242,89 +1304,88 @@ class PgCache_ContentGrabber {
 		if ( $this->_config->get_boolean( 'browsercache.enabled' ) ) {
 
 			if ( $this->_config->get_boolean( 'browsercache.html.last_modified' ) ) {
-				$headers = array_merge( $headers, array(
-						'Last-Modified' => Util_Content::http_date( $time )
-					) );
+				$headers['Last-Modified'] = Util_Content::http_date( $time );
 			}
 
 			if ( $this->_config->get_boolean( 'browsercache.html.expires' ) ) {
-				$headers = array_merge( $headers, array(
-						'Expires' => Util_Content::http_date( $expires )
-					) );
+				$headers['Expires'] = Util_Content::http_date( $expires );
 			}
 
 			if ( $this->_config->get_boolean( 'browsercache.html.cache.control' ) ) {
 				switch ( $this->_config->get_string( 'browsercache.html.cache.policy' ) ) {
 				case 'cache':
-					$headers = array_merge( $headers, array(
-							'Pragma' => 'public',
-							'Cache-Control' => 'public'
-						) );
+					$headers['Pragma'] = 'public';
+					$headers['Cache-Control'] = 'public';
 					break;
 
 				case 'cache_public_maxage':
-					$headers = array_merge( $headers, array(
-							'Pragma' => 'public',
-							'Cache-Control' => sprintf( 'max-age=%d, public', $max_age )
-						) );
+					$headers['Pragma'] = 'public';
+					$headers['Cache-Control'] = sprintf( 'max-age=%d, public', $max_age );
 					break;
 
 				case 'cache_validation':
-					$headers = array_merge( $headers, array(
-							'Pragma' => 'public',
-							'Cache-Control' => 'public, must-revalidate, proxy-revalidate'
-						) );
+					$headers['Pragma'] = 'public';
+					$headers['Cache-Control'] = 'public, must-revalidate, proxy-revalidate';
 					break;
 
 				case 'cache_noproxy':
-					$headers = array_merge( $headers, array(
-							'Pragma' => 'public',
-							'Cache-Control' => 'private, must-revalidate'
-						) );
+					$headers['Pragma'] = 'public';
+					$headers['Cache-Control'] = 'private, must-revalidate';
 					break;
 
 				case 'cache_maxage':
-					$headers = array_merge( $headers, array(
-							'Pragma' => 'public',
-							'Cache-Control' => sprintf( 'max-age=%d, public, must-revalidate, proxy-revalidate', $max_age )
-						) );
+					$headers['Pragma'] = 'public';
+					$headers['Cache-Control'] = sprintf( 'max-age=%d, public, must-revalidate, proxy-revalidate', $max_age );
 					break;
 
 				case 'no_cache':
-					$headers = array_merge( $headers, array(
-							'Pragma' => 'no-cache',
-							'Cache-Control' => 'max-age=0, private, no-store, no-cache, must-revalidate'
-						) );
+					$headers['Pragma'] = 'no-cache';
+					$headers['Cache-Control'] = 'max-age=0, private, no-store, no-cache, must-revalidate';
 					break;
 				}
 			}
 
 			if ( $this->_config->get_boolean( 'browsercache.html.etag' ) ) {
-				$headers = array_merge( $headers, array(
-						'ETag' => '"' . $etag . '"'
-					) );
-			}
-
-			if ( $this->_config->get_boolean( 'browsercache.html.w3tc' ) ) {
-				$headers = array_merge( $headers, array(
-						'X-Powered-By' => Util_Environment::w3tc_header()
-					) );
+				$headers['ETag'] = '"' . $etag . '"';
 			}
 		}
 
-		$vary ='';
+
+		$headers = array_merge( $headers,
+			$this->_get_common_headers( $compression ) );
+
+		/**
+		 * Send headers to client
+		 */
+		$result = $this->_headers( $headers );
+
+		if ( $exit )
+			exit();
+
+		return $result;
+	}
+
+	/**
+	 * Returns headers to send regardless is page caching is active
+	 */
+	function _get_common_headers( $compression ) {
+		$headers = array();
+
+		if ( $this->_config->get_boolean( 'browsercache.enabled' ) ) {
+			if ( $this->_config->get_boolean( 'browsercache.html.w3tc' ) ) {
+				$headers['X-Powered-By'] = Util_Environment::w3tc_header();
+			}
+		}
+
+		$vary = '';
 		//compressed && UAG
 		if ( $compression && $this->_get_mobile_group() ) {
 			$vary = 'Accept-Encoding,User-Agent,Cookie';
-			$headers = array_merge( $headers, array(
-					'Content-Encoding' => $compression
-				) );
+			$headers['Content-Encoding'] = $compression;
 			//compressed
 		} elseif ( $compression ) {
 			$vary = 'Accept-Encoding';
-			$headers = array_merge( $headers, array(
-					'Content-Encoding' => $compression
-				) );
+			$headers['Content-Encoding'] = $compression;
 			//uncompressed && UAG
 		} elseif ( $this->_get_mobile_group() ) {
 			$vary = 'User-Agent,Cookie';
@@ -1342,28 +1403,17 @@ class PgCache_ContentGrabber {
 		 * Add vary header
 		 */
 		if ( $vary )
-			$headers = array_merge( $headers, array(
-					'Vary' => $vary ) );
+			$headers['Vary'] = $vary;
 
 		/**
 		 * Disable caching for preview mode
 		 */
 		if ( Util_Environment::is_preview_mode() ) {
-			$headers = array_merge( $headers, array(
-					'Pragma' => 'private',
-					'Cache-Control' => 'private'
-				) );
+			$headers['Pragma'] = 'private';
+			$headers['Cache-Control'] = 'private';
 		}
 
-		/**
-		 * Send headers to client
-		 */
-		$result = $this->_headers( $headers );
-
-		if ( $exit )
-			exit();
-
-		return $result;
+		return $headers;
 	}
 
 	/**
@@ -1614,9 +1664,9 @@ class PgCache_ContentGrabber {
 		$content_type = '';
 		$is_404 = ( function_exists( 'is_404' ) ? is_404() : false );
 		$response_headers = $this->_get_response_headers();
-		$headers = $this->_get_cached_headers( $response_headers );
+		$headers = $this->_get_cached_headers( $response_headers['plain'] );
 
-		if ( !empty( $response_headers['Content-Encoding'] ) ) {
+		if ( !empty( $response_headers['kv']['Content-Encoding'] ) ) {
 			$this->cache_reject_reason = 'Response is compressed';
 			return $buffer;
 		}
@@ -1624,7 +1674,7 @@ class PgCache_ContentGrabber {
 		if ( $this->_enhanced_mode ) {
 			// redirect issued, if we have some old cache entries
 			// they will be turned into fresh files and catch further requests
-			if ( isset( $response_headers['Location'] ) ) {
+			if ( isset( $response_headers['kv']['Location'] ) ) {
 				foreach ( $compressions_to_store as $_compression ) {
 					$_page_key = $this->_get_page_key( $mobile_group,
 						$referrer_group, $encryption, $_compression,
@@ -1643,8 +1693,8 @@ class PgCache_ContentGrabber {
 					'_check_rules_present'
 				) );
 
-			if ( isset( $headers['Content-Type'] ) )
-				$content_type = $headers['Content-Type'];
+			if ( isset( $response_headers['kv']['Content-Type'] ) )
+				$content_type = $response_headers['kv']['Content-Type'];
 		}
 
 		$time = time();

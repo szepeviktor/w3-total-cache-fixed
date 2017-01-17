@@ -107,11 +107,13 @@ class PgCache_Plugin_Admin {
 		if ( $start == 0 ) {
 			$crons = _get_cron_array();
 
-			foreach ( $crons as $timestamp => $hooks ) {
-				foreach ( $hooks as $hook => $keys ) {
-					foreach ( $keys as $key => $data ) {
-						if ( $hook == 'w3_pgcache_prime' && count( $data['args'] ) ) {
-							return;
+			if ( is_array( $crons ) ) {
+				foreach ( $crons as $timestamp => $hooks ) {
+					foreach ( $hooks as $hook => $keys ) {
+						foreach ( $keys as $key => $data ) {
+							if ( $hook == 'w3_pgcache_prime' && count( $data['args'] ) ) {
+								return;
+							}
 						}
 					}
 				}
@@ -144,10 +146,10 @@ class PgCache_Plugin_Admin {
 
 
 
-		// use empty user-agent since by default we use W3TC-powered by
+		// use 'WordPress' since by default we use W3TC-powered by
 		// which blocks caching
 		foreach ( $queue as $url )
-			Util_Http::get( $url, array( 'user-agent' => '' ) );
+			Util_Http::get( $url, array( 'user-agent' => 'WordPress' ) );
 	}
 
 	/**
@@ -221,7 +223,7 @@ class PgCache_Plugin_Admin {
 
 		// Make HTTP requests and prime cache
 		foreach ( $post_urls as $url ) {
-			$result = Util_Http::get( $url, array( 'user-agent' => '' ) );
+			$result = Util_Http::get( $url, array( 'user-agent' => 'WordPress' ) );
 			if ( is_wp_error( $result ) )
 				return false;
 		}
@@ -271,16 +273,15 @@ class PgCache_Plugin_Admin {
 		if ( $this->_config->get_string( 'pgcache.engine' ) == 'memcached' ) {
 			$summary['memcached_servers']['pgcache'] = array(
 				'servers' => $this->_config->get_array( 'pgcache.memcached.servers' ),
-				'username' => $this->_config->get_boolean( 'pgcache.memcached.username' ),
-				'password' => $this->_config->get_boolean( 'pgcache.memcached.password' ),
+				'username' => $this->_config->get_string( 'pgcache.memcached.username' ),
+				'password' => $this->_config->get_string( 'pgcache.memcached.password' ),
 				'name' => __( 'Page Cache', 'w3-total-cache' )
 			);
 		} elseif ( $this->_config->get_string( 'pgcache.engine' ) == 'redis' ) {
 			$summary['redis_servers']['pgcache'] = array(
 				'servers' => $this->_config->get_array( 'pgcache.redis.servers' ),
-				'username' => $this->_config->get_boolean( 'pgcache.redis.username' ),
-				'dbid' => $this->_config->get_boolean( 'pgcache.redis.dbid' ),
-				'password' => $this->_config->get_boolean( 'pgcache.redis.password' ),
+				'dbid' => $this->_config->get_integer( 'pgcache.redis.dbid' ),
+				'password' => $this->_config->get_string( 'pgcache.redis.password' ),
 				'name' => __( 'Page Cache', 'w3-total-cache' )
 			);
 		}

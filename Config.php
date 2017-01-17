@@ -21,6 +21,7 @@ class Config {
 
 	private $_md5;
 	private $_data;
+	private $_compiled;
 
 
 
@@ -34,7 +35,7 @@ class Config {
 			// problems with APC, ZendCache, and WSOD in a case of
 			// broken config file
 			$content = @file_get_contents( $filename );
-			$config = @json_decode( $content, true );
+			$config = @json_decode( substr( $content, 14 ), true );
 
 			if ( is_array( $config ) )
 				return $config;
@@ -50,7 +51,7 @@ class Config {
      * Stored in this class to limit class loading
      */
 	static public function util_config_filename( $blog_id, $preview ) {
-		$postfix = ( $preview ? '-preview' : '' ) . '.json';
+		$postfix = ( $preview ? '-preview' : '' ) . '.php';
 
 		if ( $blog_id <= 0 )
 			return W3TC_CONFIG_DIR . '/master' . $postfix;
@@ -65,8 +66,22 @@ class Config {
      * Stored in this class to limit class loading
      * v<0.9.5
      */
-	static public function util_config_filename_legacy( $blog_id, $preview ) {
+	static public function util_config_filename_legacy_v1( $blog_id, $preview ) {
 		$postfix = ( $preview ? '-preview' : '' ) . '.php';
+
+		if ( $blog_id <= 0 )
+			return W3TC_CONFIG_DIR . '/master' . $postfix;
+		else
+			return W3TC_CONFIG_DIR . '/' . sprintf( '%06d', $blog_id ) . $postfix;
+	}
+
+	/*
+     * Returns config filename
+     * Stored in this class to limit class loading
+     * v = 0.9.5 - 0.9.5.1
+     */
+	static public function util_config_filename_legacy_v2( $blog_id, $preview ) {
+		$postfix = ( $preview ? '-preview' : '' ) . '.json';
 
 		if ( $blog_id <= 0 )
 			return W3TC_CONFIG_DIR . '/master' . $postfix;
@@ -248,6 +263,10 @@ class Config {
 		return $this->_is_master;
 	}
 
+	public function is_compiled() {
+		return $this->_compiled;
+	}
+
 
 
 	/**
@@ -358,6 +377,7 @@ class Config {
 		}
 
 		$this->_data = $data;
+		$this->_compiled = false;
 	}
 
 
@@ -369,5 +389,6 @@ class Config {
 		$c = new ConfigCompiler( $this->_blog_id, $this->_preview );
 		$c->load();
 		$this->_data = $c->get_data();
+		$this->_compiled = true;
 	}
 }

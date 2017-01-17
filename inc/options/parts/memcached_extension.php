@@ -53,9 +53,9 @@ Util_Ui::config_item( array(
 		'control' => 'textbox',
 		'disabled' => ( Util_Installed::memcache_auth() ? null : true ),
 		'description' =>
-		__( 'Specify memcached username, when SASL authentication used', 'w3-total-cache' ) .
+		__( 'Specify memcached username, when <acronym title="Simple Authentication and Security Layer">SASL</acronym> authentication used', 'w3-total-cache' ) .
 		( Util_Installed::memcache_auth() ? '' :
-			__( '<br>Available when memcached extension installed, built with SASL, and memcached.use_sasl = 1 option is set in php.ini', 'w3-total-cache' )
+			__( '<br>Available when memcached extension installed, built with <acronym title="Simple Authentication and Security Layer">SASL</acronym>, and memcached.use_sasl = 1 option is set in php.ini', 'w3-total-cache' )
 		)
 	) );
 
@@ -65,7 +65,7 @@ Util_Ui::config_item( array(
 		'control' => 'textbox',
 		'disabled' => ( Util_Installed::memcache_auth() ? null : true ),
 		'description' =>
-		__( 'Specify memcached password, when SASL authentication used', 'w3-total-cache' )
+		__( 'Specify memcached password, when <acronym title="Simple Authentication and Security Layer">SASL</acronym> authentication used', 'w3-total-cache' )
 	) );
 
 ?>

@@ -806,4 +806,3 @@ class csstidy_optimise
         return $input_css;
     }
 }
-?>

@@ -212,6 +212,7 @@ class Extension_Genesis_Plugin {
 
 		foreach ( $reject_uri as $expr ) {
 			$expr = trim( $expr );
+			$expr = str_replace( '~', '\~', $expr );
 			if ( $expr != '' && preg_match( '~' . $expr . '~i', $this->_request_uri ) ) {
 				return true;
 			}

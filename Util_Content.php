@@ -3,12 +3,31 @@ namespace W3TC;
 
 class Util_Content {
 	/**
-	 * Check if content is HTML or XML
+	 * Check if content is HTML
 	 *
 	 * @param string  $content
 	 * @return boolean
 	 */
 	static public function is_html( $content ) {
+		$content = Util_Content::_is_html_prepare( $content );
+		return stripos( $content, '<html' ) === 0 || 
+			stripos( $content, '<!DOCTYPE' ) === 0;
+	}
+
+	/**
+	 * Check if content is HTML or XML
+	 *
+	 * @param string  $content
+	 * @return boolean
+	 */
+	static public function is_html_xml( $content ) {
+		$content = Util_Content::_is_html_prepare( $content );
+		return stripos( $content, '<?xml' ) === 0 || 
+			stripos( $content, '<html' ) === 0 || 
+			stripos( $content, '<!DOCTYPE' ) === 0;
+	}
+
+	static private function _is_html_prepare( $content ) {
 		if ( strlen( $content ) > 1000 ) {
 			$content = substr( $content, 0, 1000 );
 		}
@@ -18,8 +37,7 @@ class Util_Content {
 		}
 
 		$content = ltrim( $content, "\x00\x09\x0A\x0D\x20\xBB\xBF\xEF" );
-
-		return stripos( $content, '<?xml' ) === 0 || stripos( $content, '<html' ) === 0 || stripos( $content, '<!DOCTYPE' ) === 0;
+		return $content;
 	}
 
 	/**
@@ -30,8 +48,8 @@ class Util_Content {
 	 */
 	static public function can_print_comment( $buffer ) {
 		if ( function_exists( 'apply_filters' ) )
-			return apply_filters( 'w3tc_can_print_comment', Util_Content::is_html( $buffer ) && !defined( 'DOING_AJAX' ) );
-		return Util_Content::is_html( $buffer ) && !defined( 'DOING_AJAX' );
+			return apply_filters( 'w3tc_can_print_comment', Util_Content::is_html_xml( $buffer ) && !defined( 'DOING_AJAX' ) );
+		return Util_Content::is_html_xml( $buffer ) && !defined( 'DOING_AJAX' );
 	}
 
 

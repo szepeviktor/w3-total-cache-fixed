@@ -503,8 +503,6 @@ class Minify_MinifiedFileRequestHandler {
 		$result = array();
 		if ( is_array( $files ) && count( $files ) > 0 ) {
 			foreach ( $files as $file ) {
-				$file = Util_Environment::url_to_docroot_filename( $file );
-
 				if ( Util_Environment::is_url( $file ) ) {
 					$precached_file = $this->_precache_file( $file, $type );
 
@@ -514,6 +512,7 @@ class Minify_MinifiedFileRequestHandler {
 						Minify_Core::debug_error( sprintf( 'Unable to cache remote file: "%s"', $file ) );
 					}
 				} else {
+					$file = Util_Environment::url_to_docroot_filename( $file );
 					$path = Util_Environment::document_root() . '/' . $file;
 
 					if ( file_exists( $path ) ) {
@@ -549,7 +548,7 @@ class Minify_MinifiedFileRequestHandler {
 
 		$message = '<h1>W3TC Minify Error</h1>';
 
-		if ( $debug ) {
+		if ( $this->_config->get_boolean( 'minify.debug' ) ) {
 			$message .= sprintf( '<p>%s.</p>', $error );
 		} else {
 			$message .= '<p>Enable debug mode to see error message.</p>';
@@ -557,7 +556,7 @@ class Minify_MinifiedFileRequestHandler {
 
 		if ( $quiet ) {
 			return array(
-				'content' => array( 'content' => $message )
+				'content' => $message
 			);
 		}
 
@@ -586,11 +585,10 @@ class Minify_MinifiedFileRequestHandler {
 		$cache_path = sprintf( '%s/minify_%s.%s', Util_Environment::cache_blog_dir( 'minify' ), md5( $url ), $type );
 
 		if ( !file_exists( $cache_path ) || @filemtime( $cache_path ) < ( time() - $lifetime ) ) {
-
 			if ( !@is_dir( dirname( $cache_path ) ) ) {
-
-				Util_File::mkdir_from( dirname( $cache_path ), W3TC_CACHE_DIR );
+				Util_File::mkdir_from_safe( dirname( $cache_path ), W3TC_CACHE_DIR );
 			}
+
 			Util_Http::download( $url, $cache_path );
 		}
 
@@ -619,9 +617,11 @@ class Minify_MinifiedFileRequestHandler {
 	 * @return object
 	 */
 	function _get_cache() {
-		static $cache = array();
+		static $cache = null;
 
-		if ( !isset( $cache[0] ) ) {
+		if ( is_null( $cache ) ) {
+			$inner_cache = null;
+
 			switch ( $this->_config->get_string( 'minify.engine' ) ) {
 			case 'memcached':
 				$config = array(
@@ -632,16 +632,14 @@ class Minify_MinifiedFileRequestHandler {
 					'servers' => $this->_config->get_array( 'minify.memcached.servers' ),
 					'persistent' => $this->_config->get_boolean( 'minify.memcached.persistent' ),
 					'aws_autodiscovery' => $this->_config->get_boolean( 'minify.memcached.aws_autodiscovery' ),
-					'username' => $this->_config->get_boolean( 'minify.memcached.username' ),
-					'password' => $this->_config->get_boolean( 'minify.memcached.password' )
+					'username' => $this->_config->get_string( 'minify.memcached.username' ),
+					'password' => $this->_config->get_string( 'minify.memcached.password' )
 				);
 				if ( class_exists( 'Memcached' ) ) {
-					$w3_cache = new Cache_Memcached( $config );
-				} else if ( class_exists( 'Memcache' ) ) {
-						$w3_cache = new Cache_Memcache( $config );
-					}
-
-				$cache[0] = new \Minify_Cache_W3TCDerived( $w3_cache );
+					$inner_cache = new Cache_Memcached( $config );
+				} elseif ( class_exists( 'Memcache' ) ) {
+					$inner_cache = new Cache_Memcache( $config );
+				}
 				break;
 
 			case 'redis':
@@ -652,16 +650,11 @@ class Minify_MinifiedFileRequestHandler {
 					'module' => 'minify',
 					'servers' => $this->_config->get_array( 'minify.redis.servers' ),
 					'persistent' => $this->_config->get_boolean( 'minify.redis.persistent' ),
-					'dbid' => $this->_config->get_boolean( 'minify.redis.dbid' ),
-					'password' => $this->_config->get_boolean( 'minify.redis.password' )
+					'dbid' => $this->_config->get_integer( 'minify.redis.dbid' ),
+					'password' => $this->_config->get_string( 'minify.redis.password' )
 				);
-				if ( class_exists( 'Memcached' ) ) {
-					$w3_cache = new Cache_Memcached( $config );
-				} else if ( class_exists( 'Memcache' ) ) {
-						$w3_cache = new Cache_Memcache( $config );
-					}
+				$inner_cache = new Cache_Redis( $config );
 
-				$cache[0] = new \Minify_Cache_W3TCDerived( $w3_cache );
 				break;
 
 			case 'apc':
@@ -672,12 +665,11 @@ class Minify_MinifiedFileRequestHandler {
 					'module' => 'minify'
 				);
 
-				if ( function_exists( 'apcu_store' ) )
-					$w3_cache = new Cache_Apcu( $config );
-				else if ( function_exists( 'apc_store' ) )
-						$w3_cache = new Cache_Apc( $config );
-
-					$cache[0] = new \Minify_Cache_W3TCDerived( $w3_cache );
+				if ( function_exists( 'apcu_store' ) ) {
+					$inner_cache = new Cache_Apcu( $config );
+				} elseif ( function_exists( 'apc_store' ) ) {
+					$inner_cache = new Cache_Apc( $config );
+				}
 				break;
 
 			case 'eaccelerator':
@@ -687,8 +679,7 @@ class Minify_MinifiedFileRequestHandler {
 					'host' =>  Util_Environment::host(),
 					'module' => 'minify'
 				);
-				$w3_cache = new Cache_Eaccelerator( $config );
-				$cache[0] = new \Minify_Cache_W3TCDerived( $w3_cache );
+				$inner_cache = new Cache_Eaccelerator( $config );
 				break;
 
 			case 'xcache':
@@ -698,8 +689,7 @@ class Minify_MinifiedFileRequestHandler {
 					'host' =>  Util_Environment::host(),
 					'module' => 'minify'
 				);
-				$w3_cache = new Cache_Xcache( $config );
-				$cache[0] = new \Minify_Cache_W3TCDerived( $w3_cache );
+				$inner_cache = new Cache_Xcache( $config );
 				break;
 
 			case 'wincache':
@@ -709,13 +699,16 @@ class Minify_MinifiedFileRequestHandler {
 					'host' =>  Util_Environment::host(),
 					'module' => 'minify'
 				);
-				$w3_cache = new Cache_Wincache( $config );
-				$cache[0] = new \Minify_Cache_W3TCDerived( $w3_cache );
+				$inner_cache = new Cache_Wincache( $config );
 				break;
+			}
 
-			case 'file':
-			default:
-				$cache[0] = new \Minify_Cache_File(
+			if ( !is_null( $inner_cache ) ) {
+				$cache = new \Minify_Cache_W3TCDerived( $inner_cache );
+			} else {
+				// case 'file' or fallback
+
+				$cache = new \Minify_Cache_File(
 					Util_Environment::cache_blog_minify_dir(),
 					array(
 						'.htaccess',
@@ -726,11 +719,10 @@ class Minify_MinifiedFileRequestHandler {
 					$this->_config->get_integer( 'timelimit.cache_flush' ),
 					( Util_Environment::blog_id() == 0 ? W3TC_CACHE_MINIFY_DIR : null )
 				);
-				break;
 			}
 		}
 
-		return $cache[0];
+		return $cache;
 	}
 
 	/**

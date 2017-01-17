@@ -293,7 +293,7 @@ class Cdn_Plugin {
 	 * @return string
 	 */
 	function ob_callback( $buffer ) {
-		if ( $buffer != '' && Util_Content::is_html( $buffer ) ) {
+		if ( $buffer != '' && Util_Content::is_html_xml( $buffer ) ) {
 			if ( $this->can_cdn2( $buffer ) ) {
 				$srcset_helper = new _Cdn_Plugin_ContentFilter();
 				$buffer = $srcset_helper->replace_all_links( $buffer );
@@ -613,6 +613,8 @@ class Cdn_Plugin {
 
 		foreach ( $reject_uri as $expr ) {
 			$expr = trim( $expr );
+			$expr = str_replace( '~', '\~', $expr );
+
 			if ( $expr != '' && preg_match( '~' . $expr . '~i', $_SERVER['REQUEST_URI'] ) ) {
 				return false;
 			}
@@ -630,7 +632,7 @@ class Cdn_Plugin {
 	 * @return boolean
 	 */
 	private function _check_logged_in_role_allowed() {
-		global $current_user;
+		$current_user = wp_get_current_user();
 
 		if ( !is_user_logged_in() )
 			return true;
@@ -994,27 +996,49 @@ class _Cdn_Plugin_ContentFilter {
 
 		if ( $this->_config->get_boolean( 'cdn.custom.enable' ) ) {
 			$masks = $this->_config->get_array( 'cdn.custom.files' );
-			$masks = array_map( array( '\W3TC\Cdn_Util', 'replace_folder_placeholders' ), $masks );
+			$masks = array_map( array( '\W3TC\Cdn_Util', 'replace_folder_placeholders_to_uri' ), $masks );
 			$masks = array_map( array( '\W3TC\Util_Environment', 'parse_path' ), $masks );
 
 			if ( count( $masks ) ) {
-				$mask_regexps = array();
+				$custom_regexps_urls = array();
+				$custom_regexps_uris = array();
+				$custom_regexps_docroot_related = array();
 
 				foreach ( $masks as $mask ) {
-					if ( $mask != '' ) {
-						$mask = Util_Environment::normalize_file( $mask );
-						$mask_regexps[] = Cdn_Util::get_regexp_by_mask( $mask );
+					if ( !empty( $mask ) ) {
+						if ( Util_Environment::is_url( $mask ) ) {
+							$custom_regexps_urls[] = Cdn_Util::get_regexp_by_mask( $mask );
+						} elseif ( substr( $mask, 0, 1 ) == '/' ) {   // uri
+							$custom_regexps_uris[] = Cdn_Util::get_regexp_by_mask( $mask );
+						} else {
+							$file = Util_Environment::normalize_path( $mask );   // \ -> backspaces
+							$file = str_replace( Util_Environment::site_root(), '', $file );
+							$file = ltrim( $file, '/' );
+
+							$custom_regexps_docroot_related[] = Cdn_Util::get_regexp_by_mask( $mask );
+						}
 					}
 				}
 
-				$regexps[] = '~(["\'(=])\s*((' . $domain_url_regexp .
-					')?(' . Util_Environment::preg_quote( $site_path ) .
-					'(' . implode( '|', $mask_regexps ) . ')([^"\'() >]*)))~i';
-				if ( $site_domain_url_regexp )
-					$regexps[] = '~(["\'(=])\s*((' .
-						$site_domain_url_regexp . ')?(' .
-						Util_Environment::preg_quote( $site_path ) . '(' .
-						implode( '|', $mask_regexps ) . ')([^"\'() >]*)))~i';
+				if ( count( $custom_regexps_urls ) > 0 ) {
+					foreach ( $custom_regexps_urls as $regexp )
+						$regexps[] = '~(["\'(=])\s*((' . $regexp . ')?(()([^"\'() >]*)))~i';
+				}
+				if ( count( $custom_regexps_uris ) > 0 ) {
+					$regexps[] = '~(["\'(=])\s*((' . $domain_url_regexp .
+						')?((' . implode( '|', $custom_regexps_uris ) . ')([^"\'() >]*)))~i';
+				}
+
+				if ( count( $custom_regexps_docroot_related ) > 0) {
+					$regexps[] = '~(["\'(=])\s*((' . $domain_url_regexp .
+						')?(' . Util_Environment::preg_quote( $site_path ) .
+						'(' . implode( '|', $custom_regexps_docroot_related ) . ')([^"\'() >]*)))~i';
+					if ( $site_domain_url_regexp )
+						$regexps[] = '~(["\'(=])\s*((' .
+							$site_domain_url_regexp . ')?(' .
+							Util_Environment::preg_quote( $site_path ) . '(' .
+							implode( '|', $custom_regexps_docroot_related ) . ')([^"\'() >]*)))~i';
+				}
 			}
 		}
 

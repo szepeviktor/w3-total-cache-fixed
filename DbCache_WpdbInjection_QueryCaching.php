@@ -280,8 +280,8 @@ class DbCache_WpdbInjection_QueryCaching extends DbCache_WpdbInjection {
 					'servers' => $this->_config->get_array( 'dbcache.memcached.servers' ),
 					'persistent' => $this->_config->get_boolean( 'dbcache.memcached.persistent' ),
 					'aws_autodiscovery' => $this->_config->get_boolean( 'dbcache.memcached.aws_autodiscovery' ),
-					'username' => $this->_config->get_boolean( 'dbcache.memcached.username' ),
-					'password' => $this->_config->get_boolean( 'dbcache.memcached.password' )
+					'username' => $this->_config->get_string( 'dbcache.memcached.username' ),
+					'password' => $this->_config->get_string( 'dbcache.memcached.password' )
 				);
 				break;
 
@@ -289,8 +289,8 @@ class DbCache_WpdbInjection_QueryCaching extends DbCache_WpdbInjection {
 				$engineConfig = array(
 					'servers' => $this->_config->get_array( 'dbcache.redis.servers' ),
 					'persistent' => $this->_config->get_boolean( 'dbcache.redis.persistent' ),
-					'dbid' => $this->_config->get_boolean( 'dbcache.redis.dbid' ),
-					'password' => $this->_config->get_boolean( 'dbcache.redis.password' )
+					'dbid' => $this->_config->get_integer( 'dbcache.redis.dbid' ),
+					'password' => $this->_config->get_string( 'dbcache.redis.password' )
 				);
 				break;
 
@@ -363,7 +363,8 @@ class DbCache_WpdbInjection_QueryCaching extends DbCache_WpdbInjection {
 		$ajax_skip = false;
 		if ( defined( 'DOING_AJAX' ) ) {
 			// wp_admin is always defined for ajax requests, check by referrer
-			if ( strpos( $_SERVER['HTTP_REFERER'], '/wp-admin/' ) === false )
+			if ( isset( $_SERVER['HTTP_REFERER'] ) && 
+				strpos( $_SERVER['HTTP_REFERER'], '/wp-admin/' ) === false )
 				$ajax_skip = true;
 		}
 

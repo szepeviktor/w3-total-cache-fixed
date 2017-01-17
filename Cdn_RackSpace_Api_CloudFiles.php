@@ -69,8 +69,8 @@ class Cdn_RackSpace_Api_CloudFiles {
 			$result = wp_remote_post( $url_base . $uri . '?format=json', array(
 					'headers' => $headers,
 					'body' => $body,
-					'sslcertificates' => dirname( __FILE__ ) .
-					'/Cdn_RackSpace_Api_CaCert.pem',
+					//'sslcertificates' => dirname( __FILE__ ) .
+					//'/Cdn_RackSpace_Api_CaCert.pem',
 					'timeout' => 120,
 					'method' => 'PUT'
 				) );
@@ -92,8 +92,8 @@ class Cdn_RackSpace_Api_CloudFiles {
 
 			$result = wp_remote_get( $url_base . $uri . '?format=json', array(
 					'headers' => array( 'X-Auth-Token' => $this->_access_token ),
-					'sslcertificates' => dirname( __FILE__ ) .
-					'/Cdn_RackSpace_Api_CaCert.pem',
+					//'sslcertificates' => dirname( __FILE__ ) .
+					//'/Cdn_RackSpace_Api_CaCert.pem',
 					'method' => 'HEAD'
 				) );
 
@@ -117,8 +117,8 @@ class Cdn_RackSpace_Api_CloudFiles {
 
 			$result = wp_remote_post( $url_base . $uri . '?format=json', array(
 					'headers' => array( 'X-Auth-Token' => $this->_access_token ),
-					'sslcertificates' => dirname( __FILE__ ) .
-					'/Cdn_RackSpace_Api_CaCert.pem',
+					//'sslcertificates' => dirname( __FILE__ ) .
+					//'/Cdn_RackSpace_Api_CaCert.pem',
 					'method' => 'DELETE'
 				) );
 
@@ -140,10 +140,17 @@ class Cdn_RackSpace_Api_CloudFiles {
 		if ( $result['response']['code'] != '200' &&
 			$result['response']['code'] != '201' &&
 			$result['response']['code'] != '202' &&
-			$result['response']['code'] != '204' )
+			$result['response']['code'] != '204' ) {
+
+			if ( $result['response']['message'] == 'Unauthorized' )
+				return array( 
+					'auth_required' => true 
+				);
+
 			throw new \Exception(
 				'Failed to reach API endpoint, got unexpected response ' .
 				$result['response']['message'] );
+		}
 
 		return array( 'auth_required' => false );
 	}

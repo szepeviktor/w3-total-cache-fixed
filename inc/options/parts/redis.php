@@ -49,6 +49,6 @@ if ( !defined( 'W3TC' ) )
 $this->value_with_disabled( $module . '.redis.password',
 	false, '' )
 ?> /><br />
-        <span class="description"><?php _e( 'Specify redis password, when SASL authentication used', 'w3-total-cache' )?></span>
+        <span class="description"><?php _e( 'Specify redis password, when <acronym title="Simple Authentication and Security Layer">SASL</acronym> authentication used', 'w3-total-cache' )?></span>
     </td>
 </tr>

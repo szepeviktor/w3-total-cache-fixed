@@ -53,6 +53,8 @@ class Enterprise_SnsServer extends Enterprise_SnsBase {
 	 */
 	private function _subscription_confirmation( $message ) {
 		$this->_log( 'Issuing confirm_subscription' );
+		$topic_arn = $this->_config->get_string( 'cluster.messagebus.sns.topic_arn' );
+
 		$response = $this->_get_api()->confirm_subscription(
 			$topic_arn, $message->get( 'Token' ) );
 		$this->_log( 'Subscription confirmed: ' .
@@ -125,12 +127,16 @@ class Enterprise_SnsServer extends Enterprise_SnsBase {
 				isset( $m['extras'] ) ? $m['extras'] : null );
 		elseif ( $action == 'flush_post' )
 			$executor->flush_post( $m['post_id'] );
+		elseif ( $action == 'flush_posts' )
+			$executor->flush_posts();
 		elseif ( $action == 'flush_url' )
 			$executor->flush_url( $m['url'] );
 		elseif ( $action == 'prime_post' )
 			$executor->prime_post( $m['post_id'] );
 		else
 			throw new \Exception( 'Unknown action ' . $action );
+
+		$executor->execute_delayed_operations();
 
 		$this->_log( 'succeeded' );
 	}

@@ -56,16 +56,56 @@ class Util_File {
 		$curr_path = $from_path;
 
 		foreach ( $dirs as $dir ) {
-			if ( $dir == '' ) {
+			if ( $dir == '' )
 				return false;
-			}
 
 			$curr_path .= ( $curr_path == '' ? '' : '/' ) . $dir;
 
 			if ( !@is_dir( $curr_path ) ) {
-				if ( !@mkdir( $curr_path, $mask ) ) {
+				if ( !@mkdir( $curr_path, $mask ) )
 					return false;
-				}
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Recursive creates directory from some directory
+	 * Safely for web-accessible folders
+	 * (no .htaccess folders which cause 403 error later)
+	 * Does not try to create directory before from
+	 *
+	 * @param string  $path
+	 * @param string  $from_path
+	 * @param integer $mask
+	 * @return boolean
+	 */
+	static public function mkdir_from_safe( $path, $from_path = '', $mask = 0777 ) {
+		$path = Util_Environment::realpath( $path );
+
+		$from_path = Util_Environment::realpath( $from_path );
+		if ( substr( $path, 0, strlen( $from_path ) ) != $from_path )
+			return false;
+
+		$path = substr( $path, strlen( $from_path ) );
+
+		$path = trim( $path, '/' );
+		$dirs = explode( '/', $path );
+
+		$curr_path = $from_path;
+
+		foreach ( $dirs as $dir ) {
+			if ( $dir == '' )
+				return false;
+			if ( substr( $dir, 0, 1 ) == '.' )   // (no .htaccess folders)
+				return false;
+
+			$curr_path .= ( $curr_path == '' ? '' : '/' ) . $dir;
+
+			if ( !@is_dir( $curr_path ) ) {
+				if ( !@mkdir( $curr_path, $mask ) )
+					return false;
 			}
 		}
 
@@ -293,8 +333,11 @@ class Util_File {
 			Util_File::mkdir_from( W3TC_CACHE_TMP_DIR, W3TC_CACHE_DIR );
 
 			if ( !is_dir( W3TC_CACHE_TMP_DIR ) || !is_writable( W3TC_CACHE_TMP_DIR ) ) {
+				$e = error_get_last();
+				$description = ( isset( $e['message'] ) ? $e['message'] : '' );
+				
 				throw new \Exception( 'Can\'t create folder <strong>' .
-					W3TC_CACHE_TMP_DIR . '</strong>' );
+					W3TC_CACHE_TMP_DIR . '</strong>: ' . $description );
 			}
 		}
 

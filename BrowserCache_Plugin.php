@@ -115,7 +115,7 @@ class BrowserCache_Plugin {
 	 * @return mixed
 	 */
 	function ob_callback( $buffer ) {
-		if ( $buffer != '' && Util_Content::is_html( $buffer ) ) {
+		if ( $buffer != '' && Util_Content::is_html_xml( $buffer ) ) {
 			$domain_url_regexp = Util_Environment::home_domain_root_url_regexp();
 
 			$buffer = preg_replace_callback(
@@ -214,7 +214,8 @@ class BrowserCache_Plugin {
 
 		$test_url = Util_Environment::remove_query( $url );
 		foreach ( $exceptions as $exception ) {
-			if ( trim( $exception ) && preg_match( '~' . $exception . '~', $test_url ) )
+			$escaped = str_replace( '~', '\~', $exception );
+			if ( trim( $exception ) && preg_match( '~' . $escaped . '~', $test_url ) )
 				return false;
 		}
 

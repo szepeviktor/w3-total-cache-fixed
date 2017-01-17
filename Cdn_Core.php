@@ -358,7 +358,7 @@ class Cdn_Core {
 					'container' => $this->_config->get_string( 'cdn.azure.container' ),
 					'cname' => $this->_config->get_array( 'cdn.azure.cname' ),
 					'ssl' => $this->_config->get_string( 'cdn.azure.ssl' ),
-					'compression' => $compression
+					'compression' => false
 				);
 				break;
 

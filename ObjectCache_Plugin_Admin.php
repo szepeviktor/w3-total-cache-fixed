@@ -69,16 +69,16 @@ class ObjectCache_Plugin_Admin {
 		if ( $c->get_string( 'objectcache.engine' ) == 'memcached' ) {
 			$summary['memcached_servers']['objectcache'] = array(
 				'servers' => $c->get_array( 'objectcache.memcached.servers' ),
-				'username' => $c->get_boolean( 'objectcache.memcached.username' ),
-				'password' => $c->get_boolean( 'objectcache.memcached.password' ),
+				'username' => $c->get_string( 'objectcache.memcached.username' ),
+				'password' => $c->get_string( 'objectcache.memcached.password' ),
 				'name' => __( 'Object Cache', 'w3-total-cache' )
 			);
 		} elseif ( $c->get_string( 'objectcache.engine' ) == 'redis' ) {
 			$summary['redis_servers']['objectcache'] = array(
 				'servers' => $c->get_array( 'objectcache.redis.servers' ),
 				'username' => $c->get_boolean( 'objectcache.redis.username' ),
-				'dbid' => $c->get_boolean( 'objectcache.redis.dbid' ),
-				'password' => $c->get_boolean( 'objectcache.redis.password' ),
+				'dbid' => $c->get_integer( 'objectcache.redis.dbid' ),
+				'password' => $c->get_string( 'objectcache.redis.password' ),
 				'name' => __( 'Object Cache', 'w3-total-cache' )
 			);
 		}

@@ -8,7 +8,8 @@ class Extension_CloudFlare_Plugin_Admin {
 
 
 	static public function w3tc_extensions( $extensions, $config ) {
-		global $current_user;
+		$current_user = wp_get_current_user();
+		
 		$message = array();
 		$message[] = 'CloudFlare';
 		$cloudflare_signup_email = '';

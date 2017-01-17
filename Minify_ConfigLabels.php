@@ -35,7 +35,7 @@ class Minify_ConfigLabels {
 				'minify.reject.files.js' => __( 'Never minify the following <acronym title="JavaScript">JS</acronym> files:', 'w3-total-cache' ),
 				'minify.reject.files.css' => __( 'Never minify the following <acronym title="Cascading Style Sheet">CSS</acronym> files:', 'w3-total-cache' ),
 				'minify.reject.ua' => __( 'Rejected user agents:', 'w3-total-cache' ),
-				'minify.cache.files' => __( 'Include external files/libaries:', 'w3-total-cache' ),
+				'minify.cache.files' => __( 'Include external files/libraries:', 'w3-total-cache' ),
 				// options->minify->ccjs
 				'minify.ccjs.options.formatting' => __( 'Pretty print', 'w3-total-cache' ),
 				// options->minify->ccjs2

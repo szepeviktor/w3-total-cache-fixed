@@ -190,7 +190,7 @@ class Extension_CloudFlare_Plugin {
 					break;
 				}
 			}
-		} else {
+		} elseif ( !empty( $_SERVER["REMOTE_ADDR"] ) ) {
 			$ip6_ranges = $this->_config->get_array( array(
 					'cloudflare', 'ips.ip6' ) );
 			$ip6 = $this->get_ipv6_full( $_SERVER["REMOTE_ADDR"] );
@@ -317,11 +317,17 @@ class Extension_CloudFlare_Plugin {
 	 */
 	private function get_ipv6_full( $ip ) {
 		$pieces = explode( "/", $ip, 2 );
+		if ( count( $pieces ) < 2 )
+			return 0;
+
 		$left_piece = $pieces[0];
 		$right_piece = $pieces[1];
 
 		// Extract out the main IP pieces
 		$ip_pieces = explode( "::", $left_piece, 2 );
+		if ( count( $ip_pieces ) < 2 )
+			return 0;
+
 		$main_ip_piece = $ip_pieces[0];
 		$last_ip_piece = $ip_pieces[1];
 

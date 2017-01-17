@@ -160,6 +160,14 @@ $keys = array(
 		'type' => 'boolean',
 		'default' => false
 	),
+	'objectcache.enabled_for_wp_admin' => array(
+		'type' => 'boolean',
+		'default' => true
+	),
+	'objectcache.fallback_transients' => array(
+		'type' => 'boolean',
+		'default' => true
+	),
 	'objectcache.engine' => array(
 		'type' => 'string',
 		'default' => 'file'
@@ -351,7 +359,8 @@ $keys = array(
 			'Last-Modified',
 			'Content-Type',
 			'X-Pingback',
-			'P3P'
+			'P3P',
+			'Link'
 		)
 	),
 	'pgcache.compatibility' => array(
@@ -656,6 +665,10 @@ $keys = array(
 			'RSPEAK_'
 		)
 	),
+	'minify.css.combine' => array(
+		'type' => 'boolean',
+		'default' => false
+	),
 	'minify.css.enable' => array(
 		'type' => 'boolean',
 		'default' => true
@@ -664,7 +677,7 @@ $keys = array(
 		'type' => 'string',
 		'default' => 'css'
 	),
-	'minify.css.combine' => array(
+	'minify.css.http2push' => array(
 		'type' => 'boolean',
 		'default' => false
 	),
@@ -687,6 +700,10 @@ $keys = array(
 	'minify.css.groups' => array(
 		'type' => 'array',
 		'default' => array()
+	),
+	'minify.js.http2push' => array(
+		'type' => 'boolean',
+		'default' => false
 	),
 	'minify.js.enable' => array(
 		'type' => 'boolean',
@@ -879,6 +896,10 @@ $keys = array(
 	'minify.cache.files' => array(
 		'type' => 'array',
 		'default' => array( '' )
+	),
+	'minify.cache.files_regexp' => array(
+		'type' => 'boolean',
+		'default' => false
 	),
 
 	'cdn.configuration_overloaded' => array(
@@ -1708,7 +1729,7 @@ $keys = array(
 	),
 	'common.track_usage' => array(
 		'type' => 'boolean',
-		'default' => false
+		'default' => true
 	),
 	'common.tweeted' => array(
 		'type' => 'boolean',

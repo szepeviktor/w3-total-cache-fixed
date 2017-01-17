@@ -18,8 +18,8 @@ class Cdn_RackSpace_Api_Tokens {
 					'Accept' => 'application/json',
 					'Content-Type' => 'application/json'
 				),
-				'sslcertificates' => dirname( __FILE__ ) .
-				'/Cdn_RackSpace_Api_CaCert.pem',
+				//'sslcertificates' => dirname( __FILE__ ) .
+				//'/Cdn_RackSpace_Api_CaCert.pem',
 				'body' => json_encode( $request_json )
 			)
 		);

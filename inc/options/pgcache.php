@@ -104,7 +104,7 @@ Util_Ui::config_item( array(
 		'label' => __( 'Cache alias hostnames:', 'w3-total-cache' ),
 		'checkbox_label' => __( 'Enable', 'w3-total-cache' ),
 		'enabled' => !Util_Environment::is_wpmu_subdomain(),
-		'description' => __( 'If the same Wordpress content is accessed from different domains',
+		'description' => __( 'If the same WordPress content is accessed from different domains',
 			'w3-total-cache' )
 	) );
 Util_Ui::config_item( array(
@@ -279,7 +279,7 @@ if ( $this->_config->get_string( 'pgcache.engine' ) == 'memcached' ) {
 				<th><label><?php _e( 'Compatibility mode:', 'w3-total-cache' ); ?></label></th>
 				<td>
 					<?php $this->checkbox( 'pgcache.compatibility' ) ?> <?php Util_Ui::e_config_label( 'pgcache.compatibility' ) ?></label><br />
-					<span class="description"><?php _e( 'Decreases performance by ~20% at scale in exchange for increasing interoperability with more hosting environments and WordPress idiosyncrasies. This option should be enabled for most sites', 'w3-total-cache' ); ?></span>
+					<span class="description"><?php _e( 'Decreases performance by ~20% at scale in exchange for increasing interoperability with more hosting environments and WordPress idiosyncrasies. This option should be enabled for most sites.', 'w3-total-cache' ); ?></span>
 				</td>
 			</tr>
 			<?php if ( !Util_Environment::is_nginx() ): ?>

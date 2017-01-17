@@ -69,6 +69,19 @@ if ( $this->_config->get_string( 'objectcache.engine' ) == 'memcached' ) {
                     <br /><span class="description"><?php _e( 'Groups that should not be cached.', 'w3-total-cache' ); ?></span>
                 </td>
             </tr>
+
+            <tr>
+                <th colspan="2">
+                    <?php $this->checkbox( 'objectcache.enabled_for_wp_admin' ) ?> Enable caching for wp-admin requests</label>
+                    <br /><span class="description"><?php _e( 'Enabling this option will increase wp-admin performance, but may cause side-effects', 'w3-total-cache' )?></span>
+                </th>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    <?php $this->checkbox( 'objectcache.fallback_transients' ) ?> Store transients in database</label>
+                    <br /><span class="description"><?php _e( 'Use that to store transients in database even when external cache is used. That allows transient values to survive object cache cleaning / expiration', 'w3-total-cache' )?></span>
+                </th>
+            </tr>
             <?php if ( $this->_config->get_boolean( 'cluster.messagebus.enabled' ) ): ?>
             <tr>
                 <th colspan="2">

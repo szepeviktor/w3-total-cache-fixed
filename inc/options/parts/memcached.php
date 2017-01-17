@@ -40,7 +40,7 @@ if ( !defined( 'W3TC' ) )
 if ( !Util_Installed::memcached_aws() )
 	_e( 'ElastiCache PHP module not found', 'w3-total-cache' );
 else
-	_e( 'When Amazon ElastiCache used, specify configuration endpoint as Memecached host', 'w3-total-cache' );
+	_e( 'When Amazon ElastiCache used, specify configuration endpoint as Memcached host', 'w3-total-cache' );
 ?>
         </span>
     </td>
@@ -56,9 +56,9 @@ $this->value_with_disabled( $module . '.memcached.username',
 	!Util_Installed::memcached_auth(), '' )
 ?> /><br />
         <span class="description">
-            <?php _e( 'Specify memcached username, when SASL authentication used', 'w3-total-cache' );
+            <?php _e( 'Specify memcached username, when <acronym title="Simple Authentication and Security Layer">SASL</acronym> authentication used', 'w3-total-cache' );
 if ( !Util_Installed::memcached_auth() )
-	_e( '<br>Available when memcached extension installed, built with SASL, and memcached.use_sasl = 1 option is set in php.ini', 'w3-total-cache' )
+	_e( '<br>Available when memcached extension installed, built with <acronym title="Simple Authentication and Security Layer">SASL</acronym>, and memcached.use_sasl = 1 option is set in php.ini', 'w3-total-cache' )
 	?></span>
     </td>
 </tr>
@@ -71,6 +71,6 @@ if ( !Util_Installed::memcached_auth() )
 	$this->value_with_disabled( $module . '.memcached.password',
 		!Util_Installed::memcached_auth(), '' )
 	?> /><br />
-        <span class="description"><?php _e( 'Specify memcached password, when SASL authentication used', 'w3-total-cache' )?></span>
+        <span class="description"><?php _e( 'Specify memcached password, when <acronym title="Simple Authentication and Security Layer">SASL</acronym> authentication used', 'w3-total-cache' )?></span>
     </td>
 </tr>

@@ -508,8 +508,10 @@ class Generic_Plugin {
 
 					$buffer .= sprintf( "\r\n Served from: %s @ %s by W3 Total Cache -->", Util_Content::escape_comment( $host ), $date );
 				}
-			}
 
+				$buffer = apply_filters( 'w3tc_process_content', $buffer );
+			}
+		
 			$buffer = Util_Bus::do_ob_callbacks(
 				array( 'minify', 'newrelic', 'cdn', 'browsercache', 'pagecache' ),
 				$buffer );
@@ -526,13 +528,6 @@ class Generic_Plugin {
 	function can_ob() {
 		global $w3_late_init;
 		if ( $w3_late_init ) {
-			return false;
-		}
-
-		/**
-		 * Skip if admin
-		 */
-		if ( defined( 'WP_ADMIN' ) ) {
 			return false;
 		}
 
@@ -588,7 +583,7 @@ class Generic_Plugin {
 	 * If so, set a role cookie so the requests wont be cached
 	 */
 	function check_login_action( $logged_in_cookie = false, $expire = ' ', $expiration = 0, $user_id = 0, $action = 'logged_out' ) {
-		global $current_user;
+		$current_user = wp_get_current_user();
 		if ( isset( $current_user->ID ) && !$current_user->ID )
 			$user_id = new \WP_User( $user_id );
 		else

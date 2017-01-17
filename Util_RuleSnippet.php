@@ -36,7 +36,7 @@ class Util_RuleSnippet {
 
 			$rules .=
 				$link_header .
-				'    if ($request_uri ~ \\.(ttf|ttc|otf|eot|woff|woff2|font.css)$) {' .
+				'    if ($request_uri ~ ^[^?]*\\.(ttf|ttc|otf|eot|woff|woff2|font.css)(\\?|$)) {' .
 				"\n    " . $link_header .
 				"    " .
 				str_replace( "\n", "\n    ", $add_header_rules ) .

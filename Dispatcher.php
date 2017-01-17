@@ -104,13 +104,12 @@ class Dispatcher {
 
 			$data = $minify->process( $short_filename, true );
 
-			if ( !file_exists( $filename ) &&
-				isset( $data['content']['content'] ) ) {
+			if ( !file_exists( $filename ) && isset( $data['content'] ) ) {
 
 				if ( !file_exists( dirname( $filename ) ) )
-					Util_File::mkdir_from( dirname( $filename ), W3TC_CACHE_DIR );
+					Util_File::mkdir_from_safe( dirname( $filename ), W3TC_CACHE_DIR );
 			}
-			@file_put_contents( $filename, $data['content']['content'] );
+			@file_put_contents( $filename, $data['content'] );
 		}
 	}
 

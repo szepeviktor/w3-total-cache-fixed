@@ -30,12 +30,17 @@ class CdnEngine_GoogleDrive extends CdnEngine_Base {
 
 		try {
 		$this->_init_service( $config['access_token'] );
-		} catch ( \Exception $e ) {}
+		} catch ( \Exception $e ) {
+			$this->_service = null;
+		}
 	}
 
 
 
 	private function _init_service( $access_token ) {
+		if ( empty( $this->_client_id ) || empty( $access_token ) )
+			throw new \Exception('service not configured');
+
 		$client = new \W3TCG_Google_Client();
 		$client->setClientId( $this->_client_id );
 		$client->setAccessToken( $access_token );
@@ -72,6 +77,9 @@ class CdnEngine_GoogleDrive extends CdnEngine_Base {
 	 * @return boolean
 	 */
 	function upload( $files, &$results, $force_rewrite = false, $timeout_time = NULL ) {
+		if ( is_null( $this->_service ) )
+			return false;
+		
 		$allow_refresh_token = true;
 		$result = true;
 

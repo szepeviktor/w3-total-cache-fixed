@@ -18,7 +18,7 @@ class Generic_Page_General extends Base_Page_Settings {
 	 */
 	function view() {
 
-		global $current_user;
+		$current_user = wp_get_current_user();
 		$config_master = $this->_config_master;
 		/**
 		 *

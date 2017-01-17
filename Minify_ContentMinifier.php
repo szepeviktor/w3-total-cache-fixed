@@ -115,21 +115,21 @@ class Minify_ContentMinifier {
 	function init( $engine ) {
 		switch ( $engine ) {
 		case 'yuijs':
-			Minify_YUICompressor::$tempDir = Util_File::create_tmp_dir();
-			Minify_YUICompressor::$javaExecutable = $this->_config->get_string( 'minify.yuijs.path.java' );
-			Minify_YUICompressor::$jarFile = $this->_config->get_string( 'minify.yuijs.path.jar' );
+			\Minify_YUICompressor::$tempDir = Util_File::create_tmp_dir();
+			\Minify_YUICompressor::$javaExecutable = $this->_config->get_string( 'minify.yuijs.path.java' );
+			\Minify_YUICompressor::$jarFile = $this->_config->get_string( 'minify.yuijs.path.jar' );
 			break;
 
 		case 'yuicss':
-			Minify_YUICompressor::$tempDir = Util_File::create_tmp_dir();
-			Minify_YUICompressor::$javaExecutable = $this->_config->get_string( 'minify.yuicss.path.java' );
-			Minify_YUICompressor::$jarFile = $this->_config->get_string( 'minify.yuicss.path.jar' );
+			\Minify_YUICompressor::$tempDir = Util_File::create_tmp_dir();
+			\Minify_YUICompressor::$javaExecutable = $this->_config->get_string( 'minify.yuicss.path.java' );
+			\Minify_YUICompressor::$jarFile = $this->_config->get_string( 'minify.yuicss.path.jar' );
 			break;
 
 		case 'ccjs':
-			Minify_ClosureCompiler::$tempDir = Util_File::create_tmp_dir();
-			Minify_ClosureCompiler::$javaExecutable = $this->_config->get_string( 'minify.ccjs.path.java' );
-			Minify_ClosureCompiler::$jarFile = $this->_config->get_string( 'minify.ccjs.path.jar' );
+			\Minify_ClosureCompiler::$tempDir = Util_File::create_tmp_dir();
+			\Minify_ClosureCompiler::$javaExecutable = $this->_config->get_string( 'minify.ccjs.path.java' );
+			\Minify_ClosureCompiler::$jarFile = $this->_config->get_string( 'minify.ccjs.path.jar' );
 			break;
 		}
 	}

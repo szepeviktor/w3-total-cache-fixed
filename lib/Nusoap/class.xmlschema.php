@@ -969,6 +969,3 @@ class nusoap_xmlschema extends nusoap_base  {
  */
 class XMLSchema extends nusoap_xmlschema {
 }
-
-
-?>

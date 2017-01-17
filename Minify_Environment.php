@@ -40,7 +40,7 @@ class Minify_Environment {
 		}
 
 		// if no errors so far - check if rewrite actually works
-		if ( count( $exs->exceptions() ) <= 0 || true ) {
+		if ( count( $exs->exceptions() ) <= 0 ) {
 			try {
 				if ( $config->get_boolean( 'minify.enabled' ) &&
 					$config->get_boolean( 'minify.rewrite' ) &&
@@ -224,11 +224,11 @@ class Minify_Environment {
 				( Util_Environment::is_nginx() ? 'nginx configuration file' : '.htaccess file' ) .
 				' contains rules to rewrite url ' .
 				$url . '. If handled by ' .
-				'plugin, it returns "OK" message.<br/>';
+				'plugin, it returns "Minify OK" message.<br/>';
 			$tech_message .= 'The plugin made a request to ' .
 				$url . ' but received: <br />' .
 				$result . '<br />';
-			$tech_message .= 'instead of "OK" response. <br />';
+			$tech_message .= 'instead of "Minify OK" response. <br />';
 
 			$error = '<strong>W3 Total Cache error:</strong>It appears Minify ' .
 				'<acronym title="Uniform Resource Locator">URL</acronym> ' .
@@ -276,7 +276,7 @@ class Minify_Environment {
 			else
 				$result = is_wp_error( $response ) ?
 					$response->get_error_message() :
-					implode( ' ', $response['response'] );
+					implode( ' ', $response['body'] );
 
 			set_site_transient( $key, $result, 30 );
 		}
@@ -366,7 +366,8 @@ class Minify_Environment {
 	 * @return string
 	 */
 	function rules_core_generate_apache( $config ) {
-		$cache_dir = Util_Rule::filename_to_uri( W3TC_CACHE_MINIFY_DIR );
+		$cache_uri = Util_Environment::url_to_uri(
+			Util_Environment::filename_to_url( W3TC_CACHE_MINIFY_DIR ) ) . '/';
 		$site_uri = rtrim( network_site_url( '', 'relative' ), '/' ) . '/';
 
 		$engine = $config->get_string( 'minify.engine' );
@@ -379,16 +380,17 @@ class Minify_Environment {
 		$rules .= W3TC_MARKER_BEGIN_MINIFY_CORE . "\n";
 		$rules .= "<IfModule mod_rewrite.c>\n";
 		$rules .= "    RewriteEngine On\n";
-		$rules .= "    RewriteBase " . $cache_dir . "/\n";
+		$rules .= "    RewriteBase " . $cache_uri . "\n";
 
 		if ( $engine == 'file' ) {
 			if ( $compression ) {
 				$rules .= "    RewriteCond %{HTTP:Accept-Encoding} gzip\n";
 				$rules .= "    RewriteRule .* - [E=APPEND_EXT:.gzip]\n";
+				$rules .= "    RewriteCond %{REQUEST_FILENAME}%{ENV:APPEND_EXT} -" . ( $config->get_boolean( 'minify.file.nfs' ) ? 'F' : 'f' ) . "\n";
+				$rules .= "    RewriteRule (.*) $1%{ENV:APPEND_EXT} [L]\n";
+			} else {
+				$rules .= "    RewriteCond %{REQUEST_FILENAME} !-f\n";
 			}
-
-			$rules .= "    RewriteCond %{REQUEST_FILENAME}%{ENV:APPEND_EXT} -" . ( $config->get_boolean( 'minify.file.nfs' ) ? 'F' : 'f' ) . "\n";
-			$rules .= "    RewriteRule (.*) $1%{ENV:APPEND_EXT} [L]\n";
 		}
 		$rules .= "    RewriteRule ^(.+\\.(css|js))$ ${site_uri}index.php [L]\n";
 
@@ -405,18 +407,19 @@ class Minify_Environment {
 	 * @return string
 	 */
 	function rules_core_generate_nginx( $config ) {
-		$cache_dir = Util_Rule::filename_to_uri( W3TC_CACHE_MINIFY_DIR );
+		$cache_uri = Util_Environment::url_to_uri(
+			Util_Environment::filename_to_url( W3TC_CACHE_MINIFY_DIR ) ) . '/';
 		$first_regex_var = '$1';
 
 		// for subdir - need to count subdir in url
 		if ( Util_Environment::is_wpmu() && !Util_Environment::is_wpmu_subdomain() ) {
 			// take into accont case when whole subdir wpmu is installed in subdir
 			$home_uri = network_home_url( '', 'relative' );
-			if ( substr( $cache_dir, 0, strlen( $home_uri ) ) == $home_uri )
-				$cache_dir = $home_uri . '([a-z0-9]+/)?' .
-					substr( $cache_dir, strlen( $home_uri ) );
+			if ( substr( $cache_uri, 0, strlen( $home_uri ) ) == $home_uri )
+				$cache_uri = $home_uri . '([a-z0-9]+/)?' .
+					substr( $cache_uri, strlen( $home_uri ) );
 			else
-				$cache_dir = '(/[a-z0-9]+)?' . $cache_dir;
+				$cache_uri = '(/[a-z0-9]+)?' . $cache_uri;
 
 			$first_regex_var = '$2';
 		}
@@ -445,7 +448,7 @@ class Minify_Environment {
 			$rules .= "    rewrite (.*) $1\$w3tc_enc break;\n";
 			$rules .= "}\n";
 		}
-		$rules .= "rewrite ^$cache_dir/ ${minify_uri}index.php last;\n";
+		$rules .= "rewrite ^$cache_uri ${minify_uri}index.php last;\n";
 		$rules .= W3TC_MARKER_END_MINIFY_CORE . "\n";
 
 		return $rules;
@@ -537,9 +540,13 @@ class Minify_Environment {
 
 		$rules = '';
 		$rules .= W3TC_MARKER_BEGIN_MINIFY_CACHE . "\n";
+		/* workaround for .gzip
 		if ( $compatibility ) {
 			$rules .= "Options -MultiViews\n";
-		}
+		}*/
+		$rules .= "<IfModule mod_negotiation.c>\n";
+		$rules .= "    Options -MultiViews\n";
+		$rules .= "</IfModule>\n";
 
 		if ( $etag ) {
 			$rules .= "FileETag MTime Size\n";
@@ -643,7 +650,8 @@ class Minify_Environment {
 	 * @return string
 	 */
 	private function rules_cache_generate_nginx( $config ) {
-		$cache_dir = Util_Rule::filename_to_uri( W3TC_CACHE_MINIFY_DIR );
+		$cache_uri = Util_Environment::url_to_uri(
+			Util_Environment::filename_to_url( W3TC_CACHE_MINIFY_DIR ) ) . '/';
 
 		$browsercache = $config->get_boolean( 'browsercache.enabled' );
 		$compression = ( $browsercache && $config->get_boolean( 'browsercache.cssjs.compression' ) );
@@ -706,20 +714,20 @@ class Minify_Environment {
 			}
 		}
 
-		$rules .= "location ~ " . $cache_dir . ".*\\.js$ {\n";
+		$rules .= "location ~ " . $cache_uri . ".*\\.js$ {\n";
 		$rules .= "    types {}\n";
 		$rules .= "    default_type application/x-javascript;\n";
 		$rules .= $common_rules;
 		$rules .= "}\n";
 
-		$rules .= "location ~ " . $cache_dir . ".*\\.css$ {\n";
+		$rules .= "location ~ " . $cache_uri . ".*\\.css$ {\n";
 		$rules .= "    types {}\n";
 		$rules .= "    default_type text/css;\n";
 		$rules .= $common_rules;
 		$rules .= "}\n";
 
 		if ( $compression ) {
-			$rules .= "location ~ " . $cache_dir . ".*js\\.gzip$ {\n";
+			$rules .= "location ~ " . $cache_uri . ".*js\\.gzip$ {\n";
 			$rules .= "    gzip off;\n";
 			$rules .= "    types {}\n";
 			$rules .= "    default_type application/x-javascript;\n";
@@ -727,7 +735,7 @@ class Minify_Environment {
 			$rules .= "    add_header Content-Encoding gzip;\n";
 			$rules .= "}\n";
 
-			$rules .= "location ~ " . $cache_dir . ".*css\\.gzip$ {\n";
+			$rules .= "location ~ " . $cache_uri . ".*css\\.gzip$ {\n";
 			$rules .= "    gzip off;\n";
 			$rules .= "    types {}\n";
 			$rules .= "    default_type text/css;\n";

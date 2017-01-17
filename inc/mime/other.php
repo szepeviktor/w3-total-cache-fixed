@@ -16,6 +16,7 @@ return array(
 	'gz|gzip' => 'application/x-gzip',
 	'ico' => 'image/x-icon',
 	'jpg|jpeg|jpe' => 'image/jpeg',
+	'webp' => 'image/webp',
 	'json' => 'application/json',
 	'mdb' => 'application/vnd.ms-access',
 	'mid|midi' => 'audio/midi',

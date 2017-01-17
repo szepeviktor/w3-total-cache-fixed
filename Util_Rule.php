@@ -2,23 +2,6 @@
 namespace W3TC;
 
 class Util_Rule {
-	/*
-     * Returns URI from filename/dirname
-     * Used for rules mainly since is not usable for regular URI,
-     * because wordpress adds blogname to uri making it uncompatible with
-     * directory structure
-     *
-     * @return string
-     */
-	static public function filename_to_uri( $filename ) {
-		$url = Util_Environment::filename_to_url( $filename );
-		$parsed = parse_url( $url );
-		$uri = isset( $parsed['path'] ) ? ltrim( $parsed['path'], DIRECTORY_SEPARATOR ) : '';
-		$uri = '/' . $uri;
-
-		return $uri;
-	}
-
 	/**
 	 * Check if WP permalink directives exists
 	 *

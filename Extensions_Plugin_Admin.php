@@ -124,7 +124,7 @@ class Extensions_Plugin_Admin {
 		$s = get_option( 'w3tc_extensions_hooks' );
 		$hooks = @json_decode( $s, true );
 		if ( !isset( $hooks['next_check_date'] ) ||
-			$hooks['next_check_date'] < time() || true ) {
+			$hooks['next_check_date'] < time() ) {
 			$hooks = array(
 				'actions' => array(),
 				'filters' => array(),

@@ -650,9 +650,9 @@ jQuery(function() {
         jQuery(this.rel).show();
     });
 
-    w3tc_input_enable('#cdn_reject_roles input[type=checkbox]', jQuery('#cdn_reject_logged_roles:checked').size());
-    jQuery('#cdn_reject_logged_roles').live('click', function() {
-        w3tc_input_enable('#cdn_reject_roles input[type=checkbox]', jQuery('#cdn_reject_logged_roles:checked').size());
+    w3tc_input_enable('#cdn_reject_roles input[type=checkbox]', jQuery('#cdn__reject__logged_roles:checked').size());
+    jQuery('#cdn__reject__logged_roles').live('click', function() {
+        w3tc_input_enable('#cdn_reject_roles input[type=checkbox]', jQuery('#cdn__reject__logged_roles:checked').size());
     });
 
     jQuery('#cdn_export_library').click(function() {

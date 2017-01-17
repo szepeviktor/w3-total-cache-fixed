@@ -74,13 +74,34 @@ class ConfigCompiler {
 	 * Reads config from file and returns it's content as array (or null)
 	 * Stored in this class to limit class loading
 	 */
-	static private function util_array_from_file_legacy( $filename ) {
+	static private function util_array_from_file_legacy_v1( $filename ) {
 		if ( file_exists( $filename ) && is_readable( $filename ) ) {
 			// including file directly instead of read+eval causes constant
 			// problems with APC, ZendCache, and WSOD in a case of
 			// broken config file
 			$content = @file_get_contents( $filename );
 			$config = @eval( substr( $content, 5 ) );
+
+			if ( is_array( $config ) )
+				return $config;
+		}
+
+		return null;
+	}
+
+
+
+	/**
+	 * Reads config from file and returns it's content as array (or null)
+	 * Stored in this class to limit class loading
+	 */
+	static private function util_array_from_file_legacy_v2( $filename ) {
+		if ( file_exists( $filename ) && is_readable( $filename ) ) {
+			// including file directly instead of read+eval causes constant
+			// problems with APC, ZendCache, and WSOD in a case of
+			// broken config file
+			$content = @file_get_contents( $filename );
+			$config = @json_decode( $content, true );
 
 			if ( is_array( $config ) )
 				return $config;
@@ -117,11 +138,18 @@ class ConfigCompiler {
 			$data = Config::util_array_from_file( $master_filename );
 		}
 
-		// try to get legacy data
+		// try to get legacy v2 data
 		if ( is_null( $data ) ) {
-			$master_filename = Config::util_config_filename_legacy( 0,
+			$master_filename = Config::util_config_filename_legacy_v2( 0,
 				$this->_preview );
-			$data = self::util_array_from_file_legacy( $master_filename );
+			$data = self::util_array_from_file_legacy_v2( $master_filename );
+		}
+
+		// try to get legacy v1 data
+		if ( is_null( $data ) ) {
+			$master_filename = Config::util_config_filename_legacy_v1( 0,
+				$this->_preview );
+			$data = self::util_array_from_file_legacy_v1( $master_filename );
 		}
 
 		if ( is_array( $data ) ) {
@@ -145,11 +173,18 @@ class ConfigCompiler {
 			$data = Config::util_array_from_file( $child_filename );
 		}
 
-		// try to get legacy data
+		// try to get legacy v2 data
 		if ( is_null( $data ) ) {
-			$child_filename = Config::util_config_filename_legacy(
+			$child_filename = Config::util_config_filename_legacy_v2(
 				$this->_blog_id, $this->_preview );
-			$data = self::util_array_from_file_legacy( $child_filename );
+			$data = self::util_array_from_file_legacy_v2( $child_filename );
+		}
+
+		// try to get legacy v1 data
+		if ( is_null( $data ) ) {
+			$child_filename = Config::util_config_filename_legacy_v1(
+				$this->_blog_id, $this->_preview );
+			$data = self::util_array_from_file_legacy_v1( $child_filename );
 		}
 
 		if ( is_array( $data ) ) {
@@ -203,7 +238,7 @@ class ConfigCompiler {
 		else   // for older php versions
 			$config = json_encode( $data );
 
-		Util_File::file_put_contents_atomic( $filename, $config );
+		Util_File::file_put_contents_atomic( $filename, '<?php exit; ?>' . $config );
 	}
 
 

@@ -221,4 +221,23 @@ class Cdn_Util {
 
 		return $file;
 	}
+
+	static function replace_folder_placeholders_to_uri( $file ) {
+		static $content_uri, $plugins_uri, $uploads_uri;
+		if ( empty( $content_uri ) ) {
+			$content_uri = Util_Environment::url_to_uri( content_url() );
+			$plugins_uri = Util_Environment::url_to_uri( plugins_url() );
+
+			$upload_dir = Util_Environment::wp_upload_dir();
+			if ( isset( $upload_dir['baseurl'] ) )
+				$uploads_uri = $upload_dir['baseurl'];
+			else
+				$uploads_uri = '';
+		}
+		$file = str_replace( '{wp_content_dir}', $content_uri, $file );
+		$file = str_replace( '{plugins_dir}', $plugins_uri, $file );
+		$file = str_replace( '{uploads_dir}', $uploads_uri, $file );
+
+		return $file;
+	}
 }

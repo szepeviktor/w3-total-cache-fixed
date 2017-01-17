@@ -49,9 +49,9 @@ class Cache {
 			case 'memcached':
 				if ( class_exists( '\Memcached' ) ) {
 					$instances[$instance_key] = new Cache_Memcached( $config );
-				} else if ( class_exists( '\Memcache' ) ) {
-						$instances[$instance_key] = new Cache_Memcache( $config );
-					}
+				} elseif ( class_exists( '\Memcache' ) ) {
+					$instances[$instance_key] = new Cache_Memcache( $config );
+				}
 				break;
 
 			case 'redis':

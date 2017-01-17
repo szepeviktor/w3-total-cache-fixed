@@ -85,7 +85,7 @@ class Util_WpFile {
 		if ( @is_dir( $folder ) )
 			return;
 
-		if ( Util_File::mkdir_from( $folder, $from_folder ) )
+		if ( Util_File::mkdir_from_safe( $folder, $from_folder ) )
 			return;
 
 		try {

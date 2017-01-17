@@ -50,7 +50,7 @@ class Cache_File_Generic extends Cache_File {
 		$dir = dirname( $path );
 
 		if ( !@is_dir( $dir ) ) {
-			if ( !Util_File::mkdir_from( $dir, W3TC_CACHE_DIR ) )
+			if ( !Util_File::mkdir_from_safe( $dir, W3TC_CACHE_DIR ) )
 				return false;
 		}
 
@@ -128,7 +128,8 @@ class Cache_File_Generic extends Cache_File {
 
 				}
 
-				@touch( $path_old );
+				// use old enough time to cause recalculation on next call
+				@touch( $path_old, 1479904835 );
 			}
 		}
 		$has_old_data = $exists;
@@ -186,16 +187,15 @@ class Cache_File_Generic extends Cache_File {
 			return true;
 
 		$old_entry_path = $path . '.old';
-		if ( @rename( $path, $old_entry_path ) )
-			return true;
-
-		// if we can delete old entry - do second attempt to store in old-entry file
-		if ( @unlink( $old_entry_path ) ) {
-			if ( @rename( $path, $old_entry_path ) )
-				return true;
+		if ( ! @rename( $path, $old_entry_path ) ) {
+			// if we can delete old entry - do second attempt to store in old-entry file
+			if ( ! @unlink( $old_entry_path ) || ! @rename( $path, $old_entry_path ) ) {
+				return @unlink( $path );
+			}
 		}
 
-		return @unlink( $path );
+		@touch( $old_entry_path, 1479904835 );
+		return true;
 	}
 
 	/**
@@ -274,7 +274,7 @@ class Cache_File_Generic extends Cache_File {
 				if ( $entry == '.' || $entry == '..' ) {
 					continue;
 				}
-				if ( preg_match( '/' . $regex . '/', basename( $entry ) ) ) {
+				if ( preg_match( '~' . $regex . '~', basename( $entry ) ) ) {
 					Util_File::rmdir( $flush_dir . DIRECTORY_SEPARATOR . $entry );
 				}
 			}

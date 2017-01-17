@@ -21,7 +21,7 @@ class Minify_Cache_File {
 
         if (!file_exists($this->_path .'/index.html')) {
             if (!is_dir($this->_path))
-                \W3TC\Util_File::mkdir_from($this->_path, W3TC_CACHE_DIR);
+                \W3TC\Util_File::mkdir_from_safe($this->_path, W3TC_CACHE_DIR);
             @file_put_contents($this->_path .'/index.html', '');
         }
     }
@@ -46,7 +46,7 @@ class Minify_Cache_File {
 
         if (!@file_put_contents($path, $data['content'], $flag)) {
             // retry with make dir
-            \W3TC\Util_File::mkdir_from(dirname($path), W3TC_CACHE_DIR);
+            \W3TC\Util_File::mkdir_from_safe(dirname($path), W3TC_CACHE_DIR);
 
             if (!@file_put_contents($path, $data, $flag))
                 return false;

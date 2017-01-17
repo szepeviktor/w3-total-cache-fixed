@@ -172,7 +172,7 @@ class Generic_Plugin_Admin {
 			wp_nonce_ays( 'w3tc' );
 
 		try {
-			$base_capability = apply_filters( 'w3tc_ajax', 'manage_options' );
+			$base_capability = apply_filters( 'w3tc_ajax_base_capability_', 'manage_options' );
 			$capability = apply_filters( 'w3tc_ajax_capability_' . $_REQUEST['w3tc_action'],
 				$base_capability );
 			if ( !empty( $capability ) && !current_user_can( $capability ) )
@@ -362,7 +362,8 @@ class Generic_Plugin_Admin {
 				add_action( 'admin_print_styles', array( $this, 'print_plugins_page_css' ) );
 			}
 
-			if ( $this->is_w3tc_page ) {
+			global $pagenow;
+			if ( $pagenow == 'plugins.php' || $this->is_w3tc_page ) {
 				/**
 				 * Only admin can see W3TC notices and errors
 				 */
@@ -508,7 +509,7 @@ class Generic_Plugin_Admin {
 		array_unshift( $links,
 			'<a class="edit" href="admin.php?page=w3tc_general">Settings</a>' );
 		array_unshift( $links,
-			'<a class="delete" href="admin.php?page=w3tc_support">Premium Support</a>' );
+			'<a class="edit" style="color: red" href="admin.php?page=w3tc_support">Premium Support</a>' );
 
 
 		if ( !is_writable( WP_CONTENT_DIR ) ||
@@ -703,15 +704,12 @@ class Generic_Plugin_Admin {
          * Filesystem environment fix, if needed
          */
 		try {
-			global $pagenow;
-			if ( $pagenow == 'plugins.php' || Util_Admin::is_w3tc_admin_page() ) {
-				$environment = Dispatcher::component( 'Root_Environment' );
-				$environment->fix_in_wpadmin( $this->_config );
+			$environment = Dispatcher::component( 'Root_Environment' );
+			$environment->fix_in_wpadmin( $this->_config );
 
-				if ( isset( $_REQUEST['upgrade'] ) )
-					$notes[] = __( 'Required files and directories have been automatically created',
-						'w3-total-cache' );
-			}
+			if ( isset( $_REQUEST['upgrade'] ) )
+				$notes[] = __( 'Required files and directories have been automatically created',
+					'w3-total-cache' );
 		} catch ( Util_Environment_Exceptions $exs ) {
 			$r = Util_Activation::parse_environment_exceptions( $exs );
 			$n = 1;
@@ -773,22 +771,24 @@ class Generic_Plugin_Admin {
 			}
 		}
 
-		$errors = apply_filters( 'w3tc_errors', $errors );
-		$notes = apply_filters( 'w3tc_notes', $notes );
+		if ( Util_Admin::is_w3tc_admin_page() ) {
+			$errors = apply_filters( 'w3tc_errors', $errors );
+			$notes = apply_filters( 'w3tc_notes', $notes );
 
-		/**
-		 * Show messages
-		 */
-		foreach ( $notes as $key => $note ) {
-			echo sprintf(
-				'<div class="updated w3tc_note" id="%s"><p>%s</p></div>',
-				$key,
-				$note );
-		}
+			/**
+			 * Show messages
+			 */
+			foreach ( $notes as $key => $note ) {
+				echo sprintf(
+					'<div class="updated w3tc_note" id="%s"><p>%s</p></div>',
+					$key,
+					$note );
+			}
 
-		foreach ( $errors as $key => $error ) {
-			echo sprintf( '<div class="error w3tc_error" id="%s"><p>%s</p></div>',
-				$key, $error );
+			foreach ( $errors as $key => $error ) {
+				echo sprintf( '<div class="error w3tc_error" id="%s"><p>%s</p></div>',
+					$key, $error );
+			}
 		}
 	}
 }

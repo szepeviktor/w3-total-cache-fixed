@@ -3454,7 +3454,7 @@ msgstr ""
 "Navedite korisničke agente koji nikada neće dobiti minifikovani sadržaj."
 
 #: ../inc/options/minify.php:485
-msgid "Include external files/libaries:"
+msgid "Include external files/libraries:"
 msgstr "Uključiti eksterne fajlove/biblioteke:"
 
 #: ../inc/options/minify.php:490

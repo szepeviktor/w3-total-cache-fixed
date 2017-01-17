@@ -109,7 +109,7 @@ class Generic_Plugin_AdminNotifications {
 
 	public function w3tc_ajax_generic_support_us() {
 		$supports = $this->get_supports();
-		global $current_user;
+		$current_user = wp_get_current_user();
 		wp_get_current_user();
 		$email = $current_user->user_email;
 		include W3TC_INC_DIR . '/lightbox/support_us.php';

@@ -192,14 +192,14 @@ class ObjectCache_Plugin {
 	 */
 	function on_change_option( $option ) {
 		static $flushed = false;
-
+/*
 		if ( !$flushed ) {
 			if ( $option != 'cron' ) {
 				$flush = Dispatcher::component( 'CacheFlush' );
 				$flush->objectcache_flush();
 				$flushed = true;
 			}
-		}
+		}*/
 	}
 
 	/**

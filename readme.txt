@@ -2,8 +2,8 @@
 Contributors: fredericktownes
 Tags: seo, w3totalcache, w3 totalcache, w3total cache, wpo, web performance optimization, performance, availability, scaling, scalability, user experience, cache, caching, page cache, css cache, js cache, db cache, disk cache, disk caching, database cache, http compression, gzip, deflate, minify, cdn, content delivery network, media library, performance, speed, multiple hosts, css, merge, combine, unobtrusive javascript, compress, optimize, optimizer, javascript, js, cascading style sheet, plugin, yui, yui compressor, zend, opcache, apcu, google drive, highwinds, full site delivery, full site acceleration, google, google rank, google page speed, mod_pagespeed, new relic, newrelic, aws, s3, cloudfront, sns, elasticache, rds, flash media server, amazon web services, cloud files, rackspace, akamai, max cdn, limelight, cloudflare, mod_cloudflare, microsoft, microsoft azure, iis, nginx, litespeed, apache, varnish, xcache, apc, eacclerator, wincache, redis, narcissus, wpmml, mysql, w3 total cache, batcache, wp cache, wp super cache, quick cache, wp minify, bwp-minify, buddypress
 Requires at least: 3.2
-Tested up to: 4.6.1
-Stable tag: 0.9.5.1
+Tested up to: 4.7.1
+Stable tag: 0.9.5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -11,11 +11,9 @@ Search Engine (SEO) &amp; Performance Optimization (WPO) via caching. Integrated
 
 == Description ==
 
-W3 Total Cache improves the user experience of your site by increasing website performance, reducing download times via features like content delivery network (CDN) integration.
+W3 Total Cache improves the SEO and user experience of your site by increasing website performance, reducing download times via features like content delivery network (CDN) integration.
 
-The **only** WordPress Performance Optimization (WPO) framework; designed to improve user experience and Search Engine Optimization (SEO). Recommended by countless web hosts.
-
-Trusted by numerous companies like: AT&T, stevesouders.com, mattcutts.com, mashable.com, smashingmagazine.com, makeuseof.com, kiss925.com, pearsonified.com, lockergnome.com, johnchow.com, ilovetypography.com, webdesignerdepot.com, css-tricks.com and tens of thousands of others.
+The **only** web host agnostic WordPress Performance Optimization (WPO) framework recommended by countless web developers and web hosts. Trusted by numerous companies like: AT&T, stevesouders.com, mattcutts.com, mashable.com, smashingmagazine.com, makeuseof.com, kiss925.com, pearsonified.com, lockergnome.com, johnchow.com, ilovetypography.com, webdesignerdepot.com, css-tricks.com and tens of thousands of others.
 
 An inside look:
 
@@ -32,7 +30,7 @@ http://www.youtube.com/watch?v=rkmrQP8S5KY
 * Improved web server performance; sustain high traffic periods
 * Up to 80% bandwidth savings via minify and HTTP compression of HTML, CSS, JavaScript and feeds
 
-*FEATURES*
+*KEY FEATURES*
 
 * Compatible with shared hosting, virtual private / dedicated servers and dedicated servers / clusters
 * Transparent content delivery network (CDN) management with Media Library, theme files and WordPress itself
@@ -771,6 +769,28 @@ Please reach out to all of these people and support their projects if you're so 
 
 == Changelog ==
 
+= 0.9.5.2 =
+* Fixed security issue by protecting configuration data by adding .php to relevant files
+* Fixed security issue with the creation of dot folders that could be abused
+* Fixed handling HTTP compression for uncached pages
+* Fixed handling of .svgz files
+* Added expiration headers to webP images
+* Added support for Microsoft Azure’s latest API
+* Added ability to cache WP Admin. Recommended setting, is off. (Improved WP Admin performance with object caching enabled)
+* Added HTTP/2 Push support for minified files
+* Added option management support for wp-cli
+* Improved handling of uncompressed minified files
+* Improved handling of purging of modified pages / posts
+* Improved compatibility with Rackspace Cloud Files
+* Improved initial CDN configuration reliability
+* Improved reliability of object caching
+* Improved PHP 7.0 compatibility
+* Improved PHP 4.3 compatibility
+* Improved HTTP/2 support
+* Improved CSS embed handling
+* Improved reliability of object cache, transients now fallback to database
+* Improved handling of cached http compressed objects
+
 = 0.9.5.1 =
 * Fixed missing namespace, which caused issues with other implementations of Google APIs
 * Fixed handling Cloudflare zone list being incomplete for users with many zones
@@ -912,6 +932,12 @@ Please reach out to all of these people and support their projects if you're so 
 
 
 == Upgrade Notice ==
+
+= 0.9.5.2 =
+Thanks for using W3 Total Cache! This release includes security fixes that have been reported. In addition, numerous improvements are now yours.
+
+= 0.9.5.1 =
+Thanks for using W3 Total Cache! This release includes security fixes that have been reported. In addition, numerous improvements are now yours.
 
 = 0.9.5 =
 Thanks for using W3 Total Cache! This release includes fixes for recent XSS security issues that have been reported. In addition, hundreds of other improvements are now yours.

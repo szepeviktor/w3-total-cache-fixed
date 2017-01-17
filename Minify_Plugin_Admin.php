@@ -188,16 +188,16 @@ class Minify_Plugin_Admin {
 		if ( $c->get_string( 'minify.engine' ) == 'memcached' ) {
 			$summary['memcached_servers']['minify'] = array(
 				'servers' => $c->get_array( 'minify.memcached.servers' ),
-				'username' => $c->get_boolean( 'minify.memcached.username' ),
-				'password' => $c->get_boolean( 'minify.memcached.password' ),
+				'username' => $c->get_string( 'minify.memcached.username' ),
+				'password' => $c->get_string( 'minify.memcached.password' ),
 				'name' => __( 'Minification', 'w3-total-cache' )
 			);
 		} elseif ( $c->get_string( 'minify.engine' ) == 'redis' ) {
 			$summary['redis_servers']['minify'] = array(
 				'servers' => $c->get_array( 'minify.redis.servers' ),
 				'username' => $c->get_boolean( 'minify.redis.username' ),
-				'dbid' => $c->get_boolean( 'minify.redis.dbid' ),
-				'password' => $c->get_boolean( 'minify.redis.password' ),
+				'dbid' => $c->get_integer( 'minify.redis.dbid' ),
+				'password' => $c->get_string( 'minify.redis.password' ),
 				'name' => __( 'Minification', 'w3-total-cache' )
 			);
 		}
@@ -244,7 +244,7 @@ class Minify_Plugin_Admin {
 			list( $v, $should_count ) =
 				Util_UsageStatistics::get_or_init_size_transient(
 				'w3tc_ustats_minify_size', $summary );
-			if ( $should_count || true ) {
+			if ( $should_count ) {
 				$h = Dispatcher::component( 'Minify_MinifiedFileRequestHandler' );
 				$stats = $h->get_stats_size( $summary['timeout_time'] );
 

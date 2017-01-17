@@ -148,16 +148,16 @@ class Extension_FragmentCache_Plugin_Admin {
 		if ( $c->get_string( array( 'fragmentcache', 'engine' ) ) == 'memcached' ) {
 			$summary['memcached_servers']['fragmentcache'] = array(
 				'servers' => $c->get_array( array( 'fragmentcache', 'memcached.servers' ) ),
-				'username' => $c->get_boolean( array( 'fragmentcache', 'memcached.username' ) ),
-				'password' => $c->get_boolean( array( 'fragmentcache', 'memcached.password' ) ),
+				'username' => $c->get_string( array( 'fragmentcache', 'memcached.username' ) ),
+				'password' => $c->get_string( array( 'fragmentcache', 'memcached.password' ) ),
 				'name' => __( 'Fragment Cache', 'w3-total-cache' )
 			);
 		} elseif ( $c->get_string( array( 'fragmentcache', 'engine' ) ) == 'redis' ) {
 			$summary['redis_servers']['fragmentcache'] = array(
 				'servers' => $c->get_array( array( 'fragmentcache', 'redis.servers' ) ),
 				'username' => $c->get_boolean( array( 'fragmentcache', 'redis.username' ) ),
-				'dbid' => $c->get_boolean( array( 'fragmentcache', 'redis.dbid' ) ),
-				'password' => $c->get_boolean( array( 'fragmentcache', 'redis.password' ) ),
+				'dbid' => $c->get_integer( array( 'fragmentcache', 'redis.dbid' ) ),
+				'password' => $c->get_string( array( 'fragmentcache', 'redis.password' ) ),
 				'name' => __( 'Fragment Cache', 'w3-total-cache' )
 			);
 		}

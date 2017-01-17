@@ -124,7 +124,7 @@ if ( !$upload_blogfiles_enabled )
 				<th<?php if ( $cdn_mirror ): ?> colspan="2"<?php endif; ?>>
 					<?php $this->checkbox( 'cdn.custom.enable' ) ?> <?php Util_Ui::e_config_label( 'cdn.custom.enable' ) ?></label><br />
 					<span class="description">
-						<?php echo sprintf( __( 'If checked, any file names or paths specified in the "custom file list" field below will be hosted with the <acronym title="Content Delivery Network">CDN</acronym>. Supports regular expressions (See <a href="%s">FAQ</a>)', 'w3-total-cache' ), network_admin_url( 'admin.php?page=w3tc_faq#q82' ) ); ?>
+						<?php echo sprintf( __( 'If checked, any file names or paths specified in the "custom file list" field below will be hosted with the <acronym title="Content Delivery Network">CDN</acronym>. Supports masks (See <a href="%s">FAQ</a>)', 'w3-total-cache' ), network_admin_url( 'admin.php?page=w3tc_faq#q82' ) ); ?>
 					</span>
 				</th>
 				<?php if ( ! $cdn_mirror ): ?>
