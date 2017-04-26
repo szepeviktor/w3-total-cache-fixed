@@ -262,7 +262,7 @@ Util_Ui::postbox_header( __( 'Purge Policy: ', 'w3-total-cache' ) . implode( ', 
 				<td>
 					<input type="hidden" name="pgcache__late_caching" value="0" />
 					<label><input id="pgcache_late_caching" type="checkbox" name="pgcache__late_caching" value="1"<?php checked( $this->_config->get_string( 'pgcache.engine' ) != 'file_generic' && $this->_config->get_boolean( 'pgcache.late_caching' ) ); ?> <?php disabled( $this->_config->get_string( 'pgcache.engine' ), 'file_generic' ) ?> /> <?php _e( 'Enable', 'w3-total-cache' ); ?></label>
-					<br /><span class="description"><?php _e( 'Allows overwriting of page caching key via custom filters by postponing entry extraction in the init action.', 'w3-total-cache' )?></span>
+					<br /><span class="description"><?php _e( 'Overwrites key of page caching via custom filters by postponing entry extraction during the init action.', 'w3-total-cache' )?></span>
 				</td>
 			</tr>
 			<?php

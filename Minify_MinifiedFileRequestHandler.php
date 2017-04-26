@@ -57,7 +57,7 @@ class Minify_MinifiedFileRequestHandler {
 				if ( ( function_exists( 'gzencode' ) &&
 						$this->_config->get_boolean( 'browsercache.enabled' ) &&
 						$this->_config->get_boolean( 'browsercache.cssjs.compression' ) ) )
-					if ( !$cache->store( basename( $file ) . '.gzip',
+					if ( !$cache->store( basename( $file ) . '_gzip',
 							array( 'content' => gzencode( 'content ok' ) ) ) ) {
 						echo 'error storing';
 						exit();
@@ -712,8 +712,8 @@ class Minify_MinifiedFileRequestHandler {
 					Util_Environment::cache_blog_minify_dir(),
 					array(
 						'.htaccess',
-						'index.php',
-						'*.old'
+						'index.html',
+						'*_old'
 					),
 					$this->_config->get_boolean( 'minify.file.locking' ),
 					$this->_config->get_integer( 'timelimit.cache_flush' ),
@@ -893,10 +893,12 @@ class Minify_MinifiedFileRequestHandler {
 						'minify.csstidy.options.lowercase_s',
 						'minify.csstidy.options.optimise_shorthands',
 						'minify.csstidy.options.remove_last_;',
+						'minify.csstidy.options.remove_space_before_important',
 						'minify.csstidy.options.case_properties',
 						'minify.csstidy.options.sort_properties',
 						'minify.csstidy.options.sort_selectors',
 						'minify.csstidy.options.merge_selectors',
+						'minify.csstidy.options.discard_invalid_selectors',
 						'minify.csstidy.options.discard_invalid_properties',
 						'minify.csstidy.options.css_level',
 						'minify.csstidy.options.preserve_css',

@@ -170,7 +170,7 @@ Util_Ui::config_item( array(
 			'googleccjs' => __( 'Google Closure Compiler (Web Service)', 'w3-total-cache' ),
 			'ccjs' => __( 'Google Closure Compiler (Local Java)', 'w3-total-cache' ),
 			'jsminplus' => __( 'Narcissus', 'w3-total-cache' ),
-			'yuijs' => __( 'YUI Compressor', 'w3-total-cache' )			
+			'yuijs' => __( 'YUI Compressor', 'w3-total-cache' )
 		)
 	) );
 Util_Ui::config_item( array(
@@ -178,7 +178,7 @@ Util_Ui::config_item( array(
 		'control' => 'selectbox',
 		'selectbox_values' => array(
 			'css' => __( 'Minify (default)', 'w3-total-cache' ),
-			'csstidy' => __( 'CSS Tidy', 'w3-total-cache' ),			
+			'csstidy' => array( 'label' => __( 'CSS Tidy', 'w3-total-cache' ), 'disabled' => ( version_compare( PHP_VERSION, '5.4.0', '<') ? true : false ) ),
 			'cssmin' => __( 'YUI Compressor (PHP)', 'w3-total-cache' ),
 			'yuicss' => __( 'YUI Compressor', 'w3-total-cache' )
 		)

@@ -442,7 +442,7 @@ class Cdn_Core_Admin {
 											$guid = ltrim( $upload_info['baseurlpath'] . $title, ',' );
 											$mime_type = Util_Mime::get_mime_type( $dst );
 
-											$GLOBALS['wp_rewrite'] = new WP_Rewrite();
+											$GLOBALS['wp_rewrite'] = new \WP_Rewrite();
 
 											/**
 											 * Insert attachment

@@ -274,6 +274,15 @@ class Util_Environment {
 	}
 
 	/**
+	 * Returns true if server is nginx
+	 *
+	 * @return boolean
+	 */
+	static public function is_iis() {
+		return isset( $_SERVER['SERVER_SOFTWARE'] ) && stristr( $_SERVER['SERVER_SOFTWARE'], 'IIS' ) !== false;
+	}
+
+	/**
 	 * Returns domain from host
 	 *
 	 * @param string  $host
@@ -919,6 +928,14 @@ class Util_Environment {
 	 */
 	static public function url_relative_to_full( $relative_url ) {
 		$relative_url = Util_Environment::path_remove_dots( $relative_url );
+
+		if (version_compare(PHP_VERSION, '5.4.7') < 0) {
+			if ( substr( $relative_url, 0, 2) == '//' ) {
+				$relative_url =
+					( Util_Environment::is_https() ? 'https' : 'http' ) .
+					':' . $relative_url;
+			}
+		}
 
 		$rel = parse_url( $relative_url );
 		// it's full url already

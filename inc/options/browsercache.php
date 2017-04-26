@@ -85,6 +85,14 @@ if ( !defined( 'W3TC' ) )
                 </th>
             </tr>
             <tr>
+                <th colspan="2">
+                    <label><input id="browsercache_querystring" type="checkbox"
+                        <?php Util_Ui::sealing_disabled( 'browsercache.' ) ?>
+                        name="querystring" value="1"<?php checked( $browsercache_querystring, true ); ?> /> <?php _e( 'Remove query strings from static resources', 'w3-total-cache' ); ?></label>
+                    <br /><span class="description"><?php _e( 'Resources with a "?" in the URL are not cached by some proxy caching servers.', 'w3-total-cache' ); ?></span>
+                </th>
+            </tr>
+            <tr>
                 <th><label for="browsercache_replace_exceptions"><?php Util_Ui::e_config_label( 'browsercache.replace.exceptions' ) ?></label></th>
                 <td>
                     <textarea id="browsercache_replace_exceptions"
@@ -214,6 +222,12 @@ Util_Ui::config_item( array(
                 <th colspan="2">
                     <?php $this->checkbox( 'browsercache.cssjs.replace' ) ?> <?php Util_Ui::e_config_label( 'browsercache.cssjs.replace' ) ?></label>
                     <br /><span class="description"><?php _e( 'Whenever settings are changed, a new query string will be generated and appended to objects allowing the new policy to be applied.', 'w3-total-cache' ); ?></span>
+                </th>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    <?php $this->checkbox( 'browsercache.cssjs.querystring' ) ?> <?php _e( 'Remove query strings from static resources', 'w3-total-cache' ); ?></label>
+                    <br /><span class="description"><?php _e( 'Resources with a "?" in the URL are not cached by some proxy caching servers.', 'w3-total-cache' ); ?></span>
                 </th>
             </tr>
             <tr>
@@ -374,6 +388,12 @@ Util_Ui::config_item( array(
                 <th colspan="2">
                     <?php $this->checkbox( 'browsercache.other.replace' ) ?> <?php Util_Ui::e_config_label( 'browsercache.other.replace' ) ?></label>
                     <br /><span class="description"><?php _e( 'Whenever settings are changed, a new query string will be generated and appended to objects allowing the new policy to be applied.', 'w3-total-cache' ); ?></span>
+                </th>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    <?php $this->checkbox( 'browsercache.other.querystring' ) ?> <?php _e( 'Remove query strings from static resources', 'w3-total-cache' ); ?></label>
+                    <br /><span class="description"><?php _e( 'Resources with a "?" in the URL are not cached by some proxy caching servers.', 'w3-total-cache' ); ?></span>
                 </th>
             </tr>
             <tr>

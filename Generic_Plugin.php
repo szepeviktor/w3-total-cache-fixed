@@ -261,7 +261,7 @@ class Generic_Plugin {
 				'id' => 'w3tc',
 				'title' =>
 				'<img src="' .
-				plugins_url( 'w3-total-cache/pub/img/w3tc-sprite-admin-bar.png' ) .
+				plugins_url( 'pub/img/w3tc-sprite-admin-bar.png', W3TC_FILE ) .
 				'" style="vertical-align:middle; margin-right:5px; width: 29px; height: 29px" />' .
 				__( 'Performance', 'w3-total-cache' ) .
 				$menu_postfix,
@@ -275,6 +275,15 @@ class Generic_Plugin {
 					'title' => __( 'Purge All Caches', 'w3-total-cache' ),
 					'href' => wp_nonce_url( network_admin_url(
 							'admin.php?page=w3tc_dashboard&amp;w3tc_flush_all' ),
+						'w3tc' )
+				);
+			if ( !is_admin() )
+				$menu_items['10020.generic'] = array(
+					'id' => 'w3tc_flush_current_page',
+					'parent' => 'w3tc',
+					'title' => __( 'Purge Current Page', 'w3-total-cache' ),
+					'href' => wp_nonce_url( admin_url(
+							'admin.php?page=w3tc_dashboard&amp;w3tc_flush_current_page' ),
 						'w3tc' )
 				);
 
@@ -511,9 +520,9 @@ class Generic_Plugin {
 
 				$buffer = apply_filters( 'w3tc_process_content', $buffer );
 			}
-		
+
 			$buffer = Util_Bus::do_ob_callbacks(
-				array( 'minify', 'newrelic', 'cdn', 'browsercache', 'pagecache' ),
+				array( 'swarmify', 'minify', 'newrelic', 'cdn', 'browsercache', 'pagecache' ),
 				$buffer );
 		}
 

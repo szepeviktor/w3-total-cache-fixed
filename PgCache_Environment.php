@@ -323,6 +323,10 @@ class PgCache_Environment {
 					$this->wp_config_addon() );
 			}
 		}
+		// that file was in opcache for sure and it may take time to
+		// start execution of new modified now version
+		$o = Dispatcher::component( 'SystemOpCache_Core' );
+		$o->flush();
 	}
 
 	/**

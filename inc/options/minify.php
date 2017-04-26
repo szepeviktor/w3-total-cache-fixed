@@ -314,10 +314,10 @@ if ( file_exists( $js_engine_file2 ) ) {
             <?php
 Util_Ui::config_item( array(
         'key' => 'minify.js.http2push',
-        'label' => 'HTTP/2 push',
+        'label' => '<acronym title="Hypertext Markup Language">HTTP</acronym>/2 push',
         'control' => 'checkbox',
         'checkbox_label' => __( 'Enable', 'w3-total-cache' ),
-        'description' => __( 'For better performance, send files to browser before they are requested when using the HTTP/2 protocol.',
+        'description' => __( 'For better performance, send files to browser before they are requested when using the <acronym title="Hypertext Markup Language">HTTP</acronym>/2 protocol.',
             'w3-total-cache' ) .
             ( $this->_config->get_string( 'pgcache.engine' ) != 'file_generic' ? '' :
                 __( ' <br /><b>Not supported by "Disk: Enhanced" page cache engine</b>', 'w3-total-cache' ) )
@@ -439,10 +439,10 @@ if ( file_exists( $css_engine_file2 ) ) {
             <?php
 Util_Ui::config_item( array(
         'key' => 'minify.css.http2push',
-        'label' => 'HTTP/2 push',
+        'label' => '<acronym title="Hypertext Markup Language">HTTP</acronym>/2 push',
         'control' => 'checkbox',
         'checkbox_label' => __( 'Enable', 'w3-total-cache' ),
-        'description' => __( 'For better performance, send files to browser before they are requested when using the HTTP/2 protocol.',
+        'description' => __( 'For better performance, send files to browser before they are requested when using the <acronym title="Hypertext Markup Language">HTTP</acronym>/2 protocol.',
             'w3-total-cache' ) .
             ( $this->_config->get_string( 'pgcache.engine' ) != 'file_generic' ? '' :
                 __( ' <br /><b>Not supported by "Disk: Enhanced" page cache engine</b>', 'w3-total-cache' ) )
@@ -527,8 +527,8 @@ if ( $this->_config->get_string( 'minify.engine' ) == 'memcached' ) {
             <tr>
                 <th colspan="2">
                     <?php $this->checkbox( 'minify.cache.files_regexp', false, '', true, null ); ?>
-                    <?php _e( 'Use Regular Expression for matching', 'w3-total-cache' ) ?><br />
-                    <span class="description"><?php _e( '', 'w3-total-cache' ); ?></span>
+                    <?php _e( 'Use Regular Expressions for file name matching', 'w3-total-cache' ) ?><br />
+                    <span class="description"><?php _e( 'If external script file names vary, use regular expressions in the "Include external files/libraries" field to simplify matching.', 'w3-total-cache' ); ?></span>
                 </th>
             </tr>
             <?php endif; ?>

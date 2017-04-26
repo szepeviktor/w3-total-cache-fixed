@@ -258,6 +258,7 @@ class BrowserCache_Environment {
 
 			$rules .= "</IfModule>\n";
 
+
 			$rules .= "<IfModule mod_expires.c>\n";
 			$rules .= "    ExpiresActive On\n";
 

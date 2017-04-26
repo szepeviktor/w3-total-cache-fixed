@@ -279,7 +279,9 @@ class PgCache_ContentGrabber {
 		if ( $with_filter ) {
 			// return empty value if caching should not happen
 			$this->_page_key = apply_filters( 'w3tc_page_extract_key',
-				$this->_page_key );
+				$this->_page_key, $mobile_group, $referrer_group,
+				$encryption, $compression, $content_type,
+				$this->_request_host . $this->_request_uri );
 		}
 
 		if ( !empty( $this->_page_key ) )
@@ -1241,7 +1243,7 @@ class PgCache_ContentGrabber {
 		// headers are sent as name->value and array(n=>, v=>)
 		// to support repeating headers
 		foreach ( $headers as $name0 => $value0 ) {
-			if ( isset( $value0['n'] ) ) {
+			if ( is_array( $value0 ) && isset( $value0['n'] ) ) {
 				$name = $value0['n'];
 				$value = $value0['v'];
 			} else {
