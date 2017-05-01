@@ -599,12 +599,12 @@ class PgCache_Environment {
        /**
         * Set accept query strings
         */
-       $w3tc_query_strings = array_filter( $config->get_array( 'pgcache.accept.qs' ), function( $val ) { return $val != ""; } );
+       $w3tc_query_strings = $config->get_array( 'pgcache.accept.qs' );
+       Util_Rule::array_trim( $w3tc_query_strings );
 
        if ( !empty( $w3tc_query_strings ) ) {
-           foreach ( $w3tc_query_strings as &$val ) {
-               $val = trim( str_replace( " ", "\+", preg_quote( $val ) ) );
-           }
+           $w3tc_query_strings = str_replace( ' ', '+', $w3tc_query_strings );
+           $w3tc_query_strings = array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $w3tc_query_strings );
 
            $rules .= "    RewriteRule ^ - [E=W3TC_QUERY_STRING:%{QUERY_STRING}]\n";
 
@@ -739,8 +739,11 @@ class PgCache_Environment {
 		/**
 		 * Check for rejected cookies
 		 */
+        if ( !empty( $reject_cookies ) ) {
+            $reject_cookies = str_replace( ' ', '+', $reject_cookies );
 		$use_cache_rules .= "    RewriteCond %{HTTP_COOKIE} !(" . implode( '|',
 			array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $reject_cookies ) ) . ") [NC]\n";
+        }
 
 		/**
 		 * Check for rejected user agents
@@ -856,12 +859,12 @@ class PgCache_Environment {
         /**
          * Set accept query strings
          */
-        $w3tc_query_strings = array_filter( $config->get_array( 'pgcache.accept.qs' ), function( $val ) { return $val != ""; } );
+        $w3tc_query_strings = $config->get_array( 'pgcache.accept.qs' );
+        Util_Rule::array_trim( $w3tc_query_strings );
 
         if ( !empty( $w3tc_query_strings ) ) {
-            foreach ( $w3tc_query_strings as &$val ) {
-                $val = trim( str_replace( " ", "\+", preg_quote( $val ) ) );
-            }
+           $w3tc_query_strings = str_replace( ' ', '+', $w3tc_query_strings );
+           $w3tc_query_strings = array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $w3tc_query_strings );
 
             $rules .= "set \$w3tc_query_string \$query_string;\n";
 
@@ -951,11 +954,13 @@ class PgCache_Environment {
 		/**
 		 * Check for rejected cookies
 		 */
+        if ( !empty( $reject_cookies ) ) {
+            $reject_cookies = str_replace( ' ', '+', $reject_cookies );
 		$rules .= "if (\$http_cookie ~* \"(" . implode( '|',
 			array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $reject_cookies ) ) . ")\") {\n";
 		$rules .= "    set \$w3tc_rewrite 0;\n";
 		$rules .= "}\n";
-
+        }
 		/**
 		 * Check for rejected user agents
 		 */
