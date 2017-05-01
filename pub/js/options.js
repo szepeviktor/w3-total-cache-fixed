@@ -1047,6 +1047,9 @@ jQuery(function() {
         jQuery.post('admin.php?page=w3tc_dashboard', {
             w3tc_test_redis: 1,
             servers: jQuery('#redis_servers').val(),
+            persistent : jQuery('#objectcache__redis__persistent').is(':checked'),
+            dbid : jQuery('#redis_dbid').val(),
+            password : jQuery('#redis_password').val(),
             _wpnonce: jQuery(this).metadata().nonce
         }, function(data) {
             status.addClass(data.result ? 'w3tc-success' : 'w3tc-error');
