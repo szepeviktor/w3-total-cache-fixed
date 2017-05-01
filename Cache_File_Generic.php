@@ -83,16 +83,47 @@ class Cache_File_Generic extends Cache_File {
 		$old_entry_path = $path . '_old';
 		@unlink( $old_entry_path );
 
-		if ( Util_Environment::is_apache() && isset( $var['headers'] ) &&
-			isset( $var['headers']['Content-Type'] ) &&
-			substr( $var['headers']['Content-Type'], 0, 8 ) == 'text/xml' ) {
-			file_put_contents( dirname( $path ) . '/.htaccess',
-				"<IfModule mod_mime.c>\n" .
-				"    RemoveType .html_gzip\n" .
-				"    AddType text/xml .html_gzip\n" .
-				"    RemoveType .html\n" .
-				"    AddType text/xml .html\n".
-				"</IfModule>" );
+		if ( Util_Environment::is_apache() && isset( $var['headers'] ) ) {
+			
+			$rules = '';
+			
+			if( isset( $var['headers']['Content-Type'] ) && substr( $var['headers']['Content-Type'], 0, 8 ) == 'text/xml' ){
+			
+				$rules .= "<IfModule mod_mime.c>\n";
+				$rules .= "    RemoveType .html_gzip\n";
+				$rules .= "    AddType text/xml .html_gzip\n";
+				$rules .= "    RemoveType .html\n";
+				$rules .= "    AddType text/xml .html\n";
+				$rules .= "</IfModule>\n";
+			}
+			
+			if( isset($var['headers'][0]) ){
+				
+				$links = '';
+				$i = 0;
+				
+				while( isset($var['headers'][$i]) ){
+					
+					$name  = isset($var['headers'][$i]['n']) ? $var['headers'][$i]['n'] : '';
+					$value = isset($var['headers'][$i]['v']) ? $var['headers'][$i]['v'] : '';
+					
+					if( ($name == 'Link') && (false !== strpos($value, 'rel=preload')) ){
+						$links .= "    Header add Link '".trim($value)."'\n";
+					}
+					
+					$i++;
+				}
+				
+				if( !empty($links) ){
+					$rules .= "<IfModule mod_headers.c>\n";
+					$rules .= $links;
+					$rules .= "</IfModule>\n";
+				}
+			}
+			
+			if( !empty($rules) ){
+				file_put_contents( dirname( $path ) . '/.htaccess', $rules);
+			}
 		}
 
 		return true;
