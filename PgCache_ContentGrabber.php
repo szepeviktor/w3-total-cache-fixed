@@ -1923,6 +1923,16 @@ class PgCache_ContentGrabber {
 		 */
 		$buffers = array();
 
+        /**
+         * Filters the current theme page cache lifetime.
+         *
+         * @param integer $_lifetime      The page cache lifetime.
+         * @param string  $_request_uri   The URI of the page.
+         * @param integer $mobile_group   The request's mobile group.
+         * @param integer $referrer_group The request's referrer group.
+         */
+        $_expire = apply_filters('w3tc_pgcache_lifetime', $this->_lifetime, $this->_request_uri, $mobile_group, $referrer_group);
+
 		foreach ( $compressions_to_store as $_compression ) {
 			$this->_set_extract_page_key(
 				array_merge( $this->_page_key_extension,
@@ -1949,7 +1959,7 @@ class PgCache_ContentGrabber {
 				$this->_page_group );
 
 			if ( !empty( $_data ) )
-				$cache->set( $this->_page_key, $_data, $this->_lifetime, $this->_page_group );
+				$cache->set( $this->_page_key, $_data, $_expire, $this->_page_group );
 		}
 
 		// Change buffer if using compression
