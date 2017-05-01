@@ -195,6 +195,8 @@ class Generic_AdminActions_Config {
 		$this->_config->set( 'common.tweeted', $tweeted );
 		if ( $track_usage )
 			$this->_config->set( 'common.track_usage', true );
+		else
+			$this->_config->set( 'common.track_usage', false );
 
 		if ( $signmeup ) {
 			if ( Util_Environment::is_w3tc_enterprise( $this->_config ) )
