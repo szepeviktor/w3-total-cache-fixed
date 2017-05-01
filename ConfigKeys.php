@@ -331,7 +331,7 @@ $keys = array(
 	),
 	'pgcache.cache.query' => array(
 		'type' => 'boolean',
-		'default' => false
+		'default' => true
 	),
 	'pgcache.cache.home' => array(
 		'type' => 'boolean',
@@ -348,7 +348,7 @@ $keys = array(
 	),
 	'pgcache.cache.ssl' => array(
 		'type' => 'boolean',
-		'default' => true
+		'default' => false
 	),
 	'pgcache.cache.404' => array(
 		'type' => 'boolean',
@@ -1500,7 +1500,7 @@ $keys = array(
 	),
 	'browsercache.cssjs.cache.control' => array(
 		'type' => 'boolean',
-		'default' => false
+		'default' => true
 	),
 	'browsercache.cssjs.cache.policy' => array(
 		'type' => 'string',
@@ -1532,7 +1532,7 @@ $keys = array(
 	),
 	'browsercache.html.expires' => array(
 		'type' => 'boolean',
-		'default' => false
+		'default' => true
 	),
 	'browsercache.html.lifetime' => array(
 		'type' => 'integer',
@@ -1540,7 +1540,7 @@ $keys = array(
 	),
 	'browsercache.html.cache.control' => array(
 		'type' => 'boolean',
-		'default' => false
+		'default' => true
 	),
 	'browsercache.html.cache.policy' => array(
 		'type' => 'string',
@@ -1580,7 +1580,7 @@ $keys = array(
 	),
 	'browsercache.other.cache.control' => array(
 		'type' => 'boolean',
-		'default' => false
+		'default' => true
 	),
 	'browsercache.other.cache.policy' => array(
 		'type' => 'string',
