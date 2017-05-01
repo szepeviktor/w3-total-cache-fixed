@@ -209,7 +209,9 @@ class Cdn_Core_Admin {
             WHERE
                 p.post_type = "attachment"  AND (pm.meta_value IS NOT NULL OR pm2.meta_value IS NOT NULL)
             GROUP BY
-            	p.ID', $wpdb->prefix, $wpdb->prefix, $wpdb->prefix );
+            	p.ID
+	    ORDER BY
+				p.ID', $wpdb->prefix, $wpdb->prefix, $wpdb->prefix );
 
 			if ( $limit ) {
 				$sql .= sprintf( ' LIMIT %d', $limit );
@@ -442,7 +444,7 @@ class Cdn_Core_Admin {
 											$guid = ltrim( $upload_info['baseurlpath'] . $title, ',' );
 											$mime_type = Util_Mime::get_mime_type( $dst );
 
-											$GLOBALS['wp_rewrite'] = new \WP_Rewrite();
+											$GLOBALS['wp_rewrite'] = new WP_Rewrite();
 
 											/**
 											 * Insert attachment
