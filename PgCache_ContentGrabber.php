@@ -498,7 +498,7 @@ class PgCache_ContentGrabber {
 		/**
 		 * Check request URI
 		 */
-		if ( !in_array( $_SERVER['PHP_SELF'], $this->_config->get_array( 'pgcache.accept.files' ) ) && !$this->_check_request_uri() ) {
+		if ( !$this->_check_cache_exception() && !$this->_check_request_uri() ) {
 			$this->cache_reject_reason = 'Requested URI is rejected';
 
 			return false;
@@ -615,6 +615,38 @@ class PgCache_ContentGrabber {
 			$this->cache_reject_reason = 'Page contains dynamic tags (mfunc or mclude) can not be cached in enhanced mode';
 
 			return false;
+		}
+        if ( !$this->_check_cache_exception() && ( is_single() || is_page() ) ) {
+			if ( is_single() ) {
+                /**
+                 * Don't cache pages associated with categories
+                 */
+                if ( $this->_check_categories() ) {
+                    $this->cache_reject_reason = 'Page associated with a rejected category';
+                    return false;
+                }
+                /**
+                 * Don't cache pages that use tags
+                 */
+                if ( $this->_check_tags() ) {
+                    $this->cache_reject_reason = 'Page using a rejected tag';
+                    return false;
+                }
+            }
+            /**
+             * Don't cache pages by these authors
+             */
+            if ( $this->_check_authors() ) {
+                $this->cache_reject_reason = 'Page written by a rejected author';
+                return false;
+            }
+            /**
+             * Don't cache pages using custom fields
+             */
+            if ( $this->_check_custom_fields() ) {
+                $this->cache_reject_reason = 'Page using a rejected custom field';
+                return false;
+            }
 		}
 
 		return true;
@@ -736,6 +768,97 @@ class PgCache_ContentGrabber {
 		return $cache;
 	}
 
+	/**
+     * Check if in the cache exception list
+     *
+     * @return boolean
+     */
+    function _check_cache_exception() {
+        $accept_uri = $this->_config->get_array( 'pgcache.accept.files' );
+        $accept_uri = array_map( array( '\W3TC\Util_Environment', 'parse_path' ), $accept_uri );
+        $accept_uri = str_replace( "~", "\~", $accept_uri );
+        Util_Rule::array_trim( $accept_uri );
+        if ( !empty( $accept_uri ) && @preg_match( '~' . implode( "|", $accept_uri ) . '~i', $this->_request_uri ) ) {
+        	return true;
+        }
+        return false;
+    }
+    /**
+     * Checks page against rejected categories
+     *
+     * @return boolean
+     */
+    function _check_categories() {
+        $reject_categories = $this->_config->get_array( 'pgcache.reject.categories' );
+        $reject_categories = array_map( 'strtolower', $reject_categories );
+        if ( !empty( $reject_categories ) ) {
+            if ( $cats = get_the_category() ) {
+	           foreach( $cats as $cat ) {
+		          if ( in_array( $cat->slug, $reject_categories ) ) {
+                        return true;
+                  }
+               }
+            }
+        }
+        return false;
+    }
+    /**
+     * Checks page against rejected tags
+     *
+     * @return boolean
+     */
+    function _check_tags() {
+        $reject_tags = $this->_config->get_array( 'pgcache.reject.tags' );
+        $reject_tags = array_map( 'strtolower', $reject_tags );
+        if ( !empty( $reject_tags ) ) {
+            if ( $tags = get_the_tags() ) {
+	           foreach( $tags as $tag ) {
+		          if ( in_array( $tag->slug,$reject_tags ) ) {
+                        return true;
+                  }
+               }
+            }
+        }
+        return false;
+    }
+    /**
+     * Checks page against rejected authors
+     *
+     * @return boolean
+     */
+    function _check_authors() {
+        $reject_authors = $this->_config->get_array( 'pgcache.reject.authors' );
+        $reject_authors = array_map( 'strtolower', $reject_authors );
+        if ( !empty( $reject_authors ) ) {
+            if ( $author = get_the_author_meta( "user_login" ) ) {
+                if ( in_array( $author, $reject_authors ) ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    /**
+     * Checks page against rejected custom fields
+     *
+     * @return boolean
+     */
+    function _check_custom_fields() {
+        $reject_custom = $this->_config->get_array( 'pgcache.reject.custom' );
+        Util_Rule::array_trim( $reject_custom );
+        $reject_custom = array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $reject_custom );
+        $reject_custom = implode( "|",array_filter( $reject_custom ) );
+        if ( !empty( $reject_custom ) ) {
+            if ( $customs = get_post_custom() ) {
+                foreach ( $customs as $key => $value ) {
+                    if ( @preg_match( '~' . $reject_custom . '~i', $key . ( isset( $value[0] ) ? "={$value[0]}" : "" ) ) ) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 	/**
 	 * Checks request URI
 	 *
