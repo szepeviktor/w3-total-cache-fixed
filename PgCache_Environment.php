@@ -1194,7 +1194,24 @@ class PgCache_Environment {
 
 			// allow to read files by apache if they are blocked at some level above
 			$rules .= "<Files ~ \"\.(html|html_gzip|xml|xml_gzip)$\">\n";
+            $rules .= "  <IfModule mod_version.c>\n";
+            $rules .= "    <IfVersion < 2.4>\n";
+            $rules .= "      Order Allow,Deny\n";
 			$rules .= "  Allow from all\n";
+            $rules .= "    </IfVersion>\n";
+            $rules .= "    <IfVersion >= 2.4>\n";
+            $rules .= "      Require all granted\n";
+            $rules .= "    </IfVersion>\n";
+            $rules .= "  </IfModule>\n";
+            $rules .= "  <IfModule !mod_version.c>\n";
+            $rules .= "    <IfModule !mod_authz_core.c>\n";
+            $rules .= "      Order Allow,Deny\n";
+            $rules .= "      Allow from All\n";
+            $rules .= "    </IfModule>\n";
+            $rules .= "    <IfModule mod_authz_core.c>\n";
+            $rules .= "      Require all granted\n";
+            $rules .= "    </IfModule>\n";
+            $rules .= "  </IfModule>\n";
 			$rules .= "</Files>\n";
 
 			if ( !$etag ) {
