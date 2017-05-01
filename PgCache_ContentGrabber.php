@@ -1597,14 +1597,30 @@ class PgCache_ContentGrabber {
 		return in_array( $content_type, $cache_headers );
 	}
 
-	private function _check_query_string() {
-		$accept_qs = $this->_config->get_array( 'pgcache.accept.qs' );
-		foreach ( $_GET as $key => $value ) {
-			if ( !in_array( strtolower( $key ), $accept_qs ) )
-				return false;
-		}
-		return true;
-	}
+	/**
+	 * Check whether requested page has query string(s) that can be cached
+	 *
+	 * @return bool
+	 */
+    private function _check_query_string() {
+        $accept_qs = $this->_config->get_array( 'pgcache.accept.qs' );
+        $accept_qs = array_filter( $accept_qs, function( $val ) { return $val != ""; } );
+
+        foreach ( $accept_qs as &$val ) {
+            $val = preg_quote( trim( str_replace( "+", " ", $val ) ), "~" );
+            $val .=  ( strpos( $val, '=' ) === false ? '.*?' : '' );
+        }
+
+        $accept_qs = implode( '|', $accept_qs );
+
+        foreach ( $_GET as $key => $value ) {
+            if ( !@preg_match( '~^(' . $accept_qs . ')$~i', $key . "=$value" ) ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
 	/**
 	 *
