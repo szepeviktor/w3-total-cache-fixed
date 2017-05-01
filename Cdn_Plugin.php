@@ -30,9 +30,14 @@ class Cdn_Plugin {
 	function run() {
 		$cdn_engine = $this->_config->get_string( 'cdn.engine' );
 
-        add_filter( 'wp_prepare_attachment_for_js', array( 
+        add_filter( 'wp_get_attachment_url', array( 
+             $this,
+            'w3tc_attachment_url'
+        ), 0 );
+
+        add_filter( 'attachment_link', array( 
             $this, 
-            'w3tc_prepare_attachment_for_js'
+            'w3tc_attachment_url'
         ), 0 );
 
 		if ( Cdn_Util::is_engine_fsd( $cdn_engine ) ) {
@@ -755,51 +760,35 @@ class Cdn_Plugin {
 
 	/**
 	 * Adjusts attachment urls to cdn. This is for those who rely on
-	 * wp_prepare_attachment_for_js()
-	 *
-	 * @param 	array   $response	Mixed collection of data about the attachment object
-	 * @return 	array
-	 */
-    function w3tc_prepare_attachment_for_js( $response ) {
-        $response['url'] = $this->adjust_for_cdn( $response['url'] );
-        $response['link'] = $this->adjust_for_cdn( $response['link'] );
-
-        if ( !empty( $response['sizes'] ) ) {
-            foreach( $response['sizes'] as $size => &$data ) {
-                $data['url'] = $this->adjust_for_cdn( $data['url'] );
-            }
-        }
-
-        return $response;
-    }
-
-	/**
-	 * An attachment's local url to modify into a cdn url
+	 * wp_get_attachment_url()
 	 *
 	 * @param 	string   $url	the local url to modify
 	 * @return 	string
 	 */
-    function adjust_for_cdn( $url ) {
+    function w3tc_attachment_url( $url ) {
         static $allowed_files = null;
 
-        $url = trim( $url );
+		if ( ( defined( 'WP_ADMIN' ) && $this->_config->get_boolean( 'cdn.admin.media_library' ) ) ||
+			 ( $this->can_cdn() && $this->can_cdn2( $empty ) ) ) {
+			$url = trim( $url );
 
-        if ( !empty( $url ) ) {
-            if ( empty( $allowed_files ) ) {
-                $allowed_files = $this->get_files();
-            }
-        
-            $parsed = parse_url( $url );
-            $rel_url = ( isset( $parsed['path'] ) ? $parsed['path'] : '/' ) .
-                       ( isset( $parsed['query'] ) ? '?' . $parsed['query'] : '' );
+			if ( !empty( $url ) ) {
+				if ( empty( $allowed_files ) ) {
+					$allowed_files = $this->get_files();
+				}
 
-            if ( in_array( ltrim( $rel_url, '/' ), $allowed_files ) ) {
-                $common = Dispatcher::component( 'Cdn_Core' );
-                $cdn = $common->get_cdn();
-                $remote_path = $common->uri_to_cdn_uri( $rel_url );
-                $url = $cdn->_format_url( $remote_path );
-            }
-        }
+				$parsed = parse_url( $url );
+				$rel_url = ( isset( $parsed['path'] ) ? $parsed['path'] : '/' ) .
+						   ( isset( $parsed['query'] ) ? '?' . $parsed['query'] : '' );
+
+				if ( in_array( ltrim( $rel_url, '/' ), $allowed_files ) ) {
+					$common = Dispatcher::component( 'Cdn_Core' );
+					$cdn = $common->get_cdn();
+					$remote_path = $common->uri_to_cdn_uri( $rel_url );
+					$url = $cdn->_format_url( $remote_path );
+				}
+			}
+		}
 
         return $url;
     }		

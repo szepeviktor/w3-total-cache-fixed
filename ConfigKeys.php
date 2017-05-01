@@ -1384,6 +1384,10 @@ $keys = array(
 		'type' => 'boolean',
 		'default' => false
 	),
+	'cdn.admin.media_library' => array(
+		'type' => 'boolean',
+		'default' => false
+	),
 	'varnish.configuration_overloaded' => array(
 		'type' => 'boolean',
 		'default' => false
