@@ -1108,6 +1108,10 @@ $keys = array(
 		'type' => 'string',
 		'default' => ''
 	),
+    'cdn.s3.bucket.location' => array(
+        'type' => 'string',
+        'default' => 'us-east-1'
+    ),
 	'cdn.s3.cname' => array(
 		'type' => 'array',
 		'default' => array()
@@ -1134,6 +1138,10 @@ $keys = array(
 		'type' => 'string',
 		'default' => ''
 	),
+    'cdn.cf.bucket.location' => array(
+        'type' => 'string',
+        'default' => 'us-east-1'
+    ),
 	'cdn.cf.id' => array(
 		'type' => 'string',
 		'default' => ''

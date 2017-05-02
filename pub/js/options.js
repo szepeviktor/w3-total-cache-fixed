@@ -777,6 +777,10 @@ jQuery(function() {
       w3tc_use_poll_zone(metadata.type, metadata.nonce);
     });
 
+    jQuery('#cdn_s3_bucket,#cdn_cf_bucket').focusout(function () {
+      jQuery(this).val(jQuery(this).val().toLowerCase());
+    });
+
     jQuery('#cdn_test').click(function() {
         var me = jQuery(this);
         var metadata = me.metadata();
@@ -808,7 +812,8 @@ jQuery(function() {
                     engine: 's3',
                     'config[key]': jQuery('#cdn_s3_key').val(),
                     'config[secret]': jQuery('#cdn_s3_secret').val(),
-                    'config[bucket]': jQuery('#cdn_s3_bucket').val()
+                    'config[bucket]': jQuery('#cdn_s3_bucket').val(),
+                    'config[bucket_location]': jQuery('#cdn_s3_bucket_location').val()
                 });
 
                 if (cnames.length) {
@@ -822,6 +827,7 @@ jQuery(function() {
                     'config[key]': jQuery('#cdn_cf_key').val(),
                     'config[secret]': jQuery('#cdn_cf_secret').val(),
                     'config[bucket]': jQuery('#cdn_cf_bucket').val(),
+                    'config[bucket_location]': jQuery('#cdn_cf_bucket_location').val(),
                     'config[id]': jQuery('#cdn_cf_id').val()
                 });
 
@@ -982,6 +988,12 @@ jQuery(function() {
         status.removeClass('w3tc-error');
         status.removeClass('w3tc-success');
         status.addClass('w3tc-process');
+
+        var status2 = jQuery('#cdn_create_container_status');
+        status2.removeClass('w3tc-error');
+        status2.removeClass('w3tc-success');
+        status2.html('');
+
         status.html('Testing...');
 
         jQuery.post('admin.php?page=w3tc_dashboard', params, function(data) {
@@ -1084,6 +1096,12 @@ jQuery(function() {
         status.removeClass('w3tc-error');
         status.removeClass('w3tc-success');
         status.addClass('w3tc-process');
+
+        var status2 = jQuery('#cdn_test_status');
+        status2.removeClass('w3tc-error');
+        status2.removeClass('w3tc-success');
+        status2.html('');
+
         status.html('Creating...');
 
         jQuery.post('admin.php?page=w3tc_dashboard', params, function(data) {
