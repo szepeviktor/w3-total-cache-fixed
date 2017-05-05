@@ -323,6 +323,10 @@ class PgCache_Environment {
 					$this->wp_config_addon() );
 			}
 		}
+		// that file was in opcache for sure and it may take time to
+		// start execution of new modified now version
+		$o = Dispatcher::component( 'SystemOpCache_Core' );
+		$o->flush();
 	}
 
 	/**
@@ -592,28 +596,6 @@ class PgCache_Environment {
 			$rules .= "    RewriteRule ^(.*\\/)?w3tc_rewrite_test([0-9]+)/?$ $1?w3tc_rewrite_test=1 [L]\n";
 		}
 
-       /**
-        * Set accept query strings
-        */
-       $w3tc_query_strings = $config->get_array( 'pgcache.accept.qs' );
-       Util_Rule::array_trim( $w3tc_query_strings );
-
-       if ( !empty( $w3tc_query_strings ) ) {
-           $w3tc_query_strings = str_replace( ' ', '+', $w3tc_query_strings );
-           $w3tc_query_strings = array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $w3tc_query_strings );
-
-           $rules .= "    RewriteRule ^ - [E=W3TC_QUERY_STRING:%{QUERY_STRING}]\n";
-
-           foreach ( $w3tc_query_strings as $query ) {
-               $query .=  ( strpos( $query, '=' ) === false ? '.*?' : '' );
-               $rules .= "    RewriteCond %{ENV:W3TC_QUERY_STRING} ^(.*?&|)".$query."(&.*|)$ [NC]\n";
-               $rules .= "    RewriteRule ^ - [E=W3TC_QUERY_STRING:%1%2]\n";
-           }
-
-           $rules .= "    RewriteCond %{ENV:W3TC_QUERY_STRING} ^&+$\n";
-           $rules .= "    RewriteRule ^ - [E=W3TC_QUERY_STRING]\n";
-        }
-
 		/**
 		 * Check for mobile redirect
 		 */
@@ -719,11 +701,10 @@ class PgCache_Environment {
 		 */
 		$use_cache_rules .= "    RewriteCond %{REQUEST_METHOD} !=POST\n";
 
-        /**
-         * Query string should be empty
-         */
-        $use_cache_rules .= empty( $w3tc_query_strings ) ? "    RewriteCond %{QUERY_STRING} =\"\"\n" :
-                                                           "    RewriteCond %{ENV:W3TC_QUERY_STRING} =\"\"\n";
+		/**
+		 * Query string should be empty
+		 */
+		$use_cache_rules .= "    RewriteCond %{QUERY_STRING} =\"\"\n";
 
 		/**
 		 * Check permalink structure trailing slash
@@ -735,11 +716,8 @@ class PgCache_Environment {
 		/**
 		 * Check for rejected cookies
 		 */
-        if ( !empty( $reject_cookies ) ) {
-            $reject_cookies = str_replace( ' ', '+', $reject_cookies );
-            $use_cache_rules .= "    RewriteCond %{HTTP_COOKIE} !(" . implode( '|',
-                array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $reject_cookies ) ) . ") [NC]\n";
-        }
+		$use_cache_rules .= "    RewriteCond %{HTTP_COOKIE} !(" . implode( '|',
+			array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $reject_cookies ) ) . ") [NC]\n";
 
 		/**
 		 * Check for rejected user agents
@@ -766,14 +744,6 @@ class PgCache_Environment {
 			$env_W3TC_ENC . "\"" . $switch . "\n";
 		$rules .= "    RewriteRule .* \"" . $uri_prefix . $ext .
 			$env_W3TC_ENC . "\" [L]\n";
-
-        if ($config->get_boolean( 'pgcache.cache.apache_handle_xml' ) ) {
-            $ext = '.xml';
-            $rules .= "    RewriteCond \"" . $document_root . $uri_prefix . $ext .
-                $env_W3TC_ENC . "\"" . $switch . "\n";
-            $rules .= "    RewriteRule .* \"" . $uri_prefix . $ext .
-                $env_W3TC_ENC . "\" [L]\n";
-        }
 
 		$rules .= "</IfModule>\n";
 
@@ -852,30 +822,6 @@ class PgCache_Environment {
 			$rules .= "rewrite ^(.*\\/)?w3tc_rewrite_test([0-9]+)/?$ $1?w3tc_rewrite_test=1 last;\n";
 		}
 
-        /**
-         * Set accept query strings
-         */
-        $w3tc_query_strings = $config->get_array( 'pgcache.accept.qs' );
-        Util_Rule::array_trim( $w3tc_query_strings );
-
-        if ( !empty( $w3tc_query_strings ) ) {
-           $w3tc_query_strings = str_replace( ' ', '+', $w3tc_query_strings );
-           $w3tc_query_strings = array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $w3tc_query_strings );
-
-            $rules .= "set \$w3tc_query_string \$query_string;\n";
-
-            foreach ( $w3tc_query_strings as $query ) {
-                $query .=  ( strpos( $query, '=' ) === false ? '.*?' : '' );
-                $rules .= "if (\$w3tc_query_string ~* \"^(.*?&|)".$query."(&.*|)$\") {\n";
-                $rules .= "    set \$w3tc_query_string $1$2;\n";
-                $rules .= "}\n";
-            }
-
-            $rules .= "if (\$w3tc_query_string ~ ^&+$) {\n";
-            $rules .= "    set \$w3tc_query_string \"\";\n";
-            $rules .= "}\n";
-        }
-
 		/**
 		 * Check for mobile redirect
 		 */
@@ -931,12 +877,12 @@ class PgCache_Environment {
 		$rules .= "    set \$w3tc_rewrite 0;\n";
 		$rules .= "}\n";
 
-        /**
-         * Query string should be empty
-         */
-        $rules .= "if (".( empty( $w3tc_query_strings ) ? "\$query_string" : "\$w3tc_query_string" ) . " != \"\") {\n";
-        $rules .= "    set \$w3tc_rewrite 0;\n";
-        $rules .= "}\n";
+		/**
+		 * Query string should be empty
+		 */
+		$rules .= "if (\$query_string != \"\") {\n";
+		$rules .= "    set \$w3tc_rewrite 0;\n";
+		$rules .= "}\n";
 
 		/**
 		 * Check permalink structure trailing slash
@@ -950,13 +896,11 @@ class PgCache_Environment {
 		/**
 		 * Check for rejected cookies
 		 */
-        if ( !empty( $reject_cookies ) ) {
-            $reject_cookies = str_replace( ' ', '+', $reject_cookies );
-            $rules .= "if (\$http_cookie ~* \"(" . implode( '|',
-                array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $reject_cookies ) ) . ")\") {\n";
-            $rules .= "    set \$w3tc_rewrite 0;\n";
-            $rules .= "}\n";
-        }
+		$rules .= "if (\$http_cookie ~* \"(" . implode( '|',
+			array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $reject_cookies ) ) . ")\") {\n";
+		$rules .= "    set \$w3tc_rewrite 0;\n";
+		$rules .= "}\n";
+
 		/**
 		 * Check for rejected user agents
 		 */
@@ -1188,27 +1132,10 @@ class PgCache_Environment {
 		if ( $compatibility ) {
 			$rules .= "Options -MultiViews\n";
 
-            // allow to read files by apache if they are blocked at some level above
-            $rules .= "<Files ~ \"\.(html|html_gzip|xml|xml_gzip)$\">\n";
-            $rules .= "  <IfModule mod_version.c>\n";
-            $rules .= "    <IfVersion < 2.4>\n";
-            $rules .= "      Order Allow,Deny\n";
-            $rules .= "      Allow from All\n";
-            $rules .= "    </IfVersion>\n";
-            $rules .= "    <IfVersion >= 2.4>\n";
-            $rules .= "      Require all granted\n";
-            $rules .= "    </IfVersion>\n";
-            $rules .= "  </IfModule>\n";
-            $rules .= "  <IfModule !mod_version.c>\n";
-            $rules .= "    <IfModule !mod_authz_core.c>\n";
-            $rules .= "      Order Allow,Deny\n";
-            $rules .= "      Allow from All\n";
-            $rules .= "    </IfModule>\n";
-            $rules .= "    <IfModule mod_authz_core.c>\n";
-            $rules .= "      Require all granted\n";
-            $rules .= "    </IfModule>\n";
-            $rules .= "  </IfModule>\n";
-            $rules .= "</Files>\n";
+			// allow to read files by apache if they are blocked at some level above
+			$rules .= "<Files ~ \"\.(html|html_gzip|xml|xml_gzip)$\">\n";
+			$rules .= "  Allow from all\n";
+			$rules .= "</Files>\n";
 
 			if ( !$etag ) {
 				$rules .= "FileETag None\n";

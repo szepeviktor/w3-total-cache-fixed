@@ -279,7 +279,9 @@ class PgCache_ContentGrabber {
 		if ( $with_filter ) {
 			// return empty value if caching should not happen
 			$this->_page_key = apply_filters( 'w3tc_page_extract_key',
-				$this->_page_key );
+				$this->_page_key, $mobile_group, $referrer_group,
+				$encryption, $compression, $content_type,
+				$this->_request_host . $this->_request_uri );
 		}
 
 		if ( !empty( $this->_page_key ) )
@@ -496,7 +498,7 @@ class PgCache_ContentGrabber {
 		/**
 		 * Check request URI
 		 */
-		if ( !$this->_check_cache_exception() && !$this->_check_request_uri() ) {
+		if ( !in_array( $_SERVER['PHP_SELF'], $this->_config->get_array( 'pgcache.accept.files' ) ) && !$this->_check_request_uri() ) {
 			$this->cache_reject_reason = 'Requested URI is rejected';
 
 			return false;
@@ -534,7 +536,7 @@ class PgCache_ContentGrabber {
 				return false;
 			}
 		}
-        
+
 		return true;
 	}
 
@@ -614,46 +616,6 @@ class PgCache_ContentGrabber {
 
 			return false;
 		}
-
-        if ( !$this->_check_cache_exception() && ( is_single() || is_page() ) ) {
-			if ( is_single() ) {
-                /**
-                 * Don't cache pages associated with categories
-                 */
-                if ( $this->_check_categories() ) {
-                    $this->cache_reject_reason = 'Page associated with a rejected category';
-
-                    return false;
-                }
-
-                /**
-                 * Don't cache pages that use tags
-                 */
-                if ( $this->_check_tags() ) {
-                    $this->cache_reject_reason = 'Page using a rejected tag';
-
-                    return false;
-                }
-            }
-
-            /**
-             * Don't cache pages by these authors
-             */
-            if ( $this->_check_authors() ) {
-                $this->cache_reject_reason = 'Page written by a rejected author';
-
-                return false;
-            }
-
-            /**
-             * Don't cache pages using custom fields
-             */
-            if ( $this->_check_custom_fields() ) {
-                $this->cache_reject_reason = 'Page using a rejected custom field';
-
-                return false;
-            }
-        }
 
 		return true;
 	}
@@ -774,115 +736,6 @@ class PgCache_ContentGrabber {
 		return $cache;
 	}
 
-    /**
-     * Check if in the cache exception list
-     *
-     * @return boolean
-     */
-    function _check_cache_exception() {
-        $accept_uri = $this->_config->get_array( 'pgcache.accept.files' );
-        $accept_uri = array_map( array( '\W3TC\Util_Environment', 'parse_path' ), $accept_uri );
-
-        $accept_uri = str_replace( "~", "\~", $accept_uri );
-        Util_Rule::array_trim( $accept_uri );
-
-        if ( !empty( $accept_uri ) && @preg_match( '~' . implode( "|", $accept_uri ) . '~i', $this->_request_uri ) ) {
-        	return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Checks page against rejected categories
-     *
-     * @return boolean
-     */
-    function _check_categories() {
-        $reject_categories = $this->_config->get_array( 'pgcache.reject.categories' );
-        $reject_categories = array_map( 'strtolower', $reject_categories );
-
-        if ( !empty( $reject_categories ) ) {
-            if ( $cats = get_the_category() ) {
-	           foreach( $cats as $cat ) {
-		          if ( in_array( $cat->slug, $reject_categories ) ) {
-                        return true;
-                  }
-               }
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Checks page against rejected tags
-     *
-     * @return boolean
-     */
-    function _check_tags() {
-        $reject_tags = $this->_config->get_array( 'pgcache.reject.tags' );
-        $reject_tags = array_map( 'strtolower', $reject_tags );
-
-        if ( !empty( $reject_tags ) ) {
-            if ( $tags = get_the_tags() ) {
-	           foreach( $tags as $tag ) {
-		          if ( in_array( $tag->slug,$reject_tags ) ) {
-                        return true;
-                  }
-               }
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Checks page against rejected authors
-     *
-     * @return boolean
-     */
-    function _check_authors() {
-        $reject_authors = $this->_config->get_array( 'pgcache.reject.authors' );
-        $reject_authors = array_map( 'strtolower', $reject_authors );
-
-        if ( !empty( $reject_authors ) ) {
-            if ( $author = get_the_author_meta( "user_login" ) ) {
-                if ( in_array( $author, $reject_authors ) ) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Checks page against rejected custom fields
-     *
-     * @return boolean
-     */
-    function _check_custom_fields() {
-        $reject_custom = $this->_config->get_array( 'pgcache.reject.custom' );
-		
-        Util_Rule::array_trim( $reject_custom );
-        $reject_custom = array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $reject_custom );
-
-        $reject_custom = implode( "|",array_filter( $reject_custom ) );
-
-        if ( !empty( $reject_custom ) ) {
-            if ( $customs = get_post_custom() ) {
-                foreach ( $customs as $key => $value ) {
-                    if ( @preg_match( '~' . $reject_custom . '~i', $key . ( isset( $value[0] ) ? "={$value[0]}" : "" ) ) ) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
 	/**
 	 * Checks request URI
 	 *
@@ -949,23 +802,17 @@ class PgCache_ContentGrabber {
 			}
 		}
 
-        $reject_cookies = $this->_config->get_array( 'pgcache.reject.cookie' );
-        Util_Rule::array_trim( $reject_cookies );
+		foreach ( $this->_config->get_array( 'pgcache.reject.cookie' ) as $reject_cookie ) {
+			if ( !empty( $reject_cookie ) ) {
+				foreach ( array_keys( $_COOKIE ) as $cookie_name ) {
+					if ( strstr( $cookie_name, $reject_cookie ) !== false ) {
+						return false;
+					}
+				}
+			}
+		}
 
-        $reject_cookies = str_replace( "+", " ", $reject_cookies );
-        $reject_cookies = array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $reject_cookies );
-
-        $reject_cookies = implode( '|', $reject_cookies );
-
-        if ( !empty( $reject_cookies ) ) {
-            foreach ( $_COOKIE as $key => $value ) {
-                if ( @preg_match( '~' . $reject_cookies . '~i', $key . "=$value" ) ) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
+		return true;
 	}
 
 	/**
@@ -1312,24 +1159,17 @@ class PgCache_ContentGrabber {
 			$key .= '_preview';
 		}
 
-        if ( $this->_enhanced_mode ) {
-            $ext = "html";
-            if ( @preg_match( "~(text/xml|text/xsl|application/rdf\+xml|application/rss\+xml|application/atom\+xml)~i", $content_type ) ||
-                strpos( $this->_request_uri, "/feed/" ) !== false ||
-                strpos( $this->_request_uri, ".xsl" ) !== false ) {
-                $ext = "xml";
-            }
-            if ( Util_Environment::is_nginx() ) {
-                if ( !$this->_config->get_boolean( 'pgcache.cache.nginx_handle_xml' ) ) {
-                    $ext = "html";
-                }
-            } else {
-                if ( !$this->_config->get_boolean( 'pgcache.cache.apache_handle_xml' ) ) {
-                    $ext = "html";
-                }
-            }
-            $key .= ".$ext";
-        }
+		if ( $this->_enhanced_mode ) {
+			/**
+			 * Append HTML extension.
+			 * For nginx - we create .xml cache entries and redirect to them
+			 */
+			if ( Util_Environment::is_nginx() && substr( $content_type, 0, 8 ) == 'text/xml' &&
+				$this->_config->get_boolean( 'pgcache.cache.nginx_handle_xml' ) )
+				$key .= '.xml';
+			else
+				$key .= '.html';
+		}
 
 		/**
 		 * Append compression
@@ -1351,19 +1191,18 @@ class PgCache_ContentGrabber {
 	 * @return string
 	 */
 	public function w3tc_footer_comment( $strings ) {
-		$comment = sprintf(
+		$strings[] = sprintf(
 			__( 'Page Caching using %s%s', 'w3-total-cache' ),
 			Cache::engine_name( $this->_config->get_string( 'pgcache.engine' ) ),
 			( $this->cache_reject_reason != ''
 				? sprintf( ' (%s)', $this->cache_reject_reason )
 				: '' ) );
 
+
 		if ( $this->_debug ) {
 			$time_total = Util_Debug::microtime() - $this->_time_start;
 			$engine = $this->_config->get_string( 'pgcache.engine' );
-			$strings[] = "~~~~~~~~~~~~~~~~~~~~~~~~~~";
 			$strings[] = "Page cache debug info:";
-			$strings[] = "~~~~~~~~~~~~~~~~~~~~~~~~~~";
 			$strings[] = sprintf( "%s%s", str_pad( 'Engine: ', 20 ), Cache::engine_name( $engine ) );
 			$strings[] = sprintf( "%s%s", str_pad( 'Cache key: ', 20 ), $this->_page_key );
 
@@ -1382,12 +1221,9 @@ class PgCache_ContentGrabber {
 				foreach ( $headers['plain'] as $i ) {
 					$strings[] = sprintf( "%s%s",
 						str_pad( $i['name'] . ': ', 20 ),
-						Util_Content::escape_comment( trim( $i['value'] ) ) );
+						Util_Content::escape_comment( $i['value'] ) );
 				}
 			}
-		} elseif ( $this->_config->get_string( 'common.support' ) == '' &&
-					!$this->_config->get_boolean( 'common.tweeted' ) ){
-			$strings[] = $comment;
 		}
 
 		return $strings;
@@ -1407,7 +1243,7 @@ class PgCache_ContentGrabber {
 		// headers are sent as name->value and array(n=>, v=>)
 		// to support repeating headers
 		foreach ( $headers as $name0 => $value0 ) {
-			if ( is_array($value0) && isset( $value0['n'] ) ) {
+			if ( is_array( $value0 ) && isset( $value0['n'] ) ) {
 				$name = $value0['n'];
 				$value = $value0['v'];
 			} else {
@@ -1754,37 +1590,21 @@ class PgCache_ContentGrabber {
 		$cache_headers = apply_filters( 'w3tc_is_cacheable_content_type',
 			array(
 				'' /* redirects, they have only Location header set */,
-				'application/json', 'text/html', 'text/xml', 'text/xsl',
-				'application/xhtml+xml', 'application/rss+xml', 'application/atom+xml', 'application/rdf+xml'
+				'application/json', 'text/html', 'text/xml',
+				'application/xhtml+xml'
 			)
 		);
 		return in_array( $content_type, $cache_headers );
 	}
 
-	/**
-	 * Check whether requested page has query string(s) that can be cached
-	 *
-	 * @return bool
-	 */
-    private function _check_query_string() {
-        $accept_qs = $this->_config->get_array( 'pgcache.accept.qs' );
-        Util_Rule::array_trim( $accept_qs );
-
-        foreach ( $accept_qs as &$val ) {
-            $val = Util_Environment::preg_quote( str_replace( "+", " ", $val ) );
-            $val .=  ( strpos( $val, '=' ) === false ? '.*?' : '' );
-        }
-
-        $accept_qs = implode( '|', $accept_qs );
-
-        foreach ( $_GET as $key => $value ) {
-            if ( !@preg_match( '~^(' . $accept_qs . ')$~i', $key . "=$value" ) ) {
-                return false;
-            }
-        }
-
-        return true;
-    }
+	private function _check_query_string() {
+		$accept_qs = $this->_config->get_array( 'pgcache.accept.qs' );
+		foreach ( $_GET as $key => $value ) {
+			if ( !in_array( strtolower( $key ), $accept_qs ) )
+				return false;
+		}
+		return true;
+	}
 
 	/**
 	 *
@@ -1897,16 +1717,6 @@ class PgCache_ContentGrabber {
 		} elseif ( $this->_sitemap_matched )
 			$group = 'sitemaps';
 
-        /**
-         * Filters the current theme page cache lifetime.
-         *
-         * @param integer $_lifetime      The page cache lifetime.
-         * @param string  $_request_uri   The URI of the page.
-         * @param integer $mobile_group   The request's mobile group.
-         * @param integer $referrer_group The request's referrer group.
-         */
-        $_expire = apply_filters('w3tc_pgcache_lifetime', $this->_lifetime, $this->_request_uri, $mobile_group, $referrer_group);
-
 		foreach ( $compressions_to_store as $_compression ) {
 			$this->_set_extract_page_key( $mobile_group,
 				$referrer_group, $encryption, $_compression,
@@ -1930,7 +1740,7 @@ class PgCache_ContentGrabber {
 			$_data = apply_filters( 'w3tc_pagecache_set', $_data, $this->_page_key );
 
 			if ( !empty( $_data ) )
-				$cache->set( $this->_page_key, $_data, $_expire, $group );
+				$cache->set( $this->_page_key, $_data, $this->_lifetime, $group );
 		}
 
 		// Change buffer if using compression

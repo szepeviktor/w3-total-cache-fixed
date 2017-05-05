@@ -367,7 +367,6 @@ class Cdn_Core {
 					'key' => $this->_config->get_string( 'cdn.cf.key' ),
 					'secret' => $this->_config->get_string( 'cdn.cf.secret' ),
 					'bucket' => $this->_config->get_string( 'cdn.cf.bucket' ),
-					'bucket_location' => $this->_config->get_string( 'cdn.cf.bucket.location' ),
 					'id' => $this->_config->get_string( 'cdn.cf.id' ),
 					'cname' => $this->_config->get_array( 'cdn.cf.cname' ),
 					'ssl' => $this->_config->get_string( 'cdn.cf.ssl' ),
@@ -534,7 +533,6 @@ class Cdn_Core {
 					'key' => $this->_config->get_string( 'cdn.s3.key' ),
 					'secret' => $this->_config->get_string( 'cdn.s3.secret' ),
 					'bucket' => $this->_config->get_string( 'cdn.s3.bucket' ),
-					'bucket_location' => $this->_config->get_string( 'cdn.s3.bucket.location' ),
 					'cname' => $this->_config->get_array( 'cdn.s3.cname' ),
 					'ssl' => $this->_config->get_string( 'cdn.s3.ssl' ),
 					'compression' => $compression
@@ -624,7 +622,11 @@ class Cdn_Core {
 		if ( is_file( $file ) )
 			return $file;
 
-		return  rtrim( Util_Environment::document_root(), "/" ) . '/' . ltrim( $file, "/" );
+		if ( DIRECTORY_SEPARATOR != '/' )
+			$file = str_replace( '/', DIRECTORY_SEPARATOR, $file );
+
+		return  rtrim( Util_Environment::document_root(), '/\\' ) .
+			DIRECTORY_SEPARATOR . ltrim( $file, '/\\' );
 	}
 
 	/**

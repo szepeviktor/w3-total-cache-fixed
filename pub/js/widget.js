@@ -46,20 +46,5 @@ jQuery(function() {
             jQuery('#buy-w3-service-area').empty();
             jQuery('#buy-w3-service').attr("disabled", "disabled");
         });
-        
-        jQuery('#submit_purge_urls').click(function(){
-                var data = {
-                    'action': 'w3tc_action_purge_urls',
-                    'purge_urls': jQuery('#purge_urls').val(),
-                    'nonce': jQuery('#purge_urls').data('nonce')
-                };
-
-		jQuery.post(ajaxurl, data, function(response) {
-			alert(response);
-		});
-                jQuery('#purge_urls').val('')
-                return false;
-        })
-        
     });
 });

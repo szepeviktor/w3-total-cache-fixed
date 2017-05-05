@@ -17,19 +17,11 @@ class PageSpeed_Api {
 	 */
 	var $key = '';
 
-    /**
-     * Referrer for key restricting
-     *
-     * @var string
-     */
-    var $key_restrict_referrer = '';
-
 	/**
 	 * PHP5-style constructor
 	 */
-	function __construct( $api_key, $api_ref ) {
+	function __construct( $api_key ) {
 		$this->key = $api_key;
-		$this->key_restrict_referrer = $api_ref;
 	}
 
 	/**
@@ -59,9 +51,7 @@ class PageSpeed_Api {
 				'key' => $this->key,
 			) );
 
-		$response = Util_Http::get( $request_url, array( 'timeout' => 120,
-													 'headers' => array( "Referer" => $this->key_restrict_referrer )
-													) );
+		$response = Util_Http::get( $request_url, array( 'timeout' => 120 ) );
 		if ( !is_wp_error( $response ) && $response['response']['code'] == 200 ) {
 			return $response['body'];
 		}

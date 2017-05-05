@@ -78,52 +78,21 @@ class Cache_File_Generic extends Cache_File {
 			@rename( $tmppath, $path );
 		}
 
-		@unlink( $tmppath ); 
+		@unlink( $tmppath );
 
-		$old_entry_path = $path . '.old';
+		$old_entry_path = $path . '_old';
 		@unlink( $old_entry_path );
 
-		if ( Util_Environment::is_apache() && isset( $var['headers'] ) ) {
-			
-			$rules = '';
-			
-			if( isset( $var['headers']['Content-Type'] ) && substr( $var['headers']['Content-Type'], 0, 8 ) == 'text/xml' ){
-			
-				$rules .= "<IfModule mod_mime.c>\n";
-				$rules .= "    RemoveType .html_gzip\n";
-				$rules .= "    AddType text/xml .html_gzip\n";
-				$rules .= "    RemoveType .html\n";
-				$rules .= "    AddType text/xml .html\n";
-				$rules .= "</IfModule>\n";
-			}
-			
-			if( isset($var['headers'][0]) ){
-				
-				$links = '';
-				$i = 0;
-				
-				while( isset($var['headers'][$i]) ){
-					
-					$name  = isset($var['headers'][$i]['n']) ? $var['headers'][$i]['n'] : '';
-					$value = isset($var['headers'][$i]['v']) ? $var['headers'][$i]['v'] : '';
-					
-					if( ($name == 'Link') && (false !== strpos($value, 'rel=preload')) ){
-						$links .= "    Header add Link '".trim($value)."'\n";
-					}
-					
-					$i++;
-				}
-				
-				if( !empty($links) ){
-					$rules .= "<IfModule mod_headers.c>\n";
-					$rules .= $links;
-					$rules .= "</IfModule>\n";
-				}
-			}
-			
-			if( !empty($rules) ){
-				file_put_contents( dirname( $path ) . '/.htaccess', $rules);
-			}
+		if ( Util_Environment::is_apache() && isset( $var['headers'] ) &&
+			isset( $var['headers']['Content-Type'] ) &&
+			substr( $var['headers']['Content-Type'], 0, 8 ) == 'text/xml' ) {
+			file_put_contents( dirname( $path ) . '/.htaccess',
+				"<IfModule mod_mime.c>\n" .
+				"    RemoveType .html_gzip\n" .
+				"    AddType text/xml .html_gzip\n" .
+				"    RemoveType .html\n" .
+				"    AddType text/xml .html\n".
+				"</IfModule>" );
 		}
 
 		return true;
@@ -146,7 +115,7 @@ class Cache_File_Generic extends Cache_File {
 			return array( $data, $has_old_data );
 
 
-		$path_old = $path . '.old';
+		$path_old = $path . '_old';
 		$too_old_time = time() - 30;
 
 		if ( $exists = file_exists( $path_old ) ) {
@@ -217,7 +186,7 @@ class Cache_File_Generic extends Cache_File {
 		if ( !file_exists( $path ) )
 			return true;
 
-		$old_entry_path = $path . '.old';
+		$old_entry_path = $path . '_old';
 		if ( ! @rename( $path, $old_entry_path ) ) {
 			// if we can delete old entry - do second attempt to store in old-entry file
 			if ( ! @unlink( $old_entry_path ) || ! @rename( $path, $old_entry_path ) ) {
@@ -230,7 +199,7 @@ class Cache_File_Generic extends Cache_File {
 	}
 
 	/**
-	 * Key to delete, deletes .old and primary if exists.
+	 * Key to delete, deletes _old and primary if exists.
 	 *
 	 * @param unknown $key
 	 * @return bool
@@ -238,7 +207,7 @@ class Cache_File_Generic extends Cache_File {
 	function hard_delete( $key ) {
 		$key = $this->get_item_key( $key );
 		$path = $this->_cache_dir . DIRECTORY_SEPARATOR . $this->_get_path( $key );
-		$old_entry_path = $path . '.old';
+		$old_entry_path = $path . '_old';
 		@unlink( $old_entry_path );
 
 		if ( !file_exists( $path ) )

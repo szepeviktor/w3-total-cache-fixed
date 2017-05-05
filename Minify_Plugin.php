@@ -59,10 +59,11 @@ class Minify_Plugin {
 		add_filter( 'w3tc_admin_bar_menu',
 			array( $this, 'w3tc_admin_bar_menu' ) );
 
-		add_filter( 'w3tc_footer_comment', array(
-				$this,
-				'w3tc_footer_comment'
-			) );
+		if ( !$this->_config->get_boolean( 'minify.debug' ) )
+			add_filter( 'w3tc_footer_comment', array(
+					$this,
+					'w3tc_footer_comment'
+				) );
 
 		if ( $this->_config->get_string( 'minify.engine' ) == 'file' ) {
 			add_action( 'w3_minify_cleanup', array(
@@ -137,7 +138,7 @@ class Minify_Plugin {
 	 * @return string
 	 */
 	function ob_callback( $buffer ) {
-		$enable = Util_Content::is_html_xml( $buffer ) &&
+		$enable = Util_Content::is_html( $buffer ) &&
 			$this->can_minify2( $buffer );
 		$enable = apply_filters( 'w3tc_minify_enable', $enable );
 		if ( !$enable )
@@ -195,6 +196,7 @@ class Minify_Plugin {
 						$embed_pos = 0;
 				}
 
+				$ignore_css_files = array_map( array( '\W3TC\Util_Environment', 'normalize_file' ), $ignore_css_files );
 				$handled_styles = array();
 				$style_tags = Minify_Extract::extract_css( $buffer );
 				$previous_file_was_ignored = false;
@@ -226,11 +228,7 @@ class Minify_Plugin {
 
 					$handled_styles[] = $file;
 					$this->replaced_styles[] = $file;
-
-                    $ignore_css_files = str_replace( "~", "\~", $ignore_css_files );
-                    Util_Rule::array_trim( $ignore_css_files );
-
-					if ( !empty( $ignore_css_files ) && @preg_match( '~' . implode("|", $ignore_css_files ) . '~i', $file ) ) {
+					if ( in_array( $file, $ignore_css_files ) ) {
 						if ( $tag_pos > $embed_pos ) {
 							if ( $files_to_minify ) {
 								$data = array(
@@ -419,7 +417,7 @@ class Minify_Plugin {
 	}
 
 	function w3tc_footer_comment( $strings ) {
-		$comment = sprintf(
+		$strings[] = sprintf(
 			__( 'Minified using %s%s', 'w3-total-cache' ),
 			Cache::engine_name( $this->_config->get_string( 'minify.engine' ) ),
 			( $this->minify_reject_reason != ''
@@ -427,9 +425,7 @@ class Minify_Plugin {
 				: '' ) );
 
 		if ( $this->_config->get_boolean( 'minify.debug' ) ) {
-			$strings[] = "~~~~~~~~~~~~~~~~~~~~~~~~~~";
 			$strings[] = "Minify debug info:";
-			$strings[] = "~~~~~~~~~~~~~~~~~~~~~~~~~~";
 			$strings[] = sprintf( "%s%s", str_pad( 'Engine: ', 20 ), Cache::engine_name( $this->_config->get_string( 'minify.engine' ) ) );
 			$strings[] = sprintf( "%s%s", str_pad( 'Theme: ', 20 ), $this->get_theme() );
 			$strings[] = sprintf( "%s%s", str_pad( 'Template: ', 20 ), $this->get_template() );
@@ -457,9 +453,6 @@ class Minify_Plugin {
 					$strings[] = sprintf( "%d. %s\r\n", $index + 1, Util_Content::escape_comment( $file ) );
 				}
 			}
-		} elseif ( $this->_config->get_string( 'common.support' ) == '' &&
-					!$this->_config->get_boolean( 'common.tweeted' ) ){
-			$strings[] = $comment;
 		}
 
 		return $strings;
@@ -720,6 +713,7 @@ class Minify_Plugin {
 			case ( is_author() && ( $template_file = get_author_template() ) ):
 			case ( is_date() && ( $template_file = get_date_template() ) ):
 			case ( is_archive() && ( $template_file = get_archive_template() ) ):
+			case ( is_comments_popup() && ( $template_file = get_comments_popup_template() ) ):
 			case ( is_paged() && ( $template_file = get_paged_template() ) ):
 				break;
 
@@ -779,12 +773,26 @@ class Minify_Plugin {
 		);
 
 		if ( !empty( $groups[$theme][$template][$location]['files'] ) ) {
-			$return['url'] = $this->format_url_group( $theme, $template, $location, $type );
+			if ( $this->_config->get_boolean( 'minify.css.embed' ) ) {
+				$minify = Dispatcher::component( 'Minify_MinifiedFileRequestHandler' );
+				$minify_filename = $this->get_minify_manual_filename(
+					$theme, $template, $location, $type );
 
-			if ( $return['url'] ) {
-				$import = ( isset( $groups[$theme][$template][$location]['import'] ) ? (boolean) $groups[$theme][$template][$location]['import'] : false );
+				$m = $minify->process( $minify_filename, true );
+				if ( isset( $m['content'] ) )
+					$style = $m['content'];
+				else
+					$style = 'not set';
 
-				$return['body'] = $this->get_style( $return['url'], $import );
+				$return['body'] = "<style type=\"text/css\" media=\"all\">$style</style>\r\n";
+			} else {
+				$return['url'] = $this->get_minify_manual_url( $theme, $template, $location, $type );
+
+				if ( $return['url'] ) {
+					$import = ( isset( $groups[$theme][$template][$location]['import'] ) ? (boolean) $groups[$theme][$template][$location]['import'] : false );
+
+					$return['body'] = $this->get_style( $return['url'], $import );
+				}
 			}
 		}
 
@@ -815,7 +823,7 @@ class Minify_Plugin {
 		);
 
 		if ( !empty( $groups[$theme][$template][$location]['files'] ) ) {
-			$return['url'] = $this->format_url_group( $theme, $template, $location, $fileType );
+			$return['url'] = $this->get_minify_manual_url( $theme, $template, $location, $fileType );
 
 			if ( $return['url'] ) {
 				$return['body'] = $this->minify_helpers->generate_script_tag(
@@ -856,27 +864,24 @@ class Minify_Plugin {
 	}
 
 	/**
-	 * Formats URL
-	 *
-	 * @param string  $theme
-	 * @param string  $template
-	 * @param string  $location
-	 * @param string  $type
-	 * @return string
+	 * Generates filename for minify manual resource
 	 */
-	function format_url_group( $theme, $template, $location, $type ) {
-		$w3_minify = Dispatcher::component( 'Minify_MinifiedFileRequestHandler' );
+	function get_minify_manual_filename( $theme, $template, $location, $type ) {
+		$minify = Dispatcher::component( 'Minify_MinifiedFileRequestHandler' );
+		$id = $minify->get_id_group( $theme, $template, $location, $type );
+		if ( !$id )
+			return false;
 
-		$url = false;
-		$id = $w3_minify->get_id_group( $theme, $template, $location, $type );
+		return $theme . '.' . $template . '.' . $location . '.'. $id .
+			'.' . $type;
+	}
 
-		if ( $id ) {
-			$minify_filename = $theme . '.' . $template . '.' . $location .
-				'.'. $id . '.' . $type;
-			$url = Minify_Core::minified_url( $minify_filename );
-		}
-
-		return $url;
+	/**
+	 * Generates URL for minify manual resource
+	 */
+	function get_minify_manual_url( $theme, $template, $location, $type ) {
+		return Minify_Core::minified_url( $this->get_minify_manual_filename(
+			$theme, $template, $location, $type ) );
 	}
 
 	/**
@@ -894,7 +899,7 @@ class Minify_Plugin {
 			foreach ( $js_templates as $js_template => $js_locations ) {
 				foreach ( (array) $js_locations as $js_location => $js_config ) {
 					if ( !empty( $js_config['files'] ) ) {
-						$files[] = $this->format_url_group( $js_theme, $js_template, $js_location, 'js' );
+						$files[] = $this->get_minify_manual_url( $js_theme, $js_template, $js_location, 'js' );
 					}
 				}
 			}
@@ -904,7 +909,7 @@ class Minify_Plugin {
 			foreach ( $css_templates as $css_template => $css_locations ) {
 				foreach ( (array) $css_locations as $css_location => $css_config ) {
 					if ( !empty( $css_config['files'] ) ) {
-						$files[] = $this->format_url_group( $css_theme, $css_template, $css_location, 'css' );
+						$files[] = $this->get_minify_manual_url( $css_theme, $css_template, $css_location, 'css' );
 					}
 				}
 			}
@@ -1046,18 +1051,17 @@ class Minify_Plugin {
 	 * @return boolean
 	 */
 	function check_ua() {
-		if ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
-            $uas = array_merge( $this->_config->get_array( 'minify.reject.ua' ), array(
-                    W3TC_POWERED_BY
-                ) );
+		$uas = array_merge( $this->_config->get_array( 'minify.reject.ua' ), array(
+				W3TC_POWERED_BY
+			) );
 
-            $uas = str_replace( "~", "\~", $uas );
-            Util_Rule::array_trim( $uas );
-
-            if ( !empty( $uas ) && @preg_match( '~' . implode( "|", $uas ) . '~i', $_SERVER['HTTP_USER_AGENT'] ) ) {
-                return false;
-            }
-        }
+		foreach ( $uas as $ua ) {
+			if ( !empty( $ua ) ) {
+				if ( isset( $_SERVER['HTTP_USER_AGENT'] ) && stristr( $_SERVER['HTTP_USER_AGENT'], $ua ) !== false ) {
+					return false;
+				}
+			}
+		}
 
 		return true;
 	}
@@ -1284,7 +1288,7 @@ class _W3_MinifyHelpers {
 		if ( Util_Environment::is_url( $file_normalized ) ) {
 			if ( $this->debug ) {
 				Minify_Core::log(
-					'is_file_for_minification: its url ' . $file );
+					'is_file_for_minification: its url ' . $file . ' for url ' . $url );
 			}
 
 			return '';
@@ -1411,9 +1415,7 @@ class _W3_MinifyJsAuto {
 
 		// ignored files
 		$this->ignore_js_files = $this->config->get_array( 'minify.reject.files.js' );
-
-        $this->ignore_js_files  = str_replace( "~", "\~", $this->ignore_js_files  );
-        Util_Rule::array_trim( $this->ignore_js_files  );
+		$this->ignore_js_files = array_map( array( '\W3TC\Util_Environment', 'normalize_file' ), $this->ignore_js_files );
 
 		// define embed type
 		$this->embed_type = array(
@@ -1531,7 +1533,7 @@ class _W3_MinifyJsAuto {
 
 		$step1_result = $this->minify_helpers->is_file_for_minification( $script_src, $file );
 		$step1 = !empty( $step1_result );
-		$step2 = empty( $this->ignore_js_files ) || !@preg_match( '~' . implode( "|", $this->ignore_js_files ) . '~i', $file );
+		$step2 = !in_array( $file, $this->ignore_js_files );
 
 		$do_tag_minification = $step1 && $step2;
 		$do_tag_minification = apply_filters( 'w3tc_minify_js_do_tag_minification',
@@ -1594,16 +1596,6 @@ class _W3_MinifyJsAuto {
 
 		// find embed position
 		$embed_pos = $this->embed_pos;
-		
-		if ( $this->minify_group_number <= 0 && $this->group_type == 'head' ) {
-			// try forced embed position
-			$forced_embed_pos = strpos($this->buffer, '<!-- W3TC-include-js-head -->');
-		
-			if ($forced_embed_pos !== false) {
-				$this->buffer = str_replace('<!-- W3TC-include-js-head -->', '', $this->buffer);
-				$embed_pos = $forced_embed_pos;
-			}
-		}
 
 		// build minified script tag
 		$data = array(

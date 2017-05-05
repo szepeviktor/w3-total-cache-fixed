@@ -59,11 +59,8 @@ class PgCache_Flush extends PgCache_ContentGrabber {
 		}
 
 		$post = get_post( $post_id );
-		$post_type = null;
-		if( is_object($post) ){
-			$post_type = in_array( $post->post_type, array(
-					'post', 'page', 'attachment', 'revision' ) ) ? null : $post->post_type;
-		}
+		$post_type = in_array( $post->post_type, array(
+				'post', 'page', 'attachment', 'revision' ) ) ? null : $post->post_type;
 		$front_page = get_option( 'show_on_front' );
 
 		/**
@@ -175,6 +172,11 @@ class PgCache_Flush extends PgCache_ContentGrabber {
 				Util_PageUrls::get_pages_urls( $pages ) );
 		}
 
+		// add mirror urls
+		$full_urls = Util_PageUrls::complement_with_mirror_urls( $full_urls );
+		$full_urls = apply_filters( 'pgcache_flush_post_queued_urls',
+			$full_urls );
+
 		/**
 		 * Queue flush
 		 */
@@ -182,10 +184,6 @@ class PgCache_Flush extends PgCache_ContentGrabber {
 			foreach ( $full_urls as $url )
 				$this->queued_urls[$url] = '*';
 		}
-
-		// add mirror urls
-		$this->queued_urls = Util_PageUrls::complement_with_mirror_urls(
-			$this->queued_urls );
 
 		return true;
 	}

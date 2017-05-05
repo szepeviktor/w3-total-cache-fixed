@@ -145,14 +145,11 @@ class CdnEngine_RackSpaceCloudFiles extends CdnEngine_Base {
 	function upload( $files, &$results, $force_rewrite = false,
 		$timeout_time = NULL ) {
 		foreach ( $files as $file ) {
-			$remote_path = $file['remote_path'];
-			$local_path = $file['local_path'];
+			if ( !is_null( $timeout_time ) && time() > $timeout_time )
+				break;
 
-			if ( !is_null( $timeout_time ) && time() > $timeout_time ) {
-				$results[] = $this->_get_result( $local_path, $remote_path,
-					W3TC_CDN_RESULT_ERROR, "Upload batch timed out.", $file );
-				continue;
-			}
+			$local_path = $file['local_path'];
+			$remote_path = $file['remote_path'];
 
 			if ( !file_exists( $local_path ) ) {
 				$results[] = $this->_get_result( $local_path, $remote_path,

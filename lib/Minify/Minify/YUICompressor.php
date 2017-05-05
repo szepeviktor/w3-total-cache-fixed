@@ -125,14 +125,7 @@ class Minify_YUICompressor {
             )
             ,$userOptions
         );
-        
-        $javaExecutable = self::$javaExecutable;
-        
-        if( false !== strpos(trim($javaExecutable), ' ') ){
-        	$javaExecutable = '"'.$javaExecutable.'"';
-        }
-        
-        $cmd = $javaExecutable
+        $cmd = self::$javaExecutable
 	         . (!empty($o['stack-size'])
 	            ? ' -Xss' . $o['stack-size']
 	            : '')

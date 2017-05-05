@@ -62,11 +62,7 @@ echo Util_Ui::action_button(
 	__( 'Tell Your Friends', 'w3-total-cache' ),
 	$tweet_url,
 	"btn w3tc-size image btn-default palette-twitter",
-	true );
-echo Util_Ui::hidden(
-	__( 'tweeted' ),
-	__( 'tweeted' ),
-	'0' ) ?>
+	true ) ?>
                     </label>
                 </li>
                 <li>

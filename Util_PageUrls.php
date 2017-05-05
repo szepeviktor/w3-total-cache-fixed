@@ -91,34 +91,24 @@ class Util_PageUrls {
 
 		if ( !isset( $post_urls[$post_id] ) ) {
 			$full_urls = array();
+			$post_link = get_permalink( $post_id );
+			$post_uri = str_replace( Util_Environment::home_domain_root_url(), '', $post_link );
+
+			$full_urls[] = $post_link;
+			$uris[] = $post_uri;
 			$post = get_post( $post_id );
-			if ( $post ) {
-				// On the admin page when changing a post type to "Draft" or "Pending Review"
-				// the get_permalink() returns back in the form: http://foo.bar/?p=###
-				// even if the site's permalink setting is different (e.g. http://foo.bar/post-name/).
-				// When this happens the post can potentially not get flushed.
-				// Setting the "post_status" to empty forces get_permalink() to return 
-				// the correct url for flushing.
-
-				$post->post_status = "";
-				$post_link = get_permalink( $post );
-				$post_uri = str_replace( Util_Environment::home_domain_root_url(), '', $post_link );
-
-				$full_urls[] = $post_link;
-				$uris[] = $post_uri;
-				$matches =array();
-				if ( $post && ( $post_pages_number = preg_match_all( '/\<\!\-\-nextpage\-\-\>/', $post->post_content, $matches ) )>0 ) {
-					global $wp_rewrite;
-					$post_pages_number++;
-					for ( $pagenum = 2; $pagenum <= $post_pages_number; $pagenum++ ) {
-						if ( 'page' == get_option( 'show_on_front' ) && get_option( 'page_on_front' ) == $post->ID )
-							$post_pagenum_link = trailingslashit( $post_link ) . user_trailingslashit( "$wp_rewrite->pagination_base/" . $pagenum, 'single_paged' );
-						else
-							$post_pagenum_link = trailingslashit( $post_link ) . user_trailingslashit( $pagenum, 'single_paged' );
-						$full_urls[] = $post_pagenum_link;
-					}
+			$matches =array();
+			if ( $post && ( $post_pages_number = preg_match_all( '/\<\!\-\-nextpage\-\-\>/', $post->post_content, $matches ) )>0 ) {
+				global $wp_rewrite;
+				$post_pages_number++;
+				for ( $pagenum = 2; $pagenum <= $post_pages_number; $pagenum++ ) {
+					if ( 'page' == get_option( 'show_on_front' ) && get_option( 'page_on_front' ) == $post->ID )
+						$post_pagenum_link = trailingslashit( $post_link ) . user_trailingslashit( "$wp_rewrite->pagination_base/" . $pagenum, 'single_paged' );
+					else
+						$post_pagenum_link = trailingslashit( $post_link ) . user_trailingslashit( $pagenum, 'single_paged' );
+					$full_urls[] = $post_pagenum_link;
 				}
-            }
+			}
 			$post_urls[$post_id] = $full_urls;
 		}
 		return $post_urls[$post_id];
@@ -510,7 +500,7 @@ class Util_PageUrls {
 
 		$base = trailingslashit( get_bloginfo( 'url' ) );
 
-		if ( !is_null($wp_rewrite) && $wp_rewrite->using_index_permalinks() && ( $pagenum > 1 || '' != $request ) )
+		if ( $wp_rewrite->using_index_permalinks() && ( $pagenum > 1 || '' != $request ) )
 			$base .= 'index.php/';
 
 		if ( $pagenum > 1 ) {
@@ -750,22 +740,21 @@ class Util_PageUrls {
 		$home_urls = $config->get_array( 'pgcache.mirrors.home_urls' );
 
 		$url_prefix = trailingslashit( get_home_url() );
-		$urls = array_keys( $queued_urls );
+		$mirror_urls = array();
 
-		foreach ( $urls as $url ) {
+		foreach ( $queued_urls as $url ) {
 			if ( substr( $url, 0, strlen( $url_prefix ) ) != $url_prefix )
 				continue;
 
 			foreach ( $home_urls as $home ) {
-				$home = trim( $home );
 				if ( !empty( $home ) ) {
-					$mirror_url = trailingslashit( $home ) . substr( $url, strlen( $url_prefix ) );
-					$queued_urls[$mirror_url] = '*';
+					$mirror_urls[] = trailingslashit( $home ) .
+						substr( $url, strlen( $url_prefix ) );
 				}
 			}
 		}
 
-		return $queued_urls;
+		return array_merge( $queued_urls, $mirror_urls );
 	}
 
 	static private function _term_hash( $terms ) {

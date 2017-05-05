@@ -331,7 +331,7 @@ $keys = array(
 	),
 	'pgcache.cache.query' => array(
 		'type' => 'boolean',
-		'default' => true
+		'default' => false
 	),
 	'pgcache.cache.home' => array(
 		'type' => 'boolean',
@@ -345,13 +345,9 @@ $keys = array(
 		'type' => 'boolean',
 		'default' => false
 	),
-	'pgcache.cache.apache_handle_xml' => array(
-		'type' => 'boolean',
-		'default' => false
-	),
 	'pgcache.cache.ssl' => array(
 		'type' => 'boolean',
-		'default' => false
+		'default' => true
 	),
 	'pgcache.cache.404' => array(
 		'type' => 'boolean',
@@ -434,24 +430,6 @@ $keys = array(
 			'index\.php'
 		)
 	),
-    'pgcache.reject.categories' => array(
-        'type' => 'array',
-        'default' => array()
-    ),
-    'pgcache.reject.tags' => array(
-        'type' => 'array',
-        'default' => array()
-    ),
-    'pgcache.reject.authors' => array(
-        'type' => 'array',
-        'default' => array()
-    ),
-    'pgcache.reject.custom' => array(
-        'type' => 'array',
-        'default' => array(
-            'w3tc=dontcache'
-        )
-    ),
 	'pgcache.reject.ua' => array(
 		'type' => 'array',
 		'default' => array()
@@ -532,7 +510,7 @@ $keys = array(
 	),
 	'pgcache.purge.sitemap_regex' => array(
 		'type' => 'string',
-		'default' => '[a-z0-9_\-]*sitemap[a-z0-9_\-]*\.(xml|xsl|html?)(\.gz)?'
+		'default' => '([a-z0-9_\-]*?)sitemap([a-z0-9_\-]*)?\.xml'
 	),
 	'pgcache.prime.enabled' => array(
 		'type' => 'boolean',
@@ -684,8 +662,7 @@ $keys = array(
 		'type' => 'array',
 		'default' => array(
 			'google_ad_',
-			'RSPEAK_',
-			'mfunc'
+			'RSPEAK_'
 		)
 	),
 	'minify.css.combine' => array(
@@ -848,10 +825,10 @@ $keys = array(
 		'type' => 'boolean',
 		'default' => false
 	),
-    'minify.csstidy.options.remove_space_before_important' => array(
-        'type' => 'boolean',
-        'default' => false
-    ),
+	'minify.csstidy.options.remove_space_before_important' => array(
+		'type' => 'boolean',
+		'default' => false
+	),
 	'minify.csstidy.options.case_properties' => array(
 		'type' => 'integer',
 		'default' => 1
@@ -868,10 +845,10 @@ $keys = array(
 		'type' => 'integer',
 		'default' => 0
 	),
-    'minify.csstidy.options.discard_invalid_selectors' => array(
-        'type' => 'boolean',
-        'default' => false
-    ),
+	'minify.csstidy.options.discard_invalid_selectors' => array(
+		'type' => 'boolean',
+		'default' => false
+	),
 	'minify.csstidy.options.discard_invalid_properties' => array(
 		'type' => 'boolean',
 		'default' => false
@@ -967,7 +944,7 @@ $keys = array(
 	),
 	'cdn.theme.files' => array(
 		'type' => 'string',
-		'default' => '*.css;*.js;*.gif;*.png;*.jpg;*.ico;*.ttf;*.otf;*.woff;*.woff2;*.less'
+		'default' => '*.css;*.js;*.gif;*.png;*.jpg;*.ico;*.ttf;*.otf,*.woff,*.less'
 	),
 	'cdn.minify.enable' => array(
 		'type' => 'boolean',
@@ -1108,10 +1085,6 @@ $keys = array(
 		'type' => 'string',
 		'default' => ''
 	),
-    'cdn.s3.bucket.location' => array(
-        'type' => 'string',
-        'default' => 'us-east-1'
-    ),
 	'cdn.s3.cname' => array(
 		'type' => 'array',
 		'default' => array()
@@ -1138,10 +1111,6 @@ $keys = array(
 		'type' => 'string',
 		'default' => ''
 	),
-    'cdn.cf.bucket.location' => array(
-        'type' => 'string',
-        'default' => 'us-east-1'
-    ),
 	'cdn.cf.id' => array(
 		'type' => 'string',
 		'default' => ''
@@ -1415,10 +1384,6 @@ $keys = array(
 		'type' => 'boolean',
 		'default' => false
 	),
-	'cdn.admin.media_library' => array(
-		'type' => 'boolean',
-		'default' => false
-	),
 	'varnish.configuration_overloaded' => array(
 		'type' => 'boolean',
 		'default' => false
@@ -1448,6 +1413,10 @@ $keys = array(
 		'type' => 'boolean',
 		'default' => false
 	),
+	'browsercache.hsts' => array(
+		'type' => 'boolean',
+		'default' => false
+	),
 	'browsercache.no404wp' => array(
 		'type' => 'boolean',
 		'default' => false
@@ -1456,7 +1425,7 @@ $keys = array(
 		'type' => 'array',
 		'default' => array(
 			'robots\.txt',
-			'[a-z0-9_\-]*sitemap[a-z0-9_\-]*\.(xml|xsl|html?)(\.gz)?'
+			'[a-z0-9_\-]*sitemap[a-z0-9_\-]*\.(xml|xsl|html)(\.gz)?'
 		)
 	),
 	'browsercache.cssjs.last_modified' => array(
@@ -1469,7 +1438,7 @@ $keys = array(
 	),
 	'browsercache.cssjs.expires' => array(
 		'type' => 'boolean',
-		'default' => true
+		'default' => false
 	),
 	'browsercache.cssjs.lifetime' => array(
 		'type' => 'integer',
@@ -1477,11 +1446,11 @@ $keys = array(
 	),
 	'browsercache.cssjs.nocookies' => array(
 		'type' => 'boolean',
-		'default' => true
+		'default' => false
 	),
 	'browsercache.cssjs.cache.control' => array(
 		'type' => 'boolean',
-		'default' => true
+		'default' => false
 	),
 	'browsercache.cssjs.cache.policy' => array(
 		'type' => 'string',
@@ -1489,13 +1458,17 @@ $keys = array(
 	),
 	'browsercache.cssjs.etag' => array(
 		'type' => 'boolean',
-		'default' => true
+		'default' => false
 	),
 	'browsercache.cssjs.w3tc' => array(
 		'type' => 'boolean',
 		'default' => false
 	),
 	'browsercache.cssjs.replace' => array(
+		'type' => 'boolean',
+		'default' => false
+	),
+	'browsercache.cssjs.querystring' => array(
 		'type' => 'boolean',
 		'default' => false
 	),
@@ -1509,7 +1482,7 @@ $keys = array(
 	),
 	'browsercache.html.expires' => array(
 		'type' => 'boolean',
-		'default' => true
+		'default' => false
 	),
 	'browsercache.html.lifetime' => array(
 		'type' => 'integer',
@@ -1517,7 +1490,7 @@ $keys = array(
 	),
 	'browsercache.html.cache.control' => array(
 		'type' => 'boolean',
-		'default' => true
+		'default' => false
 	),
 	'browsercache.html.cache.policy' => array(
 		'type' => 'string',
@@ -1525,7 +1498,7 @@ $keys = array(
 	),
 	'browsercache.html.etag' => array(
 		'type' => 'boolean',
-		'default' => true
+		'default' => false
 	),
 	'browsercache.html.w3tc' => array(
 		'type' => 'boolean',
@@ -1545,7 +1518,7 @@ $keys = array(
 	),
 	'browsercache.other.expires' => array(
 		'type' => 'boolean',
-		'default' => true
+		'default' => false
 	),
 	'browsercache.other.lifetime' => array(
 		'type' => 'integer',
@@ -1553,11 +1526,11 @@ $keys = array(
 	),
 	'browsercache.other.nocookies' => array(
 		'type' => 'boolean',
-		'default' => true
+		'default' => false
 	),
 	'browsercache.other.cache.control' => array(
 		'type' => 'boolean',
-		'default' => true
+		'default' => false
 	),
 	'browsercache.other.cache.policy' => array(
 		'type' => 'string',
@@ -1565,149 +1538,17 @@ $keys = array(
 	),
 	'browsercache.other.etag' => array(
 		'type' => 'boolean',
-		'default' => true
+		'default' => false
 	),
 	'browsercache.other.w3tc' => array(
 		'type' => 'boolean',
 		'default' => false
 	),
-    'browsercache.security.session.cookie_httponly' => array(
-        'type' => 'boolean',
-        'default' => false
-    ),
-    'browsercache.security.session.cookie_secure' => array(
-        'type' => 'boolean',
-        'default' => false
-    ),
-    'browsercache.security.session.use_only_cookies' => array(
-        'type' => 'boolean',
-        'default' => true
-    ),
-    'browsercache.security.hsts' => array(
-        'type' => 'boolean',
-        'default' => false
-    ),
-    'browsercache.security.hsts.directive' => array(
-        'type' => 'string',
-        'default' => 'maxage'
-    ),
-	'browsercache.security.xfo' => array(
-		'type' => 'boolean',
-		'default' => false
-	),
-	'browsercache.security.xfo.directive' => array(
-		'type' => 'string',
-		'default' => 'same'
-	),
-    'browsercache.security.xfo.allow' => array(
-            'type' => 'string',
-            'default' => ''
-    ),
-	'browsercache.security.xss' => array(
-		'type' => 'boolean',
-		'default' => false
-	),
-    'browsercache.security.xss.directive' => array(
-		'type' => 'string',
-		'default' => 'block'
-	),
-    'browsercache.security.xcto' => array(
-        'type' => 'boolean',
-        'default' => false
-    ),
-    'browsercache.security.pkp' => array(
-        'type' => 'boolean',
-        'default' => false
-    ),
-    'browsercache.security.pkp.pin' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
-    'browsercache.security.pkp.pin.backup' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
-    'browsercache.security.pkp.extra' => array(
-        'type' => 'string',
-        'default' => 'maxage'
-    ),
-    'browsercache.security.pkp.report.url' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
-    'browsercache.security.pkp.report.only' => array(
-        'type' => 'string',
-        'default' => '0'
-    ),
-    'browsercache.security.referrer.policy' => array(
-        'type' => 'boolean',
-        'default' => 'false'
-    ),
-    'browsercache.security.referrer.policy.directive' => array(
-        'type' => 'string',
-        'default' => '0'
-    ),
-    'browsercache.security.csp' => array(
-        'type' => 'boolean',
-        'default' => false
-    ),
-    'browsercache.security.csp.base' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
-    'browsercache.security.csp.frame' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
-    'browsercache.security.csp.connect' => array(
-        'type' => 'string',
-        'default' => '\'self\''
-    ),
-    'browsercache.security.csp.font' => array(
-        'type' => 'string',
-        'default' => '\'self\' fonts.gstatic.com'
-    ),
-    'browsercache.security.csp.script' => array(
-        'type' => 'string',
-        'default' => '\'self\' *.googleapis.com'
-    ),
-    'browsercache.security.csp.style' => array(
-        'type' => 'string',
-        'default' => '\'self\' *.googleapis.com'
-    ),
-    'browsercache.security.csp.img' => array(
-        'type' => 'string',
-        'default' => '\'self\' *.gravatar.com'
-    ),
-    'browsercache.security.csp.media' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
-    'browsercache.security.csp.object' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
-    'browsercache.security.csp.plugin' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
-    'browsercache.security.csp.form' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
-    'browsercache.security.csp.frame.ancestors' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
-    'browsercache.security.csp.sandbox' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
-    'browsercache.security.csp.default' => array(
-        'type' => 'string',
-        'default' => '\'none\''
-    ),
 	'browsercache.other.replace' => array(
+		'type' => 'boolean',
+		'default' => false
+	),
+	'browsercache.other.querystring' => array(
 		'type' => 'boolean',
 		'default' => false
 	),
@@ -1904,7 +1745,7 @@ $keys = array(
 	),
 	'common.track_usage' => array(
 		'type' => 'boolean',
-		'default' => false
+		'default' => true
 	),
 	'common.tweeted' => array(
 		'type' => 'boolean',
@@ -1934,10 +1775,6 @@ $keys = array(
 		'type' => 'string',
 		'default' => ''
 	),
-    'widget.pagespeed.key.restrict.referrer' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
 	'widget.pagespeed.show_in_admin_bar' => array(
 		'type' => 'boolean',
 		'default' => false
@@ -2004,7 +1841,8 @@ $keys = array(
 		'type' => 'array',
 		'default' => array(
 			'newrelic' => 'w3-total-cache/Extension_NewRelic_Plugin.php',
-			'fragmentcache' => 'w3-total-cache/Extension_FragmentCache_Plugin.php'
+			'fragmentcache' => 'w3-total-cache/Extension_FragmentCache_Plugin.php',
+			'swarmify' => 'w3-total-cache/Extension_Swarmify_Plugin.php'
 		)
 	),
 	'extensions.active_frontend' => array(

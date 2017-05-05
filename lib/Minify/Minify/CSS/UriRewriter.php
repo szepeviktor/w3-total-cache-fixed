@@ -434,10 +434,11 @@ class Minify_CSS_UriRewriter {
 
                 if (preg_match('~\.([a-z-_]+)(\?.*)?$~', $uri, $matches)) {
                     $extension = $matches[1];
+                    $query = (isset($matches[2]) ? $matches[2] : '');
 
                     if ($extension && in_array($extension, self::$_browserCacheExtensions)) {
                         $uri = \W3TC\Util_Environment::remove_query($uri);
-                        $uri .= ( strpos( $uri, '?' ) !== false ? '&' : '?' ) . self::$_browserCacheId;
+                        $uri .= ($query ? '&' : '?') . self::$_browserCacheId;
                     }
                 }
             }

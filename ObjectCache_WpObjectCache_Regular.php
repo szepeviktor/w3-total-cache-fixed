@@ -191,10 +191,10 @@ class ObjectCache_WpObjectCache_Regular {
 			$found = ( $value !== false );
 		}
 
+		$this->cache[$key] = $value;
 		$this->cache_total++;
 
 		if ( $value !== false ) {
-			$this->cache[$key] = $value;
 			$this->cache_hits++;
 		} else {
 			$this->cache_misses++;
@@ -412,8 +412,8 @@ class ObjectCache_WpObjectCache_Regular {
 
 		if ( $this->_debug ) {
 			$this->debug_info[] = array(
-				'id' => '',
-				'group' => '',
+				'id' => $id,
+				'group' => $group,
 				'operation' => 'flush',
 				'returned' => $reason,
 				'data_size' => 0,
@@ -841,9 +841,7 @@ class ObjectCache_WpObjectCache_Regular {
 
 	public function w3tc_footer_comment( $strings ) {
 		if ( $this->_config->get_boolean( 'objectcache.debug' ) ) {
-			$strings[] = "~~~~~~~~~~~~~~~~~~~~~~~~~~";
 			$strings[] = "Object Cache debug info:";
-			$strings[] = "~~~~~~~~~~~~~~~~~~~~~~~~~~";
 			$strings[] = sprintf( "%s%s", str_pad( 'Engine: ', 20 ), Cache::engine_name( $this->_config->get_string( 'objectcache.engine' ) ) );
 			$strings[] = sprintf( "%s%s", str_pad( 'Caching: ', 20 ), ( $this->_caching ? 'enabled' : 'disabled' ) );
 
@@ -876,8 +874,7 @@ class ObjectCache_WpObjectCache_Regular {
 					str_pad( $debug['group'], 15, ' ', STR_PAD_LEFT ),
 					$debug['id'] );
 			}
-		} elseif ( $this->_config->get_string( 'common.support' ) == '' &&
-					!$this->_config->get_boolean( 'common.tweeted' ) ){
+		} else {
 			$reason = $this->get_reject_reason();
 			$append = ( $reason != '' ? sprintf( ' (%s)', $reason ) : '' );
 

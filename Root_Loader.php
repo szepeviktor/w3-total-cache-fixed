@@ -39,7 +39,6 @@ class Root_Loader {
 			$plugins[] = new UsageStatistics_Plugin();
 
 		if ( is_admin() ) {
-			$plugins[] = new Generic_Plugin_PageCachePurge();
 			$plugins[] = new Generic_Plugin_Admin();
 			$plugins[] = new BrowserCache_Plugin_Admin();
 			$plugins[] = new DbCache_Plugin_Admin();
@@ -47,7 +46,7 @@ class Root_Loader {
 			$plugins[] = new PgCache_Plugin_Admin();
 			$plugins[] = new Minify_Plugin_Admin();
 			$plugins[] = new Generic_WidgetSpreadTheWord_Plugin();
-			//$plugins[] = new Generic_Plugin_WidgetNews();
+			$plugins[] = new Generic_Plugin_WidgetNews();
 			$plugins[] = new Generic_Plugin_WidgetForum();
 			$plugins[] = new SystemOpCache_Plugin_Admin();
 
@@ -115,7 +114,6 @@ class Root_Loader {
 	 * Deactivation action hook
 	 */
 	public function deactivate() {
-		w3tc_wpcli_stop_prime(); // Stop the WP-CLI page cache prime if it's still running
 		Root_AdminActivation::deactivate();
 	}
 

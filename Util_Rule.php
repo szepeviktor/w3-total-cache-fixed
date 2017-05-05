@@ -22,8 +22,10 @@ class Util_Rule {
 	 * Removes empty elements
 	 */
 	static public function array_trim( &$a ) {
-        $a = array_map( 'trim', $a );
-        $a = array_filter( $a, function( $val ) { return $val != ""; } );
+		for ( $n = count( $a ) - 1; $n >= 0; $n-- ) {
+			if ( empty( $a[$n] ) )
+				array_splice( $a, $n, 1 );
+		}
 	}
 
 	/**
@@ -383,7 +385,10 @@ class Util_Rule {
 	 * @return bool
 	 */
 	static public function can_check_rules() {
-		return Util_Environment::is_apache() || Util_Environment::is_litespeed() || Util_Environment::is_nginx();
+		return Util_Environment::is_apache() ||
+			Util_Environment::is_litespeed() ||
+			Util_Environment::is_nginx() ||
+			Util_Environment::is_iis();
 	}
 
 	/**
