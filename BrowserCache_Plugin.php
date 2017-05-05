@@ -183,7 +183,7 @@ class BrowserCache_Plugin {
 		$query_pos = strpos( $url, '?' );
 		if ( isset( $ops['querystring'] ) && $query_pos !== false ) {
 			$url = substr( $url, 0, $query_pos );
-			$query_pos == false;
+			$query_pos = false;
 		}
 
 		if ( isset( $ops['replace'] ) ) {
