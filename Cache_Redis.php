@@ -13,6 +13,7 @@ class Cache_Redis extends Cache_Base {
 	private $_servers;
 	private $_dbid;
 
+	private $_instance_key;
 	/**
 	 * constructor
 	 *
@@ -25,6 +26,7 @@ class Cache_Redis extends Cache_Base {
 		$this->_servers = (array)$config['servers'];
 		$this->_password = $config['password'];
 		$this->_dbid = $config['dbid'];
+		$this->_instance_key = sprintf( '%s_%s', 'redis', md5( serialize( $config ) ) );
 	}
 
 	/**
@@ -332,7 +334,7 @@ class Cache_Redis extends Cache_Base {
 					list( $ip, $port ) = explode( ':', $server );
 
 					if ( $this->_persistent )
-						$accessor->pconnect( trim( $ip ), (integer) trim( $port ) );
+						$accessor->pconnect( trim( $ip ), (integer) trim( $port ), null, $this->_instance_key );
 					else
 						$accessor->connect( trim( $ip ), (integer) trim( $port ) );
 				}
