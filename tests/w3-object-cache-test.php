@@ -38,6 +38,19 @@ class W3_Object_Cache_Test extends WP_UnitTestCase {
 		$this->config = w3tc_config();
 		
 		$this->moduleStatus = \W3TC\Dispatcher::component( 'ModuleStatus' );
+		
+		// copy addin into wp-content ...
+		if( file_exists(W3TC_INSTALL_FILE_ADVANCED_CACHE) && !file_exists(W3TC_ADDIN_FILE_ADVANCED_CACHE) ){
+			copy(W3TC_INSTALL_FILE_ADVANCED_CACHE, W3TC_ADDIN_FILE_ADVANCED_CACHE);
+		}
+		
+		if( file_exists(W3TC_INSTALL_FILE_DB) && !file_exists(W3TC_ADDIN_FILE_DB) ){
+			copy(W3TC_INSTALL_FILE_DB, W3TC_ADDIN_FILE_DB);
+		}
+		
+		if( file_exists(W3TC_INSTALL_FILE_OBJECT_CACHE) && !file_exists(W3TC_ADDIN_FILE_OBJECT_CACHE) ){
+			copy(W3TC_INSTALL_FILE_OBJECT_CACHE,  W3TC_ADDIN_FILE_OBJECT_CACHE);
+		}
 	}
 	
 	/**
@@ -54,14 +67,22 @@ class W3_Object_Cache_Test extends WP_UnitTestCase {
      */
     function test_plugin_activation() {
         $this->assertTrue( is_plugin_active('w3-total-cache/w3-total-cache.php') );
-	$this->assertTrue( $this->moduleStatus->plugin_is_enabled() );
+	    $this->assertTrue( $this->moduleStatus->plugin_is_enabled() );
     }
 	
     /**
      * Check WP_CACHE
      */
     function test_wp_cache() {
-	$this->assertTrue( defined('WP_CACHE') && WP_CACHE === true );
+	    $this->assertTrue( defined('WP_CACHE') && WP_CACHE === true );
+	    
+	    $this->assertTrue( defined('W3TC_ADDIN_FILE_ADVANCED_CACHE') );
+	    $this->assertTrue( defined('W3TC_ADDIN_FILE_DB') );
+	    $this->assertTrue( defined('W3TC_ADDIN_FILE_OBJECT_CACHE') );
+	    
+	    $this->assertTrue( file_exists(W3TC_ADDIN_FILE_ADVANCED_CACHE) );
+	    $this->assertTrue( file_exists(W3TC_ADDIN_FILE_DB) );
+	    $this->assertTrue( file_exists(W3TC_ADDIN_FILE_OBJECT_CACHE) );
     }
  
     /**
@@ -69,15 +90,15 @@ class W3_Object_Cache_Test extends WP_UnitTestCase {
      */
     public function test_plugin_env()
     {
-	$WP_MULTISITE = getenv('WP_MULTISITE');
+	    $WP_MULTISITE = getenv('WP_MULTISITE');
 	    
-	$this->assertTrue( $WP_MULTISITE !== false );
+	    $this->assertTrue( $WP_MULTISITE !== false );
 	    
         if( is_multisite() ){
-	    $this->assertTrue( $WP_MULTISITE == 1 );
+	        $this->assertTrue( $WP_MULTISITE == 1 );
         } else {
-	    $this->assertTrue( $WP_MULTISITE == 0 );
-	}
+	        $this->assertTrue( $WP_MULTISITE == 0 );
+	    }
     }
 	
     /**
