@@ -95,3 +95,4 @@ Type | More Information |
 :beetle: Bug Fix | [Fix page cache .htaccess for Windows](https://github.com/szepeviktor/w3-total-cache-fixed/pull/490) |
 :beetle: Bug Fix | [Fix Undefined property: W3TC\\Extension_Amp_Plugin::$is_amp_endpoint](https://github.com/szepeviktor/w3-total-cache-fixed/pull/510) |
 :beetle: Bug Fix | [Adjusting cdn link in MediaLibrary](https://github.com/szepeviktor/w3-total-cache-fixed/pull/516) |
+:diamond_shape_with_a_dot_inside: Update | [Add support for X-Forwarded-Proto to identify HTTPS protocol](https://github.com/szepeviktor/w3-total-cache-fixed/pull/520) |
