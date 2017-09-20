@@ -3,7 +3,7 @@ Contributors: fredericktownes
 Tags: seo, cache, caching, compression, maxcdn, nginx, varnish, redis, new relic, aws, amazon web services, s3, cloudfront, rackspace, cloudflare, azure, apache
 Requires at least: 3.2
 Tested up to: 4.8
-Stable tag: 0.9.5.4.2
+Stable tag: 0.9.5.4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -282,6 +282,16 @@ It's quite difficult to recall all of the innovators that have shared their thou
 Please reach out to all of these people and support their projects if you're so inclined.
 
 == Changelog ==
+
+= 0.9.5.4.3 =
+* Fix Undefined property: W3TC\Extension_Amp_Plugin::$is_amp_endpoint
+* Adjusting cdn link in MediaLibrary
+* Add support for X-Forwarded-Proto to identify HTTPS protocol
+* Fix a timeout update that was missed in push CDN upload
+* Write correct data into minify cache file when cache dir is created
+* Make the Google Drive CDN work properly
+* Return correct data from minify file cache when locking is in use
+* Write cache files in binary to prevent corruption of UTF-8 characters
 
 = 0.9.5.4.2 =
 * Colored self test window
