@@ -775,9 +775,11 @@ class PgCache_Environment {
 		/**
 		 * Check for rejected cookies
 		 */
-		$use_cache_rules .= "    RewriteCond %{HTTP_COOKIE} !(" . implode( '|',
+        if ( !empty( $reject_cookies ) ) {
+            $reject_cookies = str_replace( ' ', '+', $reject_cookies );
+			$use_cache_rules .= "    RewriteCond %{HTTP_COOKIE} !(" . implode( '|',
 			array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $reject_cookies ) ) . ") [NC]\n";
-
+		}
 		/**
 		 * Check for rejected user agents
 		 */
@@ -989,10 +991,13 @@ class PgCache_Environment {
 		/**
 		 * Check for rejected cookies
 		 */
-		$rules .= "if (\$http_cookie ~* \"(" . implode( '|',
-			array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $reject_cookies ) ) . ")\") {\n";
-		$rules .= "    set \$w3tc_rewrite 0;\n";
-		$rules .= "}\n";
+		if ( !empty( $reject_cookies ) ) {
+            $reject_cookies = str_replace( ' ', '+', $reject_cookies );
+			$rules .= "if (\$http_cookie ~* \"(" . implode( '|',
+				array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $reject_cookies ) ) . ")\") {\n";
+			$rules .= "    set \$w3tc_rewrite 0;\n";
+			$rules .= "}\n";
+		}
 
 		/**
 		 * Check for rejected user agents

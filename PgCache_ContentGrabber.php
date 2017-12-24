@@ -945,12 +945,18 @@ class PgCache_ContentGrabber {
 			}
 		}
 
-		foreach ( $this->_config->get_array( 'pgcache.reject.cookie' ) as $reject_cookie ) {
-			if ( !empty( $reject_cookie ) ) {
-				foreach ( array_keys( $_COOKIE ) as $cookie_name ) {
-					if ( strstr( $cookie_name, $reject_cookie ) !== false ) {
-						return false;
-					}
+        $reject_cookies = $this->_config->get_array( 'pgcache.reject.cookie' );
+        Util_Rule::array_trim( $reject_cookies );
+
+        $reject_cookies = str_replace( "+", " ", $reject_cookies );
+        $reject_cookies = array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $reject_cookies );
+
+        $reject_cookies = implode( '|', $reject_cookies );
+
+        if ( !empty( $reject_cookies ) ) {
+            foreach ( $_COOKIE as $key => $value ) {
+                if ( @preg_match( '~' . $reject_cookies . '~i', $key . "=$value" ) ) {
+                    return false;
 				}
 			}
 		}
