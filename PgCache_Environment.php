@@ -1141,7 +1141,8 @@ class PgCache_Environment {
 			$env_w3tc_enc = "\$w3tc_enc";
 		}
 
-		$cache_path = str_replace( Util_Environment::document_root(), '', $cache_dir );
+		$document_root = str_replace('\\', '/', Util_Environment::document_root());
+		$cache_path = str_replace($document_root, '', $cache_dir);
 		$uri_prefix = $cache_path . "/\$http_host/" .
 			"\$request_uri/_index" . $env_w3tc_ua . $env_w3tc_ref .
 			$env_w3tc_cookie . $env_w3tc_ssl . $env_w3tc_preview;
