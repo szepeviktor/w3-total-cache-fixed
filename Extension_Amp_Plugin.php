@@ -2,9 +2,9 @@
 namespace W3TC;
 
 class Extension_Amp_Plugin {
-	function __construct() {
-		$is_amp_endpoint = null;
-	}
+	private $is_amp_endpoint = null;
+
+
 
 	public function run() {
 		add_filter( 'w3tc_minify_js_enable',
@@ -67,10 +67,6 @@ class Extension_Amp_Plugin {
 		}
 
 		$queued_urls = array_merge( $queued_urls, $amp_urls );
-
-		$filename = Util_Debug::log_filename( 'pagecache' );
-		file_put_contents( $filename, "\nstart\n" . implode("\n", $queued_urls), FILE_APPEND );
-
 		return $queued_urls;
 	}
 

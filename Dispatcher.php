@@ -152,7 +152,7 @@ class Dispatcher {
 			return '';
 
 		return Util_RuleSnippet::canonical_without_location( $cdnftp,
-			$add_header_rules );
+			$add_header_rules, $config->get_boolean( 'cdn.cors_header') );
 	}
 
 	/**
@@ -209,19 +209,6 @@ class Dispatcher {
 		$cdn = $cdncommon->get_cdn();
 		return ( ( $config->get_string( 'cdn.engine' ) != 'ftp' || $cdnftp ) &&
 			$cdn->headers_support() == W3TC_CDN_HEADER_MIRRORING );
-	}
-
-	/**
-	 * Checks whether canonical should be generated or not by browsercache plugin
-	 *
-	 * @param Config  $config
-	 * @return string|null
-	 */
-	static public function allow_origin_generated_by( $config ) {
-		if ( $config->get_boolean( 'cdn.enabled' ) )
-			return 'cdn';
-
-		return null;
 	}
 
 	/**

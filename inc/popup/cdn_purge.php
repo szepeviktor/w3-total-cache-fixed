@@ -8,7 +8,7 @@ if ( !defined( 'W3TC' ) )
 <?php include W3TC_INC_DIR . '/popup/common/header.php';?>
 
 <p>
-    <?php _e( 'Remove objects from the CDN by specifying the relative path on individual lines below and clicking the "Purge" button when done. For example:', 'w3-total-cache' ); ?>
+    <?php _e( 'Remove objects from the <acronym title="Content Delivery Network">CDN</acronym> by specifying the relative path on individual lines below and clicking the "Purge" button when done. For example:', 'w3-total-cache' ); ?>
 </p>
 <p>
     <?php switch ( $this->_config->get_string( 'cdn.engine' ) ):

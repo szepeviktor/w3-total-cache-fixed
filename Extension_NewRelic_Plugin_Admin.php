@@ -88,13 +88,12 @@ class Extension_NewRelic_Plugin_Admin {
 		$c = Dispatcher::config();
 		$monitoring_type = $c->get_string( array( 'newrelic', 'monitoring_type' ) );
 		if ( $monitoring_type == 'apm' ) {
-			$menu = array_merge( $menu, array(
-					'w3tc_monitoring' => array(
-						'page_title' => __( 'Monitoring', 'w3-total-cache' ),
-						'menu_text' => __( 'Monitoring', 'w3-total-cache' ),
-						'visible_always' => false
-					)
-				) );
+			$menu['w3tc_monitoring'] = array(
+				'page_title' => __( 'Monitoring', 'w3-total-cache' ),
+				'menu_text' => __( 'Monitoring', 'w3-total-cache' ),
+				'visible_always' => false,
+				'order' => 1200
+			);
 		}
 
 		return $menu;

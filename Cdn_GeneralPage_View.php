@@ -30,12 +30,14 @@ Util_Ui::config_item( array(
 		'selectbox_values' => $engine_values,
 		'selectbox_optgroups' => $engine_optgroups,
 		'description' => __( 'Select the <acronym title="Content Delivery Network">CDN</acronym> type you wish to use.',
-			'w3-total-cache' ) . $cdn_engine_extra_description
+			'w3-total-cache' )
 	) );
 ?>
 </table>
 
 <?php
+do_action( 'w3tc_settings_general_boxarea_cdn_footer' );
+
 Util_Ui::button_config_save( 'general_cdn',
 	'<input id="cdn_purge" type="button" value="'.
 	__( 'Empty cache', 'w3-total-cache' ) . '" ' .

@@ -8,10 +8,10 @@ if ( !defined( 'W3TC' ) )
 <?php include W3TC_INC_DIR . '/options/common/header.php'; ?>
 
 <p>
-    <?php echo sprintf( __( 'The plugin is currently <span class="w3tc-%s">%s</span> in <strong>%s%s</strong> mode.', 'w3-total-cache' )
+    <?php echo sprintf( __( 'The plugin is currently <span class="w3tc-%s">%s</span> in <strong>%s</strong> mode.', 'w3-total-cache' )
 	, $enabled ? "enabled" : "disabled"
 	, $enabled ? __( 'enabled', 'w3-total-cache' ) : __( 'disabled', 'w3-total-cache' )
-	, Util_Environment::w3tc_edition( $this->_config ), ( Util_Environment::is_w3tc_edge( $this->_config ) ? __( ' edge', 'w3-total-cache' ) : '' ) );
+	, Util_Environment::w3tc_edition( $this->_config ) );
 ?>
 </p>
 <form id="w3tc_dashboard" action="admin.php?page=<?php echo $this->_page; ?>" method="post">

@@ -25,85 +25,100 @@ class Root_AdminMenu {
 			'w3tc_dashboard' => array(
 				'page_title' => __( 'Dashboard', 'w3-total-cache' ),
 				'menu_text' => __( 'Dashboard', 'w3-total-cache' ),
-				'visible_always' => true
+				'visible_always' => true,
+				'order' => 100
 			),
 			'w3tc_general' => array(
 				'page_title' => __( 'General Settings', 'w3-total-cache' ),
 				'menu_text' => __( 'General Settings', 'w3-total-cache' ),
-				'visible_always' => false
+				'visible_always' => false,
+				'order' => 200
 			),
 			'w3tc_pgcache' => array(
 				'page_title' => __( 'Page Cache', 'w3-total-cache' ),
 				'menu_text' => __( 'Page Cache', 'w3-total-cache' ),
-				'visible_always' => false
+				'visible_always' => false,
+				'order' => 300
 			),
 			'w3tc_minify' => array(
 				'page_title' => __( 'Minify', 'w3-total-cache' ),
 				'menu_text' => __( 'Minify', 'w3-total-cache' ),
-				'visible_always' => false
+				'visible_always' => false,
+				'order' => 400
 			),
 			'w3tc_dbcache' => array(
 				'page_title' => __( 'Database Cache', 'w3-total-cache' ),
 				'menu_text' => __( 'Database Cache', 'w3-total-cache' ),
-				'visible_always' => false
+				'visible_always' => false,
+				'order' => 500
 			),
 			'w3tc_objectcache' => array(
 				'page_title' => __( 'Object Cache', 'w3-total-cache' ),
 				'menu_text' => __( 'Object Cache', 'w3-total-cache' ),
-				'visible_always' => false
-			)
-		);
-		$pages = array_merge( $pages, array(
-				'w3tc_browsercache' => array(
-					'page_title' => __( 'Browser Cache', 'w3-total-cache' ),
-					'menu_text' => __( 'Browser Cache', 'w3-total-cache' ),
-					'visible_always' => false
-				),
-				'w3tc_mobile' => array(
-					'page_title' => __( 'User Agent Groups', 'w3-total-cache' ),
-					'menu_text' => __( 'User Agent Groups', 'w3-total-cache' ),
-					'visible_always' => false
-				),
-				'w3tc_referrer' => array(
-					'page_title' => __( 'Referrer Groups', 'w3-total-cache' ),
-					'menu_text' => __( 'Referrer Groups', 'w3-total-cache' ),
-					'visible_always' => false
-				),
-				'w3tc_cdn' => array(
-					'page_title' => __( 'Content Delivery Network', 'w3-total-cache' ),
-					'menu_text' => __( '<acronym title="Content Delivery Network">CDN</acronym>', 'w3-total-cache' ),
-					'visible_always' => false
-				)
-			) );
-		$pages_tail = array(
+				'visible_always' => false,
+				'order' => 600
+			),
+			'w3tc_browsercache' => array(
+				'page_title' => __( 'Browser Cache', 'w3-total-cache' ),
+				'menu_text' => __( 'Browser Cache', 'w3-total-cache' ),
+				'visible_always' => false,
+				'order' => 700
+			),
+			'w3tc_mobile' => array(
+				'page_title' => __( 'User Agent Groups', 'w3-total-cache' ),
+				'menu_text' => __( 'User Agent Groups', 'w3-total-cache' ),
+				'visible_always' => false,
+				'order' => 800
+			),
+			'w3tc_referrer' => array(
+				'page_title' => __( 'Referrer Groups', 'w3-total-cache' ),
+				'menu_text' => __( 'Referrer Groups', 'w3-total-cache' ),
+				'visible_always' => false,
+				'order' => 900
+			),
+			'w3tc_cdn' => array(
+				'page_title' => __( 'Content Delivery Network', 'w3-total-cache' ),
+				'menu_text' => __( '<acronym title="Content Delivery Network">CDN</acronym>', 'w3-total-cache' ),
+				'visible_always' => false,
+				'order' => 1000
+			),
 			'w3tc_faq' => array(
 				'page_title' => __( 'FAQ', 'w3-total-cache' ),
 				'menu_text' => __( 'FAQ', 'w3-total-cache' ),
-				'visible_always' => true
+				'visible_always' => true,
+				'order' => 2000
 			),
 			'w3tc_support' => array(
 				'page_title' => __( 'Support', 'w3-total-cache' ),
 				'menu_text' => __( '<span style="color: red;">Support</span>', 'w3-total-cache' ),
-				'visible_always' => true
+				'visible_always' => true,
+				'order' => 2100
 			),
 			'w3tc_install' => array(
 				'page_title' => __( 'Install', 'w3-total-cache' ),
 				'menu_text' => __( 'Install', 'w3-total-cache' ),
-				'visible_always' => false
+				'visible_always' => false,
+				'order' => 2200
 			),
 			'w3tc_about' => array(
 				'page_title' => __( 'About', 'w3-total-cache' ),
 				'menu_text' => __( 'About', 'w3-total-cache' ),
-				'visible_always' => true
+				'visible_always' => true,
+				'order' => 2300
 			)
 		);
 		$pages = apply_filters( 'w3tc_admin_menu', $pages, $this->_config );
-		$pages = array_merge( $pages, $pages_tail );
+
 		return $pages;
 	}
 
 	function generate( $base_capability ) {
 		$pages = $this->generate_menu_array();
+
+		uasort( $pages, function($a, $b) {
+    			return ($a['order'] - $b['order']);
+			}
+		);
 
 		add_menu_page( __( 'Performance', 'w3-total-cache' ),
 			__( 'Performance', 'w3-total-cache' ),

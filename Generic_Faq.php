@@ -31,8 +31,6 @@ class Generic_Faq {
 
 		self::parse_file( $faq, 'faq', '', '' );
 
-		if ( Util_Environment::is_w3tc_edge( $config ) )
-			self::parse_file( $faq, 'faq-edge', 'edge', '<b>Edge:</b> ' );
 		if ( Util_Environment::is_w3tc_pro( $config ) )
 			self::parse_file( $faq, 'faq-pro', 'pro', '<b>Pro:</b> ' );
 

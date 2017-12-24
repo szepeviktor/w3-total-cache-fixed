@@ -1,10 +1,6 @@
 <?php
 namespace W3TC;
 
-/**
- * W3 CDN Netdna Class
- */
-
 define( 'W3TC_CDN_MIRROR_AKAMAI_WSDL', 'https://ccuapi.akamai.com/ccuapi-axis.wsdl' );
 define( 'W3TC_CDN_MIRROR_AKAMAI_NAMESPACE', 'http://www.akamai.com/purge' );
 

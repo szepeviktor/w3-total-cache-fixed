@@ -45,7 +45,6 @@ class Root_AdminActions {
 				'config' => 'Generic_AdminActions_Config',
 				'test' => 'Generic_AdminActions_Test',
 				'licensing' => 'Licensing_AdminActions',
-				'edge_mode' => 'Generic_AdminActions_EdgeMode',
 				'extensions' => 'Extensions_AdminActions',
 				'default' => 'Generic_AdminActions_Default',
 				'support' => 'Support_AdminActions'

@@ -181,7 +181,7 @@ class Extension_CloudFlare_Api {
 		if ( is_null( $response_json ) || !isset( $response_json['success'] ) ) {
 			throw new \Exception(
 				'Failed to reach API endpoint, got unexpected response ' .
-				$result['body'] );
+				str_replace( '<', '.', str_replace( '>', '.', $result['body'] ) ) );
 		}
 
 		if ( !$response_json['success'] ) {

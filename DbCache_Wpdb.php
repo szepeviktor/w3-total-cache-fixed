@@ -26,6 +26,11 @@ class DbCache_Wpdb extends DbCache_WpdbBase {
 				$processors[] = new DbCache_WpdbInjection_QueryCaching();
 			}
 			if ( Util_Environment::is_dbcluster() ) {
+				// dbcluster use mysqli only since other is obsolete now
+				if ( !defined( 'WP_USE_EXT_MYSQL' ) ) {
+                    define( 'WP_USE_EXT_MYSQL', false );
+                }
+
 				$processors[] = new Enterprise_Dbcache_WpdbInjection_Cluster();
 			}
 
@@ -49,9 +54,9 @@ class DbCache_Wpdb extends DbCache_WpdbBase {
 		return $instance;
 	}
 
-	private $processor_number;
+	private $active_processor_number;
 	private $active_processor;
-	private $active_processors;
+	private $processors;
 
 	private $debug;
 	private $request_time_start = 0;
@@ -60,6 +65,9 @@ class DbCache_Wpdb extends DbCache_WpdbBase {
      * @param boolean $call_default_constructor
      */
 	public function __construct( $processors = null ) {
+		// required to initialize $use_mysqli which is private
+		parent::__construct( '', '', '', '' );
+
 		// cant force empty parameter list due to wp requirements
 		if ( !is_array( $processors ) )
 			throw new Exception( 'called incorrectly, use instance()' );
@@ -130,6 +138,13 @@ class DbCache_Wpdb extends DbCache_WpdbBase {
 		return $v;
 	}
 
+	function db_connect( $allow_bail = true ) {
+		if ( empty( $this->dbuser ) ) {
+			// skip connection - called from constructor
+		} else
+			return parent::db_connect( $allow_bail );
+	}
+
 	/**
 	 * Initializes object after processors configured. Called from instance() only
 	 */
@@ -150,6 +165,10 @@ class DbCache_Wpdb extends DbCache_WpdbBase {
 	 */
 	function query( $query ) {
 		return $this->active_processor->query( $query );
+	}
+
+	function _escape( $data ) {
+		return $this->active_processor->_escape( $data );
 	}
 
 	/**
@@ -245,6 +264,10 @@ class DbCache_Wpdb extends DbCache_WpdbBase {
 	 */
 	function default_query( $query ) {
 		return parent::query( $query );
+	}
+
+	function default__escape( $data ) {
+		return parent::_escape( $data );
 	}
 
 	/**
@@ -388,6 +411,23 @@ class _CallUnderlying {
 
 		try {
 			$r = $this->wpdb_mixin->query( $query );
+
+			$this->wpdb_mixin->switch_active_processor( -$switched );
+			return $r;
+		} catch ( \Exception $e ) {
+			$this->wpdb_mixin->switch_active_processor( -$switched );
+			throw $e;
+		}
+	}
+
+	/**
+	 * Calls underlying processor's aproptiate method of wp_db
+	 */
+	function _escape( $data ) {
+		$switched = $this->wpdb_mixin->switch_active_processor( 1 );
+
+		try {
+			$r = $this->wpdb_mixin->_escape( $data );
 
 			$this->wpdb_mixin->switch_active_processor( -$switched );
 			return $r;

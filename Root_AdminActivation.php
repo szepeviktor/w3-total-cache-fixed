@@ -43,7 +43,7 @@ class Root_AdminActivation {
 
 			// try to save config file if needed, optional thing so exceptions
 			// hidden
-			if ( !file_exists( Config::util_config_filename( 0, false ) ) ) {
+			if ( !ConfigUtil::is_item_exists( 0, false ) ) {
 				try {
 					// create folders
 					$e->fix_in_wpadmin( $config );

@@ -21,8 +21,6 @@ class Support_AdminActions {
 		$license_level = 'community';
 		if ( Util_Environment::is_w3tc_pro( $c ) )
 			$license_level = 'pro';
-		elseif ( Util_Environment::is_w3tc_enterprise( $c ) )
-			$license_level = 'enterprise';
 
 		$post['license_level'] = $license_level . ' ' .
 			$c->get_string( 'plugin.license_key' );

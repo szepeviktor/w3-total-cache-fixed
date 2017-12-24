@@ -114,7 +114,7 @@ class DbCache_Environment {
 					if ( isset( $_GET['page'] ) )
 						$url = 'admin.php?page=' . $_GET['page'] . '&amp;';
 					else
-						$url = basename( Util_Environment::remove_query( $_SERVER['REQUEST_URI'] ) ) . '?page=w3tc_dashboard&amp;';
+						$url = basename( Util_Environment::remove_query_all( $_SERVER['REQUEST_URI'] ) ) . '?page=w3tc_dashboard&amp;';
 					$remove_url = Util_Ui::admin_url( $url . 'w3tc_default_remove_add_in=dbcache' );
 					throw new Util_WpFile_FilesystemOperationException(
 						sprintf( __( 'The Database add-in file db.php is not a W3 Total Cache drop-in.
@@ -151,6 +151,9 @@ class DbCache_Environment {
 	 * @return boolean
 	 */
 	public function db_check_old_add_in() {
+		if ( !$this->db_installed() )
+			return false;
+
 		return ( ( $script_data = @file_get_contents( W3TC_ADDIN_FILE_DB ) )
 			&& strstr( $script_data, 'w3_instance' ) !== false );
 	}
@@ -161,6 +164,9 @@ class DbCache_Environment {
 	 * @return boolean
 	 */
 	public function is_dbcache_add_in() {
+		if ( !$this->db_installed() )
+			return false;
+
 		return ( ( $script_data = @file_get_contents( W3TC_ADDIN_FILE_DB ) )
 			&& strstr( $script_data, 'DbCache_Wpdb' ) !== false );
 	}

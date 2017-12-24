@@ -18,14 +18,14 @@ if ( !defined( 'W3TC' ) )
         </div>
         <div class="w3tc_overlay_upgrade_description">
             <div class="w3tc_overlay_upgrade_content_l">
-                <img src="<?php echo plugins_url( 'pub/img/overlay/w3-meteor.png', W3TC_FILE ) ?>" 
+                <img src="<?php echo plugins_url( 'pub/img/overlay/w3-meteor.png', W3TC_FILE ) ?>"
                     width="238" height="178" />
             </div>
             <div class="w3tc_overlay_upgrade_content_r">
                 <ul>
                     <li>
                         <strong>Full Site Delivery (FSD)</strong><br>
-                        Provide the best user experience possible by enhancing by hosting HTML pages and RSS feeds with (supported) CDN's high speed global networks.</li>
+                        Provide the best user experience possible by enhancing by hosting HTML pages and RSS feeds with (supported) <acronym title="Content Delivery Network">CDN</acronym>'s high speed global networks.</li>
                     <li><strong>Fragment Caching Module</strong><br>
                         Unlocking the fragment caching module delivers enhanced performance for plugins and themes that use the WordPress Transient API. StudioPress' Genesis Framework is up to 60% faster with W3TC Pro.</li>
                     <li>

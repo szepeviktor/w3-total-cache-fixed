@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 define( 'W3TC', true );
-define( 'W3TC_VERSION', '0.9.5.4' );
+define( 'W3TC_VERSION', '0.9.6' );
 define( 'W3TC_POWERED_BY', 'W3 Total Cache' );
 define( 'W3TC_EMAIL', 'w3tc@w3-edge.com' );
 define( 'W3TC_TEXT_DOMAIN', 'w3-total-cache' );
@@ -76,6 +76,7 @@ define( 'W3TC_CDN_COMMAND_UPLOAD', 1 );
 define( 'W3TC_CDN_COMMAND_DELETE', 2 );
 define( 'W3TC_CDN_COMMAND_PURGE', 3 );
 define( 'W3TC_CDN_TABLE_QUEUE', 'w3tc_cdn_queue' );
+define( 'W3TC_CDN_TABLE_PATHMAP', 'w3tc_cdn_pathmap' );
 
 define( 'W3TC_INSTALL_FILE_ADVANCED_CACHE', W3TC_INSTALL_DIR . '/advanced-cache.php' );
 define( 'W3TC_INSTALL_FILE_DB', W3TC_INSTALL_DIR . '/db.php' );
@@ -153,6 +154,10 @@ function w3tc_class_autoload( $class ) {
 		if ( file_exists( $filePath ) )
 			require $filePath;
 		return;
+	} elseif ( substr( $class, 0, 24 ) == 'w3tc_tubalmartin\\CssMin\\' ) {
+		$base = W3TC_LIB_DIR . DIRECTORY_SEPARATOR . 'Minify' . DIRECTORY_SEPARATOR .
+			'YUI-CSS-compressor-PHP-port-4.1.0' . DIRECTORY_SEPARATOR;
+			$class = substr( $class, 24 );
 	}
 
 	if ( !is_null( $base ) ) {
@@ -167,8 +172,8 @@ function w3tc_class_autoload( $class ) {
 				require $filename;
 			} else {
 				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-					echo 'Attempt to create object of class ' . 
-						$class . ' has been made, but file ' . 
+					echo 'Attempt to create object of class ' .
+						$class . ' has been made, but file ' .
 						$filename . ' doesnt exists';
 					debug_print_backtrace();
 				}
@@ -195,7 +200,7 @@ spl_autoload_register( 'w3tc_class_autoload' );
 function w3tc_config() {
 	/*
 	 * Some plugins make incorrect decisions based on configuration
-	 * and force to disable modules working otherwise or 
+	 * and force to disable modules working otherwise or
 	 * adds notices on each wp-admin page without ability to remove it.
 	 * By defining W3TC_CONFIG_HIDE you may still use w3tc configuration you like.
 	 */
@@ -209,33 +214,33 @@ function w3tc_config() {
 /**
  * Shortcut for url varnish flush
  */
-function w3tc_flush_all() {
+function w3tc_flush_all( $extras = null ) {
 	$o = \W3TC\Dispatcher::component( 'CacheFlush' );
-	$o->flush_all();
+	$o->flush_all( $extras );
 }
 
 /**
  * Purges/Flushes post page
  */
-function w3tc_flush_post( $post_id ) {
+function w3tc_flush_post( $post_id, $extras = null ) {
 	$o = \W3TC\Dispatcher::component( 'CacheFlush' );
-	$o->flush_post( $post_id );
+	$o->flush_post( $post_id, $extras );
 }
 
 /**
  * Purges/Flushes all posts
  */
-function w3tc_flush_posts() {
+function w3tc_flush_posts( $extras = null ) {
 	$o = \W3TC\Dispatcher::component( 'CacheFlush' );
-	$o->flush_posts();
+	$o->flush_posts( $extras );
 }
 
 /**
  * Purges/Flushes url
  */
-function w3tc_flush_url( $url ) {
+function w3tc_flush_url( $url, $extras = null ) {
 	$o = \W3TC\Dispatcher::component( 'CacheFlush' );
-	$o->flush_url( $url );
+	$o->flush_url( $url, $extras );
 }
 
 
@@ -532,7 +537,7 @@ function w3tc_opcache_flush_file( $file, $http = false ) {
  * Deprecated. Retained for 3rd parties that used it. see w3tc_config()
  *
  * Some plugins make incorrect decisions based on configuration
- * and force to disable modules working otherwise or 
+ * and force to disable modules working otherwise or
  * adds notices on each wp-admin page without ability to remove it.
  * By defining W3TC_CONFIG_HIDE you may still use w3tc configuration you like.
  */
@@ -540,11 +545,11 @@ if ( defined( 'W3TC_CONFIG_HIDE' ) && W3TC_CONFIG_HIDE ) {
 	class W3_Config {
 	    public function __construct( $master = false, $blog_id = null ) {
 	    }
-		
+
 		public function get_string( $key, $default = '', $trim = true ) {
 			return '';
 		}
-    	
+
     	public function get_integer( $key, $default = 0 ) {
 			return 0;
     	}

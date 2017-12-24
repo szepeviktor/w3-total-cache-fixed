@@ -27,14 +27,14 @@ if ( !defined( 'W3TC' ) )
 			<option value="enabled"<?php selected( $this->_config->get_string( 'cdn.edgecast.ssl' ), 'enabled' ); ?>><?php _e( 'Enabled (always use SSL)', 'w3-total-cache' ); ?></option>
 			<option value="disabled"<?php selected( $this->_config->get_string( 'cdn.edgecast.ssl' ), 'disabled' ); ?>><?php _e( 'Disabled (always use HTTP)', 'w3-total-cache' ); ?></option>
 		</select>
-        <br /><span class="description"><?php _e( 'Some <acronym>CDN</acronym> providers may or may not support <acronym title="Secure Sockets Layer">SSL</acronym>, contact your vendor for more information.', 'w3-total-cache' ); ?></span>
+        <br /><span class="description"><?php _e( 'Some <acronym title="Content Delivery Network">CDN</acronym> providers may or may not support <acronym title="Secure Sockets Layer">SSL</acronym>, contact your vendor for more information.', 'w3-total-cache' ); ?></span>
 	</td>
 </tr>
 <tr>
     <th><?php _e( 'Replace site\'s hostname with:', 'w3-total-cache' ); ?></th>
     <td>
 		<?php $cnames = $this->_config->get_array( 'cdn.edgecast.domain' ); include W3TC_INC_DIR . '/options/cdn/common/cnames.php'; ?>
-        <br /><span class="description"><?php _e( 'Enter the hostname provided by your <acronym>CDN</acronym> provider, this value will replace your site\'s hostname in the <acronym title="Hypertext Markup Language">HTML</acronym>.', 'w3-total-cache' ); ?></span>
+        <br /><span class="description"><?php _e( 'Enter the hostname provided by your <acronym title="Content Delivery Network">CDN</acronym> provider, this value will replace your site\'s hostname in the <acronym title="Hypertext Markup Language">HTML</acronym>.', 'w3-total-cache' ); ?></span>
     </td>
 </tr>
 <tr>

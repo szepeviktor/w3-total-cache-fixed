@@ -17,14 +17,6 @@ echo sprintf( 'The plugin is currently %1$s If an option is disabled it means th
         <?php Util_Ui::postbox_header( __( 'General', 'w3-total-cache' ), '' ); ?>
         <table class="form-table">
             <tr>
-                <th colspan="2">
-                    <label>
-                        <input id="enabled" type="checkbox" name="enabled" value="1"<?php checked( $enabled_checkbox, true ); ?> />
-                        <?php _e( 'Toggle all caching types on or off (at once)', 'w3-total-cache' ); ?>
-                    </label>
-                </th>
-            </tr>
-            <tr>
                 <th>Preview mode:</th>
                 <td>
                     <?php echo Util_Ui::nonce_field( 'w3tc' ); ?>
@@ -220,7 +212,7 @@ Util_Ui::config_item_engine( array(
 	) );
 ?>
 
-            <?php if ( Util_Environment::is_w3tc_enterprise() && is_network_admin() ): ?>
+            <?php if ( Util_Environment::is_w3tc_pro() && is_network_admin() ): ?>
             <?php include W3TC_INC_OPTIONS_DIR . '/enterprise/dbcluster_general_section.php' ?>
             <?php endif; ?>
         </table>
@@ -329,7 +321,7 @@ Util_Ui::button_config_save( 'general_varnish',
 ?>
         <?php Util_Ui::postbox_footer(); ?>
 
-        <?php if ( Util_Environment::is_w3tc_enterprise() ): ?>
+        <?php if ( Util_Environment::is_w3tc_pro() ): ?>
         <?php Util_Ui::postbox_header( 'Message Bus', '', 'amazon_sns' ); ?>
         <p>
             Allows policy management to be shared between a dynamic pool of servers. For example, each server in a pool to use opcode caching (which is not a shared resource) and purging is then syncronized between any number of servers in real-time; each server therefore behaves identically even though resources are not shared.
@@ -431,6 +423,13 @@ Util_Ui::config_item( array(
                     Then go to the <acronym title="Application Programming Interface">API</acronym> Access tab. The <acronym title="Application Programming Interface">API</acronym> key is in the Simple <acronym title="Application Programming Interface">API</acronym> Access section.', 'w3-total-cache' ); ?></span>
                 </td>
             </tr>
+ 			<tr>
+                 <th><label for="widget_pagespeed_key"><?php Util_Ui::e_config_label( 'widget.pagespeed.key.restrict.referrer', 'general' ) ?></label></th>
+                 <td>
+                     <input id="widget_pagespeed_key_restrict_referrer" type="text" name="widget__pagespeed__key__restrict__referrer" value="<?php echo esc_attr( $this->_config->get_string( 'widget.pagespeed.key.restrict.referrer' ) ); ?>" size="60" /><br>
+                     <span class="description">Although not required, to prevent unauthorized use and quota theft, you have the option to restrict your key using a designated HTTP referrer. If you decide to use it, you will need to set this referrer within the API Console's "Http Referrers (web sites)" key restriction area (under Credentials).</span>
+                 </td>
+            </tr>
             <?php
 Util_Ui::config_item( array(
 		'key' => 'widget.pagespeed.show_in_admin_bar',
@@ -488,27 +487,6 @@ Util_Ui::config_item( array(
 ?>
 
             <?php do_action( 'w3tc_settings_general_boxarea_miscellaneous_content' ); ?>
-            <?php if ( is_network_admin() || !Util_Environment::is_wpmu() ): ?>
-            <tr id="edge_mode">
-                <th colspan="2">
-                    <?php
-	if ( !Util_Environment::is_w3tc_edge( $this->_config ) )
-		echo '<a href="' .
-			Util_Ui::url( array( 'w3tc_edge_mode_enable' => 'y' ) ) .
-			'"><strong>' .
-			__( 'Enable Edge mode', 'w3-total-cache' ) .
-			'</strong></a>';
-	else
-		echo '<a href="' .
-			Util_Ui::url( array( 'w3tc_edge_mode_disable' => 'y' ) ) .
-			'"><strong>' .
-			__( 'Disable Edge mode', 'w3-total-cache' ) .
-			'</strong></a>';
-?>
-                    <br /><span class="description"><?php _e( 'Enable this to try out new functionality under development. Might cause issues on some sites.', 'w3-total-cache' ); ?></span>
-                </th>
-            </tr>
-            <?php endif; ?>
         </table>
 
         <?php Util_Ui::button_config_save( 'general_misc' ); ?>
@@ -529,8 +507,9 @@ Util_Ui::config_item( array(
                     <?php $this->checkbox_debug( array( 'fragmentcache', 'debug' ) ) ?> <?php _e( 'Fragment Cache', 'w3-total-cache' ) ?></label><br />
                     <?php endif; ?>
                     <?php $this->checkbox_debug( 'cdn.debug' ) ?> <?php Util_Ui::e_config_label( 'cdn.debug' ) ?></label><br />
+                    <?php $this->checkbox_debug( 'cdnfsd.debug' ) ?> <?php Util_Ui::e_config_label( 'cdnfsd.debug' ) ?></label><br />
                     <?php $this->checkbox_debug( 'varnish.debug' ) ?> <?php Util_Ui::e_config_label( 'varnish.debug' ) ?></label><br />
-                    <?php if ( Util_Environment::is_w3tc_enterprise() ): ?>
+                    <?php if ( Util_Environment::is_w3tc_pro() ): ?>
                     <?php $this->checkbox_debug( 'cluster.messagebus.debug' ) ?> <?php Util_Ui::e_config_label( 'cluster.messagebus.debug' ) ?></label><br />
                     <?php endif; ?>
                     <span class="description"><?php _e( 'If selected, detailed caching information will be appear at the end of each page in a <acronym title="Hypertext Markup Language">HTML</acronym> comment. View a page\'s source code to review.', 'w3-total-cache' ); ?></span>

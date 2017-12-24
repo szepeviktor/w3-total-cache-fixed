@@ -16,7 +16,7 @@ class Generic_AdminActions_Flush {
 	 * @return void
 	 */
 	function w3tc_flush_all() {
-		w3tc_flush_all();
+		w3tc_flush_all( array( 'ui_action' => 'flush_button' ) );
 		$this->_redirect_after_flush( 'flush_all' );
 	}
 

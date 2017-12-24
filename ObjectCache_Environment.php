@@ -115,7 +115,7 @@ class ObjectCache_Environment {
 					if ( isset( $_GET['page'] ) )
 						$url = 'admin.php?page=' . $_GET['page'] . '&amp;';
 					else
-						$url = basename( Util_Environment::remove_query(
+						$url = basename( Util_Environment::remove_query_all(
 								$_SERVER['REQUEST_URI'] ) ) . '?page=w3tc_dashboard&amp;';
 					$remove_url = Util_Ui::admin_url( $url .
 						'w3tc_default_remove_add_in=objectcache' );
@@ -155,6 +155,9 @@ class ObjectCache_Environment {
 	 * @return boolean
 	 */
 	public function is_objectcache_old_add_in() {
+		if ( !$this->objectcache_installed() )
+			return false;
+
 		return ( ( $script_data = @file_get_contents( W3TC_ADDIN_FILE_OBJECT_CACHE ) )
 			&& ( ( strstr( $script_data, 'W3 Total Cache Object Cache' ) !== false ) ||
 				strstr( $script_data, 'w3_instance' ) !== false ) );
@@ -166,6 +169,9 @@ class ObjectCache_Environment {
 	 * @return boolean
 	 */
 	public function is_objectcache_add_in() {
+		if ( !$this->objectcache_installed() )
+			return false;
+
 		return ( ( $script_data = @file_get_contents( W3TC_ADDIN_FILE_OBJECT_CACHE ) )
 			&& strstr( $script_data, '//ObjectCache Version: 1.4' ) !== false );
 	}

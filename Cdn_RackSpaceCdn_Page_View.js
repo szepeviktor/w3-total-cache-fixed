@@ -97,7 +97,7 @@ jQuery(function($) {
 	    	var protocol = '';
 
    	        $('body').find('.w3tc_cdn_rackspace_protocol').each(function(i) {
-                if (!jQuery(this).attr('checked'))
+                if (!jQuery(this).prop('checked'))
                     return;
 
 				protocol = $(this).val();

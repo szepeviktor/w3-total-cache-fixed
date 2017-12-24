@@ -18,7 +18,7 @@ if ( !defined( 'W3TC' ) )
 		<li><?php _e( 'Bandwidth savings via Minify and <acronym title="Hypertext Transfer Protocol">HTTP</acronym> compression of <acronym title="Hypertext Markup Language">HTML</acronym>, <acronym title="Cascading Style Sheet">CSS</acronym>, JavaScript and feeds', 'w3-total-cache' ); ?></li>
 		<li><?php _e( 'Increased web server concurrency and increased scale (easily sustain high traffic spikes)', 'w3-total-cache' ); ?></li>
 		<li><?php _e( 'Transparent content delivery network (<acronym title="Content Delivery Network">CDN</acronym>) integration with Media Library, theme files and WordPress core', 'w3-total-cache' ); ?></li>
-		<li><?php _e( 'Caching of pages / posts in memory or on disk or on CDN (mirror only)', 'w3-total-cache' ); ?></li>
+		<li><?php _e( 'Caching of pages / posts in memory or on disk or on <acronym title="Content Delivery Network">CDN</acronym> (mirror only)', 'w3-total-cache' ); ?></li>
 		<li><?php _e( 'Caching of (minified) <acronym title="Cascading Style Sheet">CSS</acronym> and JavaScript in memory, on disk or on <acronym title="Content Delivery Network">CDN</acronym>', 'w3-total-cache' ); ?></li>
 		<li><?php _e( 'Caching of database objects in memory or on disk', 'w3-total-cache' ); ?></li>
 		<li><?php _e( 'Caching of objects in memory or on disk', 'w3-total-cache' ); ?></li>

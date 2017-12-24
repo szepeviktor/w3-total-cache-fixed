@@ -9,26 +9,25 @@ class Cdn_Plugin_Admin {
 		$c = Dispatcher::config();
 		$cdn_engine = $c->get_string( 'cdn.engine' );
 
-		if ( $c->get_boolean( 'cdn.enabled' ) &&
-			!Cdn_Util::is_engine_fsd( $cdn_engine ) ) {
+		if ( $c->get_boolean( 'cdn.enabled' ) ) {
 			$admin_notes = new Cdn_AdminNotes();
 			add_filter( 'w3tc_notes', array( $admin_notes, 'w3tc_notes' ) );
 			add_filter( 'w3tc_errors', array( $admin_notes, 'w3tc_errors' ) );
+
+			if ( $c->get_boolean( 'cdn.admin.media_library' ) &&
+			 	$c->get_boolean( 'cdn.uploads.enable' ) ) {
+
+		        add_filter( 'wp_get_attachment_url',
+		        	array( $this, 'wp_get_attachment_url' ), 0 );
+
+		        add_filter( 'attachment_link',
+		        	array( $this, 'wp_get_attachment_url' ), 0 );
+			}
 		}
 
 
 		// attach to actions without firing class loading at all without need
-		if ( $cdn_engine == 'cloudfront_fsd' ) {
-			add_action( 'admin_print_scripts-performance_page_w3tc_cdn', array(
-					'\W3TC\Cdn_CloudFrontFsd_Page',
-					'admin_print_scripts_w3tc_cdn' ) );
-			add_action( 'w3tc_ajax', array(
-					'\W3TC\Cdn_CloudFrontFsd_Popup',
-					'w3tc_ajax' ) );
-			add_action( 'w3tc_settings_cdn', array(
-					'\W3TC\Cdn_CloudFrontFsd_Page',
-					'w3tc_settings_cdn' ) );
-		} elseif ( $cdn_engine == 'google_drive' ) {
+		if ( $cdn_engine == 'google_drive' ) {
 			add_action( 'admin_print_scripts-performance_page_w3tc_cdn', array(
 					'\W3TC\Cdn_GoogleDrive_Page',
 					'admin_print_scripts_w3tc_cdn' ) );
@@ -52,16 +51,17 @@ class Cdn_Plugin_Admin {
 			add_action( 'w3tc_settings_cdn_boxarea_configuration', array(
 					'\W3TC\Cdn_Highwinds_Page',
 					'w3tc_settings_cdn_boxarea_configuration' ) );
-		} elseif ( $cdn_engine == 'maxcdn_fsd' ) {
+		} elseif ( $cdn_engine == 'maxcdn' ) {
 			add_action( 'admin_print_scripts-performance_page_w3tc_cdn', array(
-					'\W3TC\Cdn_MaxCdnFsd_Page',
+					'\W3TC\Cdn_MaxCdn_Page',
 					'admin_print_scripts_w3tc_cdn' ) );
 			add_action( 'w3tc_ajax', array(
-					'\W3TC\Cdn_MaxCdnFsd_Popup',
+					'\W3TC\Cdn_MaxCdn_Popup',
 					'w3tc_ajax' ) );
-			add_action( 'w3tc_settings_cdn', array(
-					'\W3TC\Cdn_MaxCdnFsd_Page',
-					'w3tc_settings_cdn' ) );
+			add_action( 'w3tc_settings_cdn_boxarea_configuration', array(
+					'\W3TC\Cdn_MaxCdn_Page',
+					'w3tc_settings_cdn_boxarea_configuration'
+				) );
 		} elseif ( $cdn_engine == 'rackspace_cdn' ) {
 			add_filter( 'w3tc_admin_actions', array(
 					'\W3TC\Cdn_RackSpaceCdn_Page',
@@ -101,25 +101,8 @@ class Cdn_Plugin_Admin {
 		$engine_optgroups = array();
 		$engine_values = array();
 
-		$is_fsd = Util_Environment::is_w3tc_pro( $config );
-
-		if ( $is_fsd ) {
-			$engine_optgroups[] = __( 'Full Site Delivery:', 'w3-total-cache' );
-			$engine_values['cloudfront_fsd'] = array(
-				'label' => __( 'Amazon CloudFront', 'w3-total-cache' ),
-				'optgroup' => 0
-			);
-			$engine_values['maxcdn_fsd'] = array(
-				'label' => __( 'MaxCDN (recommended)', 'w3-total-cache' ),
-				'optgroup' => 0
-			);
-
-			$optgroup_pull = count( $engine_optgroups );
-			$engine_optgroups[] = __( 'Origin Pull / Mirror:', 'w3-total-cache' );
-		} else {
-			$optgroup_pull = count( $engine_optgroups );
-			$engine_optgroups[] = __( 'Origin Pull / Mirror:', 'w3-total-cache' );
-		}
+		$optgroup_pull = count( $engine_optgroups );
+		$engine_optgroups[] = __( 'Origin Pull / Mirror:', 'w3-total-cache' );
 
 		$optgroup_push = count( $engine_optgroups );
 		$engine_optgroups[] = __( 'Origin Push:', 'w3-total-cache' );
@@ -152,10 +135,6 @@ class Cdn_Plugin_Admin {
 		);
 		$engine_values['maxcdn'] = array(
 			'label' => __( 'MaxCDN', 'w3-total-cache' ),
-			'optgroup' => $optgroup_pull
-		);
-		$engine_values['netdna'] = array(
-			'label' => __( 'MaxCDN Enterprise (NetDNA)', 'w3-total-cache' ),
 			'optgroup' => $optgroup_pull
 		);
 		$engine_values['rackspace_cdn'] = array(
@@ -201,22 +180,42 @@ class Cdn_Plugin_Admin {
 		);
 
 		$cdn_enabled = $config->get_boolean( 'cdn.enabled' );
-
 		$cdn_engine = $config->get_string( 'cdn.engine' );
-
-		$tag = '';
-		if ( $cdn_engine == 'cloudfront_fsd' )
-			$tag = '#cdn-fsd-cloudfront';
-		elseif ( $cdn_engine == 'maxcdn_fsd' )
-			$tag = '#cdn-fsd-maxcdn';
-
-		if ( empty( $tag ) )
-			$cdn_engine_extra_description = '';
-		else
-			$cdn_engine_extra_description =
-				' See <a href="admin.php?page=w3tc_faq' . $tag .
-				'">setup instructions</a>';
 
 		include  W3TC_DIR . '/Cdn_GeneralPage_View.php';
 	}
+
+
+
+	/**
+	 * Adjusts attachment urls to cdn. This is for those who rely on
+	 * wp_get_attachment_url()
+	 *
+	 * @param 	string   $url	the local url to modify
+	 * @return 	string
+	 */
+    function wp_get_attachment_url( $url ) {
+		if ( defined( 'WP_ADMIN' ) ) {
+			$url = trim( $url );
+
+			if ( !empty( $url ) ) {
+				$parsed = parse_url( $url );
+				$uri = ( isset( $parsed['path'] ) ? $parsed['path'] : '/' ) .
+						   ( isset( $parsed['query'] ) ? '?' . $parsed['query'] : '' );
+
+				$wp_upload_dir = wp_upload_dir();
+				$upload_base_url = $wp_upload_dir['baseurl'];
+
+				if ( substr($url, 0, strlen( $upload_base_url ) ) == $upload_base_url ) {
+					$common = Dispatcher::component( 'Cdn_Core' );
+					$new_url = $common->url_to_cdn_url( $url, $uri );
+					if ( !is_null( $new_url ) ) {
+						$url = $new_url;
+					}
+				}
+			}
+		}
+
+        return $url;
+    }
 }

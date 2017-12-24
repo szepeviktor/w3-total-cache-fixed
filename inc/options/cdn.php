@@ -156,10 +156,11 @@ if ( !$upload_blogfiles_enabled )
 		<?php Util_Ui::button_config_save( 'cdn_general' ); ?>
 		<?php Util_Ui::postbox_footer(); ?>
 
-		<?php Util_Ui::postbox_header( __( 'Configuration', 'w3-total-cache' ), '', 'configuration' ); ?>
+		<?php Util_Ui::postbox_header( __( 'Configuration: Objects', 'w3-total-cache' ), '', 'configuration' ); ?>
 		<table class="form-table">
 			<?php
 if ( $cdn_engine == 'google_drive' || $cdn_engine == 'highwinds' ||
+	$cdn_engine == 'maxcdn' ||
 	$cdn_engine == 'rackspace_cdn' || $cdn_engine == 'rscf' ) {
 	do_action( 'w3tc_settings_cdn_boxarea_configuration' );
 } else if ( Cdn_Util::is_engine( $cdn_engine ) ) {
@@ -171,6 +172,8 @@ if ( $cdn_engine == 'google_drive' || $cdn_engine == 'highwinds' ||
 		<?php Util_Ui::button_config_save( 'cdn_configuration' ); ?>
 		<?php Util_Ui::postbox_footer(); ?>
 
+		<?php do_action( 'w3tc_settings_box_cdnfsd' ); ?>
+
 		<?php Util_Ui::postbox_header( __( 'Advanced', 'w3-total-cache' ), '', 'advanced' ); ?>
 		<table class="form-table">
 			<tr>
@@ -179,6 +182,19 @@ if ( $cdn_engine == 'google_drive' || $cdn_engine == 'highwinds' ||
 					<span class="description">When <acronym title="Secure Sockets Layer">SSL</acronym> pages are returned no <acronym title="Content Delivery Network">CDN</acronym> <acronym title="Uniform Resource Indicator">URL</acronym>s will appear in HTML pages.</span>
 				</th>
 			</tr>
+			<tr>
+ 				<th colspan="2">
+ 					<?php $this->checkbox( 'cdn.admin.media_library' ) ?> <?php Util_Ui::e_config_label( 'cdn.admin.media_library' ) ?></label><br />
+					<span class="description">All Media Library content will use CDN links on administration pages.</span>
+				</th>
+ 			</tr>
+			<tr>
+ 				<th colspan="2">
+ 					<?php $this->checkbox( 'cdn.cors_header' ) ?> Add <acronym title="Access-Control-Allow-Origin">CORS</acronym> header</label><br />
+					<span class="description">Add <acronym title="Access-Control-Allow-Origin">CORS</acronym> headers to allow cross-domain assets usage.</span>
+				</th>
+ 			</tr>
+
 			<tr>
 				<th colspan="2">
 					<?php $this->checkbox( 'cdn.reject.logged_roles' ) ?> <?php Util_Ui::e_config_label( 'cdn.reject.logged_roles' ) ?></label><br />

@@ -44,6 +44,14 @@ class Cache_Memcache extends Cache_Base {
 			return false;
 		}
 
+		// when disabled - no extra requests are made to obtain key version,
+		// but flush operations not supported as a result
+		// group should be always empty
+		if ( isset( $config['key_version_mode'] ) &&
+			$config['key_version_mode'] == 'disabled' ) {
+			$this->_key_version[''] = 1;
+		}
+
 		return true;
 	}
 

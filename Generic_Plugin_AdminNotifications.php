@@ -71,29 +71,6 @@ class Generic_Plugin_AdminNotifications {
 
 			do_action( 'w3tc_message_action_generic_support_us' );
 		}
-
-
-		// edge mode
-		$edge_reminder = !$support_reminder &&
-			!Util_Environment::is_w3tc_edge( $this->_config ) &&
-			$state->get_integer( 'common.edge_invitations' ) < 3 &&
-			( $state->get_integer( 'common.install' ) <
-			( time() - W3TC_EDGE_TIMEOUT ) ) &&
-			( $state->get_integer( 'common.next_edge_invitation' ) < time() );
-
-		if ( $edge_reminder ) {
-			if ( $state->get_integer( 'common.edge_invitations' ) > 1 )
-				$next = time() + 30 * 24 * 60 * 60;
-			else
-				$next = time() + W3TC_EDGE_TIMEOUT;
-
-			$state->set( 'common.next_edge_invitation', $next );
-			$state->set( 'common.edge_invitations',
-				$state->get_integer( 'common.edge_invitations' ) + 1 );
-			$state->save();
-
-			do_action( 'w3tc_message_action_generic_edge' );
-		}
 	}
 
 	/**
@@ -143,11 +120,5 @@ class Generic_Plugin_AdminNotifications {
 		wp_enqueue_script( 'w3tc-generic_edge',
 			plugins_url( 'Generic_GeneralPage_View_ShowEdge.js', W3TC_FILE ),
 			array(), W3TC_VERSION );
-	}
-
-
-
-	public function w3tc_ajax_generic_edge() {
-		include W3TC_INC_LIGHTBOX_DIR . '/edge.php';
 	}
 }

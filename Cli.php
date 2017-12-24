@@ -297,6 +297,32 @@ class W3TotalCache_Command extends \WP_CLI_Command {
 	}
 
 	/**
+	 * Imports configuration file
+	 *
+	 * ## OPTIONS
+	 * <filename>
+	 * : Filename to import
+	 */
+	function import( $args = array(), $vars = array() ) {
+		$filename = array_shift( $args );
+
+		try {
+			$config = new Config();
+			if ( !file_exists( $filename ) || !is_readable( $filename ) ) {
+				throw new \Exception( 'Cant read file: ' . $filename );
+			}
+			if ( !$config->import( $filename ) ) {
+				throw new \Exception( 'import failed' );
+			}
+			$config->save();
+		} catch ( \Exception $e ) {
+			\WP_CLI::error( __( 'Config import failed: ' . $e->getMessage(), 'w3-total-cache' ) );
+		}
+
+		\WP_CLI::success( __( 'Configuration successfully imported.', 'w3-total-cache' ) );
+	}
+
+	/**
 	 * Update query string for all static files
 	 */
 	function querystring() {

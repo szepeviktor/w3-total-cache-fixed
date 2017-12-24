@@ -19,6 +19,18 @@ class Util_AttachToActions {
 				$o,
 				'on_post_change'
 			), 0, 2 );
+
+		// when post status is changed to draft - it looses its URL
+		// so we need to flush before update is happened
+		add_action( 'pre_post_update', array(
+				$o,
+				'on_post_change'
+			), 0 );
+		add_action( 'wp_trash_post', array(
+				$o,
+				'on_post_change'
+			), 0 );
+
 		add_action( 'publish_post', array(
 				$o,
 				'on_post_change'

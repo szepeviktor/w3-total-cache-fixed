@@ -67,10 +67,6 @@ class CdnEngine {
 				$instances[$instance_key] = new CdnEngine_Mirror( $config );
 				break;
 
-			case 'netdna':
-				$instances[$instance_key] = new CdnEngine_Mirror_Netdna( $config );
-				break;
-
 			case 'rackspace_cdn':
 				$instances[$instance_key] = new CdnEngine_Mirror_RackSpaceCdn( $config );
 				break;

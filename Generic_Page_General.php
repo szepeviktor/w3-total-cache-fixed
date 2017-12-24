@@ -35,7 +35,6 @@ class Generic_Page_General extends Base_Page_Settings {
 		$varnish_enabled = $modules->is_enabled( 'varnish' );
 
 		$enabled = $modules->plugin_is_enabled();
-		$enabled_checkbox = $modules->all_modules_enabled();
 
 		$check_rules = Util_Rule::can_check_rules();
 		$disc_enhanced_enabled = !( ! $check_rules || ( !$this->is_master() && Util_Environment::is_wpmu() && $config_master->get_string( 'pgcache.engine' ) != 'file_generic' ) );

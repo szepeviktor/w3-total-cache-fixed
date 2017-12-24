@@ -537,7 +537,7 @@ msgid "Update via FTP"
 msgstr ""
 
 #: inc/functions/admin_ui.php:73 inc/functions/widgets.php:61
-#: inc/lightbox/edge.php:15 inc/options/support/form.php:26
+#: inc/options/support/form.php:26
 #: inc/options/support/payment.php:21
 msgid "Cancel"
 msgstr ""
@@ -653,23 +653,6 @@ msgstr ""
 
 #: inc/lightbox/create_netdna_maxcdn_pull_zone.php:22
 msgid "Something that describes your zone. Length: 1-255 chars"
-msgstr ""
-
-#: inc/lightbox/edge.php:7
-msgid ""
-"You can now keep up-to-date on all of the web performance optimization (WPO) "
-"techniques that will make your website as fast as possible without having to "
-"worry about new features breaking your website when you update!"
-msgstr ""
-
-#: inc/lightbox/edge.php:8
-msgid ""
-"Enable \"edge mode\" to opt-in to pre-release features or simply close this "
-"window to opt-in to bug fixes, security fixes and settings updates only."
-msgstr ""
-
-#: inc/lightbox/edge.php:13
-msgid "Enable Edge Mode"
 msgstr ""
 
 #: inc/lightbox/minify_recommendations.php:5
@@ -2902,14 +2885,6 @@ msgstr ""
 
 #: inc/options/general.php:650
 msgid "Disable Edge mode"
-msgstr ""
-
-#: inc/options/general.php:653
-msgid ""
-"Enable this to try out new functionality under development. Might cause "
-"issues on some sites. If you have issues and can't access wp-admin, remove "
-"\"define('W3TC_EDGE_MODE', true);\" from your wp-config.php file and edge "
-"mode features will be disabled."
 msgstr ""
 
 #: inc/options/general.php:666

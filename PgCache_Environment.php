@@ -582,6 +582,7 @@ class PgCache_Environment {
 		 */
 		$env_W3TC_UA = '';
 		$env_W3TC_REF = '';
+		$env_W3TC_COOKIE = '';
 		$env_W3TC_SSL = '';
 		$env_W3TC_ENC = '';
 
@@ -594,6 +595,30 @@ class PgCache_Environment {
 
 		if ( $config->get_boolean( 'pgcache.debug' ) ) {
 			$rules .= "    RewriteRule ^(.*\\/)?w3tc_rewrite_test([0-9]+)/?$ $1?w3tc_rewrite_test=1 [L]\n";
+		}
+
+
+		/**
+		 * Set accept query strings
+		 */
+		$w3tc_query_strings = $config->get_array( 'pgcache.accept.qs' );
+		Util_Rule::array_trim( $w3tc_query_strings );
+
+		if ( !empty( $w3tc_query_strings ) ) {
+			$w3tc_query_strings = str_replace( ' ', '+', $w3tc_query_strings );
+			$w3tc_query_strings = array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $w3tc_query_strings );
+
+			$rules .= "    RewriteRule ^ - [E=W3TC_QUERY_STRING:%{QUERY_STRING}]\n";
+
+			foreach ( $w3tc_query_strings as $query ) {
+				$query .=  ( strpos( $query, '=' ) === false ? '=.*?' : '' );
+				$rules .= "    RewriteCond %{ENV:W3TC_QUERY_STRING} ^(.*?&|)" .
+					$query . "(&.*|)$ [NC]\n";
+				$rules .= "    RewriteRule ^ - [E=W3TC_QUERY_STRING:%1%2]\n";
+			}
+
+			$rules .= "    RewriteCond %{ENV:W3TC_QUERY_STRING} ^&+$\n";
+			$rules .= "    RewriteRule ^ - [E=W3TC_QUERY_STRING]\n";
 		}
 
 		/**
@@ -671,12 +696,44 @@ class PgCache_Environment {
 		}
 
 		/**
+		 * Set cookie group
+		 */
+		if ( $config->get_boolean( 'pgcache.cookiegroups.enabled' ) ) {
+			$cookie_groups = $config->get_array( 'pgcache.cookiegroups.groups' );
+
+			foreach ( $cookie_groups as $group_name => $g ) {
+				if ( isset( $g['enabled'] ) && $g['enabled'] ) {
+					$cookies = array();
+					foreach ($g['cookies'] as $cookie ) {
+						$cookie = trim( $cookie );
+						if ( !empty( $cookie ) ) {
+							$cookie = str_replace( '+', ' ', $cookie );
+							$cookie = Util_Environment::preg_quote( $cookie );
+							if ( strpos( $cookie, '=') === false )
+								$cookie .= '=.*';
+							$cookies[] = $cookie;
+						}
+					}
+
+					if ( count( $cookies ) > 0 ) {
+						$cookies_regexp = '^(.*;\s*)?(' . implode( '|', $cookies ) . ')(\s*;.*)?$';
+						$rules .= "    RewriteCond %{HTTP_COOKIE} $cookies_regexp [NC]\n";
+						$rules .= "    RewriteRule .* - [E=W3TC_COOKIE:_" . $group_name . "]\n";
+						$env_W3TC_COOKIE = '%{ENV:W3TC_COOKIE}';
+					}
+				}
+			}
+		}
+
+		/**
 		 * Set HTTPS
 		 */
 		if ( $config->get_boolean( 'pgcache.cache.ssl' ) ) {
 			$rules .= "    RewriteCond %{HTTPS} =on\n";
 			$rules .= "    RewriteRule .* - [E=W3TC_SSL:_ssl]\n";
 			$rules .= "    RewriteCond %{SERVER_PORT} =443\n";
+			$rules .= "    RewriteRule .* - [E=W3TC_SSL:_ssl]\n";
+			$rules .= "    RewriteCond %{HTTP:X-Forwarded-Proto} =https [NC]\n";
 			$rules .= "    RewriteRule .* - [E=W3TC_SSL:_ssl]\n";
 			$env_W3TC_SSL = '%{ENV:W3TC_SSL}';
 		}
@@ -704,7 +761,9 @@ class PgCache_Environment {
 		/**
 		 * Query string should be empty
 		 */
-		$use_cache_rules .= "    RewriteCond %{QUERY_STRING} =\"\"\n";
+		$use_cache_rules .= empty( $w3tc_query_strings ) ?
+			"    RewriteCond %{QUERY_STRING} =\"\"\n" :
+			"    RewriteCond %{ENV:W3TC_QUERY_STRING} =\"\"\n";
 
 		/**
 		 * Check permalink structure trailing slash
@@ -732,18 +791,24 @@ class PgCache_Environment {
 		 * Make final rewrites for specific files
 		 */
 		$uri_prefix =  $cache_path . '/%{HTTP_HOST}/%{REQUEST_URI}/' .
-			'_index' . $env_W3TC_UA . $env_W3TC_REF . $env_W3TC_SSL . $env_W3TC_PREVIEW;
+			'_index' . $env_W3TC_UA . $env_W3TC_REF . $env_W3TC_COOKIE .
+			$env_W3TC_SSL . $env_W3TC_PREVIEW;
 		$switch = " -" . ( $config->get_boolean( 'pgcache.file.nfs' ) ? 'F' : 'f' );
 
 		$document_root = Util_Rule::apache_docroot_variable();
 
-		// write rule to rewrite to .html file
-		$ext = '.html';
-		$rules .= $use_cache_rules;
-		$rules .= "    RewriteCond \"" . $document_root . $uri_prefix . $ext .
-			$env_W3TC_ENC . "\"" . $switch . "\n";
-		$rules .= "    RewriteRule .* \"" . $uri_prefix . $ext .
-			$env_W3TC_ENC . "\" [L]\n";
+		// write rule to rewrite to .html/.xml file
+		$exts = array( '.html' );
+		if ($config->get_boolean('pgcache.cache.nginx_handle_xml'))
+			$exts[] = '.xml';
+
+		foreach ( $exts as $ext ) {
+			$rules .= $use_cache_rules;
+			$rules .= "    RewriteCond \"" . $document_root . $uri_prefix . $ext .
+				$env_W3TC_ENC . "\"" . $switch . "\n";
+			$rules .= "    RewriteRule .* \"" . $uri_prefix . $ext .
+				$env_W3TC_ENC . "\" [L]\n";
+		}
 
 		$rules .= "</IfModule>\n";
 
@@ -812,6 +877,7 @@ class PgCache_Environment {
 		 */
 		$env_w3tc_ua = '';
 		$env_w3tc_ref = '';
+		$env_w3tc_cookie = '';
 		$env_w3tc_ssl = '';
 		$env_w3tc_ext = '';
 		$env_w3tc_enc = '';
@@ -820,6 +886,30 @@ class PgCache_Environment {
 		$rules .= W3TC_MARKER_BEGIN_PGCACHE_CORE . "\n";
 		if ( $config->get_boolean( 'pgcache.debug' ) ) {
 			$rules .= "rewrite ^(.*\\/)?w3tc_rewrite_test([0-9]+)/?$ $1?w3tc_rewrite_test=1 last;\n";
+		}
+
+		/**
+		 * Set accept query strings
+		 */
+		$w3tc_query_strings = $config->get_array( 'pgcache.accept.qs' );
+		Util_Rule::array_trim( $w3tc_query_strings );
+
+		if ( !empty( $w3tc_query_strings ) ) {
+		   $w3tc_query_strings = str_replace( ' ', '+', $w3tc_query_strings );
+		   $w3tc_query_strings = array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $w3tc_query_strings );
+
+			$rules .= "set \$w3tc_query_string \$query_string;\n";
+
+			foreach ( $w3tc_query_strings as $query ) {
+				$query .=  ( strpos( $query, '=' ) === false ? '.*?' : '' );
+				$rules .= "if (\$w3tc_query_string ~* \"^(.*?&|)".$query."(&.*|)$\") {\n";
+				$rules .= "    set \$w3tc_query_string $1$2;\n";
+				$rules .= "}\n";
+			}
+
+			$rules .= "if (\$w3tc_query_string ~ ^&+$) {\n";
+			$rules .= "    set \$w3tc_query_string \"\";\n";
+			$rules .= "}\n";
 		}
 
 		/**
@@ -880,7 +970,10 @@ class PgCache_Environment {
 		/**
 		 * Query string should be empty
 		 */
-		$rules .= "if (\$query_string != \"\") {\n";
+		$querystring_variable = ( empty( $w3tc_query_strings ) ?
+			'$query_string' : '$w3tc_query_string' );
+
+		$rules .= "if (" . $querystring_variable . " != \"\") {\n";
 		$rules .= "    set \$w3tc_rewrite 0;\n";
 		$rules .= "}\n";
 
@@ -981,10 +1074,51 @@ class PgCache_Environment {
 			}
 		}
 
+		/**
+		 * Set cookie group
+		 */
+		if ( $config->get_boolean( 'pgcache.cookiegroups.enabled' ) ) {
+			$cookie_groups = $config->get_array( 'pgcache.cookiegroups.groups' );
+			$set_cookie_var = true;
+
+			foreach ( $cookie_groups as $group_name => $g ) {
+				if ( isset( $g['enabled'] ) && $g['enabled'] ) {
+					$cookies = array();
+					foreach ($g['cookies'] as $cookie ) {
+						$cookie = trim( $cookie );
+						if ( !empty( $cookie ) ) {
+							$cookie = str_replace( '+', ' ', $cookie );
+							$cookie = Util_Environment::preg_quote( $cookie );
+							if ( strpos( $cookie, '=') === false )
+								$cookie .= '=.*';
+							$cookies[] = $cookie;
+						}
+					}
+
+					if ( count( $cookies ) > 0 ) {
+						$cookies_regexp = '"^(.*;)?(' . implode( '|', $cookies ) . ')(;.*)?$"';
+
+						if ( $set_cookie_var ) {
+							$rules .= "set \$w3tc_cookie \"\";\n";
+							$set_cookie_var = false;
+						}
+						$rules .= "if (\$http_cookie ~* $cookies_regexp) {\n";
+						$rules .= "    set \$w3tc_cookie _" . $group_name . ";\n";
+						$rules .= "}\n";
+
+						$env_w3tc_cookie = "\$w3tc_cookie";
+					}
+				}
+			}
+		}
+
 		if ( $config->get_boolean( 'pgcache.cache.ssl' ) ) {
 			$rules .= "set \$w3tc_ssl \"\";\n";
 
 			$rules .= "if (\$scheme = https) {\n";
+			$rules .= "    set \$w3tc_ssl _ssl;\n";
+			$rules .= "}\n";
+			$rules .= "if (\$http_x_forwarded_proto = 'https') {\n";
 			$rules .= "    set \$w3tc_ssl _ssl;\n";
 			$rules .= "}\n";
 
@@ -1005,7 +1139,7 @@ class PgCache_Environment {
 		$cache_path = str_replace( Util_Environment::document_root(), '', $cache_dir );
 		$uri_prefix = $cache_path . "/\$http_host/" .
 			"\$request_uri/_index" . $env_w3tc_ua . $env_w3tc_ref .
-			$env_w3tc_ssl . $env_w3tc_preview;
+			$env_w3tc_cookie . $env_w3tc_ssl . $env_w3tc_preview;
 
 		if ( !$config->get_boolean( 'pgcache.cache.nginx_handle_xml' ) ) {
 			$env_w3tc_ext = '.html';
@@ -1134,7 +1268,14 @@ class PgCache_Environment {
 
 			// allow to read files by apache if they are blocked at some level above
 			$rules .= "<Files ~ \"\.(html|html_gzip|xml|xml_gzip)$\">\n";
-			$rules .= "  Allow from all\n";
+
+			if ( version_compare( Util_Environment::get_server_version(), '2.4', '>=' ) ) {
+				$rules .= "  Require all granted\n";
+			} else {
+				$rules .= "  Order Allow,Deny\n";
+				$rules .= "  Allow from all\n";
+			}
+
 			$rules .= "</Files>\n";
 
 			if ( !$etag ) {
@@ -1326,14 +1467,23 @@ class PgCache_Environment {
 		$rules = '';
 		$rules .= W3TC_MARKER_BEGIN_PGCACHE_CACHE . "\n";
 
-		$rules .= "location ~ " . $cache_dir . ".*html$ {\n";
-		$rules .= $common_rules;
-		$rules .= "}\n";
+		if ( !empty( $common_rules ) ) {
+			$rules .= "location ~ " . $cache_dir . ".*html$ {\n";
+			$rules .= $common_rules;
+			$rules .= "}\n";
+		}
 
 		if ( $compression ) {
+			$maybe_xml = '';
+			if ($config->get_boolean('pgcache.cache.nginx_handle_xml')) {
+				$maybe_xml = "\n" .
+					"        text/xml xml_gzip\n" .
+					"    ";
+			}
+
 			$rules .= "location ~ " . $cache_dir . ".*gzip$ {\n";
 			$rules .= "    gzip off;\n";
-			$rules .= "    types {}\n";
+			$rules .= "    types {" . $maybe_xml . "}\n";
 			$rules .= "    default_type text/html;\n";
 			$rules .= $common_rules;
 			$rules .= "    add_header Content-Encoding gzip;\n";

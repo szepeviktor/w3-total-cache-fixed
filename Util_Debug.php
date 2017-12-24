@@ -50,4 +50,13 @@ class Util_Debug {
 
 		return $filename;
 	}
+
+
+
+	static public function log( $module, $message ) {
+		$message = strtr( $message, '<>', '..' );
+		$filename = Util_Debug::log_filename( $module );
+
+		return @file_put_contents( $filename, date( 'r' ) . ' ' . $message . "\n", FILE_APPEND );
+	}
 }

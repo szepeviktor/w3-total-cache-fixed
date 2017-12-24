@@ -320,7 +320,7 @@ Util_Ui::config_item( array(
         'description' => __( 'For better performance, send files to browser before they are requested when using the <acronym title="Hypertext Markup Language">HTTP</acronym>/2 protocol.',
             'w3-total-cache' ) .
             ( $this->_config->get_string( 'pgcache.engine' ) != 'file_generic' ? '' :
-                __( ' <br /><b>Not supported by "Disk: Enhanced" page cache engine</b>', 'w3-total-cache' ) )
+                __( ' <br /><b>Not supported by "Disk: Enhanced" page cache engine for Nginx</b>', 'w3-total-cache' ) )
     ) ); ?>
         </table>
 
@@ -445,7 +445,7 @@ Util_Ui::config_item( array(
         'description' => __( 'For better performance, send files to browser before they are requested when using the <acronym title="Hypertext Markup Language">HTTP</acronym>/2 protocol.',
             'w3-total-cache' ) .
             ( $this->_config->get_string( 'pgcache.engine' ) != 'file_generic' ? '' :
-                __( ' <br /><b>Not supported by "Disk: Enhanced" page cache engine</b>', 'w3-total-cache' ) )
+                __( ' <br /><b>Not supported by "Disk: Enhanced" page cache engine for Nginx</b>', 'w3-total-cache' ) )
     ) ); ?>
         </table>
 

@@ -70,22 +70,34 @@ class Extension_NewRelic_Plugin {
 	function ob_callback_browser( $buffer ) {
 		$core = Dispatcher::component( 'Extension_NewRelic_Core' );
 		$app = $core->get_effective_browser_application();
-		if ( isset( $app['loader_script'] ) && !$this->_should_disable_auto_rum() ) {
+		if ( isset( $app['loader_script'] ) && $this->_can_add_tracker_script( $buffer ) ) {
 			$buffer = preg_replace( '~<head(\s+[^>]*)*>~Ui',
 				'\\0' . $app['loader_script'], $buffer, 1 );
 		}
+
+		$buffer = str_replace('{w3tc_newrelic_reject_reason}',
+			( $this->newrelic_reject_reason != '' ? sprintf( ' (%s)', $this->newrelic_reject_reason )
+				: '' ),
+			$buffer );
 
 		return $buffer;
 	}
 
 	function ob_callback_apm( $buffer ) {
-		if ( $this->_config->get_boolean( array( 'newrelic', 'include_rum' ) ) ) {
-			if ( ( $this->_config->get_boolean( 'browsercache.html.compression' ) ||
-					$this->_config->get_string( 'pgcache.engine' ) == 'file_generic' ) && !$this->_should_disable_auto_rum() ) {
+		if ( !$this->_can_add_tracker_script( $buffer ) ) {
+			$this->disable_auto_rum();
+		} else {
+			if ( $this->_config->get_boolean( array( 'newrelic', 'include_rum' ) ) ) {
 				$buffer = preg_replace( '~<head(\s+[^>]*)*>~Ui', '\\0' . \NewRelicWrapper::get_browser_timing_header(), $buffer, 1 );
 				$buffer = preg_replace( '~<\\/body>~', \NewRelicWrapper::get_browser_timing_footer() . '\\0', $buffer, 1 );
 			}
 		}
+
+		$buffer = str_replace('{w3tc_newrelic_reject_reason}',
+			( $this->newrelic_reject_reason != '' ? sprintf( ' (%s)', $this->newrelic_reject_reason )
+				: '' ),
+			$buffer );
+
 		return $buffer;
 	}
 
@@ -103,12 +115,19 @@ class Extension_NewRelic_Plugin {
 		\NewRelicWrapper::disable_auto_rum();
 	}
 
-	function _should_disable_auto_rum() {
+	function _can_add_tracker_script( $buffer ) {
+		//
+		$v = '';
+		if ( preg_match('~^\s*<\?xml[^>]*>\s*<xsl:stylesheet~', $buffer, $v ) ) {
+			$this->newrelic_reject_reason = __( 'XSL not tracked', 'w3-total-cache' );
+			return false;
+		}
+
 		$reject_reason = apply_filters( 'w3tc_newrelic_should_disable_auto_rum', null );
 		if ( !empty( $reject_reason ) ) {
 			$this->newrelic_reject_reason =
 				__( 'rejected by filter: ', 'w3-total-cache' ) . $reject_reason;
-			return true;
+			return false;
 		}
 
 
@@ -118,7 +137,7 @@ class Extension_NewRelic_Plugin {
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 			$this->newrelic_reject_reason = __( 'DOING_AJAX constant is defined', 'w3-total-cache' );
 
-			return true;
+			return false;
 		}
 
 
@@ -128,7 +147,7 @@ class Extension_NewRelic_Plugin {
 		if ( defined( 'DONOTAUTORUM' ) && DONOTAUTORUM ) {
 			$this->newrelic_reject_reason = __( 'DONOTAUTORUM constant is defined', 'w3-total-cache' );
 
-			return true;
+			return false;
 		}
 
 		/**
@@ -139,10 +158,10 @@ class Extension_NewRelic_Plugin {
 			$this->newrelic_reject_reason = __( 'logged in role is rejected',
 				'w3-total-cache' );
 
-			return true;
+			return false;
 		}
 
-		return false;
+		return true;
 	}
 
 	/**
@@ -183,11 +202,9 @@ class Extension_NewRelic_Plugin {
 	}
 
 	public function w3tc_footer_comment( $strings ) {
-		$append = ( $this->newrelic_reject_reason != '' ) ?
-			sprintf( ' (%s)', $this->newrelic_reject_reason ) : '';
 		$strings[] = sprintf(
 			__( "Application Monitoring using New Relic%s", 'w3-total-cache' ),
-			$append );
+			'{w3tc_newrelic_reject_reason}' );
 
 		return $strings;
 	}

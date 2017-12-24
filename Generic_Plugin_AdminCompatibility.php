@@ -24,8 +24,6 @@ class Generic_Plugin_AdminCompatibility {
 			add_action( 'admin_notices', array( $this, 'verify' ) );
 			add_action( 'network_admin_notices', array( $this, 'verify' ) );
 		}
-
-		$this->_backwards_import();
 	}
 
 	/**
@@ -109,30 +107,5 @@ class Generic_Plugin_AdminCompatibility {
 			$plugin_names[] = $temp;
 		}
 		return sprintf( "<p>$message</p><ul class=\"w3tc-incomp-plugins\">%s</ul>", implode( '', $plugin_names ) );
-	}
-
-	/**
-	 * Handle importing changed configuration from older versions
-	 */
-	private function _backwards_import() {
-		if ( $this->_config->get_string( 'cdn.engine' ) == 'netdna' && $this->_config->get_string( 'cdn.netdna.authorization_key' ) == '' ) {
-
-			$alias = $this->_config->get_string( 'cdn.netdna.alias' );
-			$consumerkey = $this->_config->get_string( 'cdn.netdna.consumerkey' );
-			$consumersecret = $this->_config->get_string( 'cdn.netdna.consumersecret' );
-			if ( $alias && $consumerkey && $consumersecret ) {
-				$this->_config->set( 'cdn.maxcdn.authorization_key', "$alias+$consumerkey+$consumersecret" );
-				$this->_config->set( 'cdn.netdna.authorization_key', "$alias+$consumerkey+$consumersecret" );
-				$this->_config->set( 'cdn.engine', 'maxcdn' );
-				$this->_config->set( 'cdn.maxcdn.zone_id', $this->_config->get_integer( 'cdn.netdna.zone_id', 0 ) );
-				$this->_config->set( 'cdn.maxcdn.domain', $this->_config->get_array( 'cdn.netdna.domain' ) );
-				$this->_config->set( 'cdn.maxcdn.ssl',  $this->_config->get_string( 'cdn.netdna.ssl' ) );
-
-				try{
-					$this->_config->save();
-					$this->_config->refresh_cache();
-				} catch ( \Exception $ex ) {}
-			}
-		}
 	}
 }

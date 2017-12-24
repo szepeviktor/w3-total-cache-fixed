@@ -1,10 +1,6 @@
 <?php
 namespace W3TC;
 
-/**
- * W3 CDN Netdna Class
- */
-
 if ( !defined( 'W3TC_CDN_EDGECAST_PURGE_URL' ) ) define( 'W3TC_CDN_EDGECAST_PURGE_URL', 'http://api.edgecast.com/v2/mcc/customers/%s/edge/purge' );
 define( 'W3TC_CDN_EDGECAST_MEDIATYPE_WINDOWS_MEDIA_STREAMING', 1 );
 define( 'W3TC_CDN_EDGECAST_MEDIATYPE_FLASH_MEDIA_STREAMING', 2 );

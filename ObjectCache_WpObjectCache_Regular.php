@@ -125,7 +125,8 @@ class ObjectCache_WpObjectCache_Regular {
 		$this->_debug = $this->_config->get_boolean( 'objectcache.debug' );
 		$this->_caching = $_wp_using_ext_object_cache = $this->_can_cache();
 		$this->global_groups = $this->_config->get_array( 'objectcache.groups.global' );
-		$this->nonpersistent_groups = $this->_config->get_array( 'objectcache.groups.nonpersistent' );
+		$this->nonpersistent_groups = $this->_config->get_array(
+			'objectcache.groups.nonpersistent' );
 
 		$this->_blog_id = Util_Environment::blog_id();
 	}
@@ -143,10 +144,10 @@ class ObjectCache_WpObjectCache_Regular {
 		}
 
 		$key = $this->_get_cache_key( $id, $group );
-		$internal = isset( $this->cache[$key] );
+		$in_incall_cache = isset( $this->cache[$key] );
 		$fallback_used = false;
 
-		if ( $internal && !$force ) {
+		if ( $in_incall_cache && !$force ) {
 			$found = true;
 			$value = $this->cache[$key];
 		} elseif ( $this->_caching &&
@@ -163,7 +164,7 @@ class ObjectCache_WpObjectCache_Regular {
 					json_encode($a);
 			*/
 
-			if ( is_array( $v ) && $v['content'] != null ) {
+			if ( is_array( $v ) && isset( $v['content'] ) ) {
 				$found = true;
 				$value = $v['content'];
 			} else {
@@ -191,10 +192,12 @@ class ObjectCache_WpObjectCache_Regular {
 			$found = ( $value !== false );
 		}
 
-		$this->cache[$key] = $value;
-		$this->cache_total++;
+		if ( $found ) {
+			if ( !$in_incall_cache ) {
+				$this->cache[$key] = $value;
+				$this->cache_total++;
+			}
 
-		if ( $value !== false ) {
 			$this->cache_hits++;
 		} else {
 			$this->cache_misses++;
@@ -220,7 +223,7 @@ class ObjectCache_WpObjectCache_Regular {
 				if ( !$found )
 					$returned = 'not in cache';
 				else {
-					if ( $internal )
+					if ( $in_incall_cache )
 						$returned = 'from in-call cache';
 					else
 						$returned = 'from persistent cache';
@@ -412,8 +415,8 @@ class ObjectCache_WpObjectCache_Regular {
 
 		if ( $this->_debug ) {
 			$this->debug_info[] = array(
-				'id' => $id,
-				'group' => $group,
+				'id' => '',
+				'group' => '',
 				'operation' => 'flush',
 				'returned' => $reason,
 				'data_size' => 0,
@@ -540,7 +543,7 @@ class ObjectCache_WpObjectCache_Regular {
 			if ( ! isset( $value ) )
 				$value = get_site_option( $transient_option );
 		} else {
-			$value == false;
+			$value = false;
 		}
 
 		return $value;
@@ -614,11 +617,14 @@ class ObjectCache_WpObjectCache_Regular {
 	function stats() {
 		echo '<h2>Summary</h2>';
 		echo '<p>';
-		echo '<strong>Engine</strong>: ' . Cache::engine_name( $this->_config->get_string( 'objectcache.engine' ) ) . '<br />';
-		echo '<strong>Caching</strong>: ' . ( $this->_caching ? 'enabled' : 'disabled' ) . '<br />';
+		echo '<strong>Engine</strong>: ' . Cache::engine_name(
+			$this->_config->get_string( 'objectcache.engine' ) ) . '<br />';
+		echo '<strong>Caching</strong>: ' .
+			( $this->_caching ? 'enabled' : 'disabled' ) . '<br />';
 
 		if ( !$this->_caching ) {
-			echo '<strong>Reject reason</strong>: ' . $this->get_reject_reason() . '<br />';
+			echo '<strong>Reject reason</strong>: ' .
+				$this->get_reject_reason() . '<br />';
 		}
 
 		echo '<strong>Total calls</strong>: ' . $this->cache_total . '<br />';
@@ -631,13 +637,13 @@ class ObjectCache_WpObjectCache_Regular {
 
 		if ( $this->_debug ) {
 			echo '<table cellpadding="0" cellspacing="3" border="1">';
-			echo '<tr><td>#</td><td>Status</td><td>Source</td><td>Data size (b)</td><td>Query time (s)</td><td>ID:Group</td></tr>';
+			echo '<tr><td>#</td><td>Operation</td><td>Returned</td><td>Data size (b)</td><td>Query time (s)</td><td>ID:Group</td></tr>';
 
 			foreach ( $this->debug_info as $index => $debug ) {
 				echo '<tr>';
 				echo '<td>' . ( $index + 1 ) . '</td>';
-				echo '<td>' . ( $debug['cached'] ? 'cached' : 'not cached' ) . '</td>';
-				echo '<td>' . ( $debug['internal'] ? 'internal' : 'persistent' ) . '</td>';
+				echo '<td>' . $debug['operation'] . '</td>';
+				echo '<td>' . $debug['returned'] . '</td>';
 				echo '<td>' . $debug['data_size'] . '</td>';
 				echo '<td>' . round( $debug['time'], 4 ) . '</td>';
 				echo '<td>' . sprintf( '%s:%s', $debug['id'], $debug['group'] ) . '</td>';
@@ -732,7 +738,8 @@ class ObjectCache_WpObjectCache_Regular {
 			case 'memcached':
 				$engineConfig = array(
 					'servers' => $this->_config->get_array( 'objectcache.memcached.servers' ),
-					'persistent' => $this->_config->get_boolean( 'objectcache.memcached.persistent' ),
+					'persistent' => $this->_config->get_boolean(
+						'objectcache.memcached.persistent' ),
 					'aws_autodiscovery' => $this->_config->get_boolean( 'objectcache.memcached.aws_autodiscovery' ),
 					'username' => $this->_config->get_string( 'objectcache.memcached.username' ),
 					'password' => $this->_config->get_string( 'objectcache.memcached.password' )
@@ -742,7 +749,8 @@ class ObjectCache_WpObjectCache_Regular {
 			case 'redis':
 				$engineConfig = array(
 					'servers' => $this->_config->get_array( 'objectcache.redis.servers' ),
-					'persistent' => $this->_config->get_boolean( 'objectcache.redis.persistent' ),
+					'persistent' => $this->_config->get_boolean(
+						'objectcache.redis.persistent' ),
 					'dbid' => $this->_config->get_integer( 'objectcache.redis.dbid' ),
 					'password' => $this->_config->get_string( 'objectcache.redis.password' )
 				);
@@ -824,7 +832,8 @@ class ObjectCache_WpObjectCache_Regular {
 			$this->_can_cache_dynamic = true;
 		} else {
 			if ( $this->_caching ) {
-				if ( defined( 'WP_ADMIN' ) ) {
+				if ( defined( 'WP_ADMIN' ) &&
+					( !defined( 'DOING_AJAX' ) || !DOING_AJAX ) ) {
 					$this->_can_cache_dynamic = false;
 					$this->cache_reject_reason = 'WP_ADMIN defined';
 					return $this->_can_cache_dynamic;
@@ -840,14 +849,20 @@ class ObjectCache_WpObjectCache_Regular {
 	}
 
 	public function w3tc_footer_comment( $strings ) {
-		if ( $this->_config->get_boolean( 'objectcache.debug' ) ) {
-			$strings[] = "Object Cache debug info:";
-			$strings[] = sprintf( "%s%s", str_pad( 'Engine: ', 20 ), Cache::engine_name( $this->_config->get_string( 'objectcache.engine' ) ) );
-			$strings[] = sprintf( "%s%s", str_pad( 'Caching: ', 20 ), ( $this->_caching ? 'enabled' : 'disabled' ) );
+		$reason = $this->get_reject_reason();
+		$append = ( $reason != '' ? sprintf( ' (%s)', $reason ) : '' );
 
-			if ( !$this->_caching ) {
-				$strings[] = sprintf( "%s%s", str_pad( 'Reject reason: ', 20 ), $this->cache_reject_reason );
-			}
+		$strings[] = sprintf(
+			__( 'Object Caching %d/%d objects using %s%s', 'w3-total-cache' ),
+			$this->cache_hits, $this->cache_total,
+			Cache::engine_name( $this->_config->get_string( 'objectcache.engine' ) ),
+			$append );
+
+		if ( $this->_config->get_boolean( 'objectcache.debug' ) ) {
+			$strings[] = '';
+			$strings[] = 'Object Cache debug info:';
+			$strings[] = sprintf( "%s%s", str_pad( 'Caching: ', 20 ),
+				( $this->_caching ? 'enabled' : 'disabled' ) );
 
 			$strings[] = sprintf( "%s%d", str_pad( 'Total calls: ', 20 ), $this->cache_total );
 			$strings[] = sprintf( "%s%d", str_pad( 'Cache hits: ', 20 ), $this->cache_hits );
@@ -874,15 +889,7 @@ class ObjectCache_WpObjectCache_Regular {
 					str_pad( $debug['group'], 15, ' ', STR_PAD_LEFT ),
 					$debug['id'] );
 			}
-		} else {
-			$reason = $this->get_reject_reason();
-			$append = ( $reason != '' ? sprintf( ' (%s)', $reason ) : '' );
-
-			$strings[] = sprintf(
-				__( 'Object Caching %d/%d objects using %s%s', 'w3-total-cache' ),
-				$this->cache_hits, $this->cache_total,
-				Cache::engine_name( $this->_config->get_string( 'objectcache.engine' ) ),
-				$append );
+			$strings[] = '';
 		}
 
 		return $strings;

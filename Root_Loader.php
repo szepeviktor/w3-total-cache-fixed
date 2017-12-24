@@ -29,6 +29,8 @@ class Root_Loader {
 			$plugins[] = new PgCache_Plugin();
 		if ( $c->get_boolean( 'cdn.enabled' ) )
 			$plugins[] = new Cdn_Plugin();
+		if ( $c->get_boolean( 'cdnfsd.enabled' ) )
+			$plugins[] = new Cdnfsd_Plugin();
 		if ( $c->get_boolean( 'browsercache.enabled' ) )
 			$plugins[] = new BrowserCache_Plugin();
 		if ( $c->get_boolean( 'minify.enabled' ) )
@@ -51,18 +53,18 @@ class Root_Loader {
 			$plugins[] = new SystemOpCache_Plugin_Admin();
 
 			$plugins[] = new Cdn_Plugin_Admin();
+			$plugins[] = new Cdnfsd_Plugin_Admin();
 			if ( $c->get_string( 'cdn.engine' ) == 'highwinds' ) {
-			} else if ( $c->get_string( 'cdn.engine' ) != 'netdna' )
-					$plugins[] = new Cdn_Plugin_WidgetMaxCdn();
-				else
-					$plugins[] = new Cdn_Plugin_WidgetNetDna();
+			} else {
+				$plugins[] = new Cdn_Plugin_WidgetMaxCdn();
+			}
 
-				if ( $c->get_boolean( 'widget.pagespeed.enabled' ) )
-					$plugins[] = new PageSpeed_Plugin_Widget();
+			if ( $c->get_boolean( 'widget.pagespeed.enabled' ) )
+				$plugins[] = new PageSpeed_Plugin_Widget();
 
-				$plugins[] = new Generic_Plugin_AdminCompatibility();
+			$plugins[] = new Generic_Plugin_AdminCompatibility();
 
-			if ( !( defined( 'W3TC_PRO' ) || Util_Environment::is_w3tc_enterprise() ) )
+			if ( !( defined( 'W3TC_PRO' ) || defined( 'W3TC_ENTERPRISE' ) ) )
 				$plugins[] = new Licensing_Plugin_Admin();
 
 			if ( $c->get_boolean( 'pgcache.enabled' ) ||

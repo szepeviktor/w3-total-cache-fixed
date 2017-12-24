@@ -89,8 +89,8 @@ class Extension_CloudFlare_SettingsForUi {
 			$current_value = $settings[$settings_key]['value'];
 
 			// convert checkbox value to on/off
-			// excetion: rocket loader is not checkbox so contains real value
-			if ( $settings_key != 'rocket_loader' ) {
+			// exception: rocket loader, ssl is not checkbox so contains real value
+			if ( $settings_key != 'rocket_loader' && $settings_key != 'ssl' ) {
 				if ( $current_value == 'on' || $current_value == 'off' ) {
 					// it's boolean, so control is checkbox - convert it
 					$value = ( $value == '0' ? 'off' : 'on' );

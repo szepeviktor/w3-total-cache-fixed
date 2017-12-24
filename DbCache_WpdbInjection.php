@@ -58,6 +58,14 @@ class DbCache_WpdbInjection {
 	 * Placeholder for apropriate wp_db method replacement.
 	 * By default calls wp_db implementation
 	 */
+	function _escape( $data ) {
+		return $this->wpdb_mixin->default__escape( $data );
+	}
+
+	/**
+	 * Placeholder for apropriate wp_db method replacement.
+	 * By default calls wp_db implementation
+	 */
 	function replace( $table, $data, $format = null ) {
 		return $this->wpdb_mixin->default_replace( $table, $data, $format );
 	}

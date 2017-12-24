@@ -316,7 +316,7 @@ class BrowserCache_Environment {
 				$rules .= "        BrowserMatch \\bMSI[E] !no-gzip !gzip-only-text/html\n";
 				$rules .= "    </IfModule>\n";
 			}
-			if ( version_compare( $this->_get_server_version(), '2.3.7', '>=' ) ) {
+			if ( version_compare( Util_Environment::get_server_version(), '2.3.7', '>=' ) ) {
 				$rules .= "    <IfModule mod_filter.c>\n";
 			}
 			$rules .= "        AddOutputFilterByType DEFLATE " . implode( ' ', $compression_types ) . "\n";
@@ -325,7 +325,7 @@ class BrowserCache_Environment {
 			$rules .= "        AddOutputFilter DEFLATE js css htm html xml\n";
 			$rules .= "    </IfModule>\n";
 
-			if ( version_compare( $this->_get_server_version(), '2.3.7', '>=' ) ) {
+			if ( version_compare( Util_Environment::get_server_version(), '2.3.7', '>=' ) ) {
 				$rules .= "    </IfModule>\n";
 			}
 			$rules .= "</IfModule>\n";
@@ -585,10 +585,12 @@ class BrowserCache_Environment {
 		$mime_types, $section ) {
 
 		$expires = $config->get_boolean( 'browsercache.' . $section . '.expires' );
+		$etag = $config->get_boolean( 'browsercache.' . $section . '.etag' );
 		$cache_control = $config->get_boolean( 'browsercache.' . $section . '.cache.control' );
 		$w3tc = $config->get_boolean( 'browsercache.' . $section . '.w3tc' );
+		$last_modified = $config->get_boolean( 'browsercache.' . $section . '.last_modified' );
 
-		if ( $expires || $cache_control || $w3tc ) {
+		if ( $etag || $expires || $cache_control || $w3tc || !$last_modified ) {
 			$lifetime = $config->get_integer( 'browsercache.' . $section . '.lifetime' );
 
 			$extensions = array_keys( $mime_types );
@@ -603,6 +605,18 @@ class BrowserCache_Environment {
 
 			if ( $expires ) {
 				$rules .= "    expires " . $lifetime . "s;\n";
+			}
+			if ( version_compare( Util_Environment::get_server_version(), '1.3.3', '>=' ) ) {
+				if ( $etag ) {
+					$rules .= "    etag on;\n";
+				} else {
+					$rules .= "    etag off;\n";
+				}
+			}
+			if ( $last_modified ) {
+				$rules .= "    if_modified_since exact;\n";
+			} else {
+				$rules .= "    if_modified_since off;\n";
 			}
 
 			$add_header_rules = '';
@@ -792,18 +806,6 @@ class BrowserCache_Environment {
 		$rules .= W3TC_MARKER_END_BROWSERCACHE_NO404WP . "\n";
 
 		return $rules;
-	}
-
-	/**
-	 * Returns the apache, nginx version
-	 *
-	 * @return string
-	 */
-	private function _get_server_version() {
-		$sig= explode( '/', $_SERVER['SERVER_SOFTWARE'] );
-		$temp = isset( $sig[1] ) ? explode( ' ', $sig[1] ) : array( '0' );
-		$version = $temp[0];
-		return $version;
 	}
 
 	/**

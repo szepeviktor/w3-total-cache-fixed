@@ -25,6 +25,14 @@ class Cache_Redis extends Cache_Base {
 		$this->_servers = (array)$config['servers'];
 		$this->_password = $config['password'];
 		$this->_dbid = $config['dbid'];
+
+		// when disabled - no extra requests are made to obtain key version,
+		// but flush operations not supported as a result
+		// group should be always empty
+		if ( isset( $config['key_version_mode'] ) &&
+			$config['key_version_mode'] == 'disabled' ) {
+			$this->_key_version[''] = 1;
+		}
 	}
 
 	/**
@@ -325,14 +333,16 @@ class Cache_Redis extends Cache_Base {
 
 				if ( substr( $server, 0, 5 ) == 'unix:' ) {
 					if ( $this->_persistent )
-						$accessor->pconnect( trim( substr( $server, 5 ) ) );
+						$accessor->pconnect( trim( substr( $server, 5 ) ),
+							null, null, $this->_instance_id . '_' . $this->_dbid );
 					else
 						$accessor->connect( trim( substr( $server, 5 ) ) );
 				} else {
 					list( $ip, $port ) = explode( ':', $server );
 
 					if ( $this->_persistent )
-						$accessor->pconnect( trim( $ip ), (integer) trim( $port ) );
+						$accessor->pconnect( trim( $ip ), (integer) trim( $port ),
+							null, $this->_instance_id . '_' . $this->_dbid );
 					else
 						$accessor->connect( trim( $ip ), (integer) trim( $port ) );
 				}

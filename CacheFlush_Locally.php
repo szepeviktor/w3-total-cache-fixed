@@ -83,7 +83,7 @@ class CacheFlush_Locally {
 	function minifycache_flush_all( $extras = array() ) {
 		if ( $extras['minify'] == 'purge_map' )
 			delete_option( 'w3tc_minify' );
-		
+
 		$this->minifycache_flush( $extras );
 	}
 
@@ -156,8 +156,10 @@ class CacheFlush_Locally {
 	/**
 	 * Purges/Flushes post from page cache, varnish and cdn cache
 	 */
-	function flush_post( $post_id ) {
-		do_action( 'w3tc_flush_post', $post_id );
+	function flush_post( $post_id, $extras = null ) {
+		$do_flush = apply_filters( 'w3tc_preflush_post', true, $extras );
+		if ( $do_flush )
+			do_action( 'w3tc_flush_post', $post_id );
 	}
 
 	/**
@@ -165,7 +167,9 @@ class CacheFlush_Locally {
 	 * When global changes affect whole content but not internal data structures
 	 */
 	function flush_posts( $extras = null ) {
-		do_action( 'w3tc_flush_posts', $extras );
+		$do_flush = apply_filters( 'w3tc_preflush_posts', true, $extras );
+		if ( $do_flush )
+			do_action( 'w3tc_flush_posts', $extras );
 	}
 
 	/**
@@ -198,14 +202,18 @@ class CacheFlush_Locally {
 			$default_actions_added = true;
 		}
 
-		do_action( 'w3tc_flush_all', $extras );
+		$do_flush = apply_filters( 'w3tc_preflush_all', true, $extras );
+		if ( $do_flush )
+			do_action( 'w3tc_flush_all', $extras );
 	}
 
 	/**
 	 * Purges/Flushes url from page cache, varnish and cdn cache
 	 */
-	function flush_url( $url ) {
-		do_action( 'w3tc_flush_url', $url );
+	function flush_url( $url, $extras = null ) {
+		$do_flush = apply_filters( 'w3tc_preflush_url', true, $extras );
+		if ( $do_flush )
+			do_action( 'w3tc_flush_url', $url );
 	}
 
 	/**

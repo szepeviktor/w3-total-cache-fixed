@@ -61,7 +61,7 @@ if ( !defined( 'W3TC' ) )
     <th><?php _e( 'Replace site\'s hostname with:', 'w3-total-cache' ); ?></th>
     <td>
 		<?php $cnames = $this->_config->get_array( 'cdn.akamai.domain' ); include W3TC_INC_DIR . '/options/cdn/common/cnames.php'; ?>
-        <br /><span class="description"><?php _e( 'Enter the hostname provided by your <acronym>CDN</acronym> provider, this value will replace your site\'s hostname in the <acronym title="Hypertext Markup Language">HTML</acronym>.', 'w3-total-cache' ); ?></span>
+        <br /><span class="description"><?php _e( 'Enter the hostname provided by your <acronym title="Content Delivery Network">CDN</acronym> provider, this value will replace your site\'s hostname in the <acronym title="Hypertext Markup Language">HTML</acronym>.', 'w3-total-cache' ); ?></span>
     </td>
 </tr>
 <tr>

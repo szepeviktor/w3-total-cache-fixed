@@ -185,6 +185,10 @@ class DbCache_WpdbInjection_QueryCaching extends DbCache_WpdbInjection {
 		return $return_val;
 	}
 
+	function _escape( $data ) {
+		return $this->next_injection->_escape( $data );
+	}
+
 	/**
 	 * Initializes object, calls underlying processor
 	 */
@@ -612,9 +616,25 @@ class DbCache_WpdbInjection_QueryCaching extends DbCache_WpdbInjection {
 	}
 
 	public function w3tc_footer_comment( $strings ) {
+		$reason = $this->get_reject_reason();
+		$append = ( $reason ? sprintf( ' (%s)', $reason ) : '' );
+
+		if ( $this->query_hits ) {
+			$strings[] = sprintf(
+				__( 'Database Caching %d/%d queries in %.3f seconds using %s%s', 'w3-total-cache' ),
+				$this->query_hits, $this->query_total, $this->time_total,
+				Cache::engine_name( $this->_config->get_string( 'dbcache.engine' ) ),
+				$append );
+		} else {
+			$strings[] = sprintf(
+				__( 'Database Caching using %s%s', 'w3-total-cache' ),
+				Cache::engine_name( $this->_config->get_string( 'dbcache.engine' ) ),
+				$append );
+		}
+
 		if ( $this->debug ) {
+			$strings[] = '';
 			$strings[] = "Db cache debug info:";
-			$strings[] = sprintf( "%s%s", str_pad( 'Engine: ', 20 ), Cache::engine_name( $this->_config->get_string( 'dbcache.engine' ) ) );
 			$strings[] = sprintf( "%s%d", str_pad( 'Total queries: ', 20 ), $this->query_total );
 			$strings[] = sprintf( "%s%d", str_pad( 'Cached queries: ', 20 ), $this->query_hits );
 			$strings[] = sprintf( "%s%.4f", str_pad( 'Total query time: ', 20 ), $this->time_total );
@@ -639,22 +659,8 @@ class DbCache_WpdbInjection_QueryCaching extends DbCache_WpdbInjection {
 						trim( $query['query'] ) );
 				}
 			}
-		} else {
-			$reason = $this->get_reject_reason();
-			$append = ( $reason ? sprintf( ' (%s)', $reason ) : '' );
 
-			if ( $this->query_hits ) {
-				$strings[] = sprintf(
-					__( 'Database Caching %d/%d queries in %.3f seconds using %s%s', 'w3-total-cache' ),
-					$this->query_hits, $this->query_total, $this->time_total,
-					Cache::engine_name( $this->_config->get_string( 'dbcache.engine' ) ),
-					$append );
-			} else {
-				$strings[] = sprintf(
-					__( 'Database Caching using %s%s', 'w3-total-cache' ),
-					Cache::engine_name( $this->_config->get_string( 'dbcache.engine' ) ),
-					$append );
-			}
+			$strings[] = '';
 		}
 
 		return $strings;

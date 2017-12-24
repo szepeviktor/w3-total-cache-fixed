@@ -74,27 +74,6 @@ class ConfigCompiler {
 	 * Reads config from file and returns it's content as array (or null)
 	 * Stored in this class to limit class loading
 	 */
-	static private function util_array_from_file_legacy_v1( $filename ) {
-		if ( file_exists( $filename ) && is_readable( $filename ) ) {
-			// including file directly instead of read+eval causes constant
-			// problems with APC, ZendCache, and WSOD in a case of
-			// broken config file
-			$content = @file_get_contents( $filename );
-			$config = @eval( substr( $content, 5 ) );
-
-			if ( is_array( $config ) )
-				return $config;
-		}
-
-		return null;
-	}
-
-
-
-	/**
-	 * Reads config from file and returns it's content as array (or null)
-	 * Stored in this class to limit class loading
-	 */
 	static private function util_array_from_file_legacy_v2( $filename ) {
 		if ( file_exists( $filename ) && is_readable( $filename ) ) {
 			// including file directly instead of read+eval causes constant
@@ -128,14 +107,14 @@ class ConfigCompiler {
 
 
 
-	public function load() {
+	public function load( $data = null ) {
 		// apply data from master config
-		$master_filename = Config::util_config_filename( 0, $this->_preview );
-		$data = Config::util_array_from_file( $master_filename );
+		if ( is_null( $data ) ) {
+			$data = Config::util_array_from_storage( 0, $this->_preview );
+		}
 		if ( is_null( $data ) && $this->_preview ) {
 			// try to read production data when preview not available
-			$master_filename = Config::util_config_filename( 0, false );
-			$data = Config::util_array_from_file( $master_filename );
+			$data = Config::util_array_from_storage( 0, false );
 		}
 
 		// try to get legacy v2 data
@@ -143,13 +122,6 @@ class ConfigCompiler {
 			$master_filename = Config::util_config_filename_legacy_v2( 0,
 				$this->_preview );
 			$data = self::util_array_from_file_legacy_v2( $master_filename );
-		}
-
-		// try to get legacy v1 data
-		if ( is_null( $data ) ) {
-			$master_filename = Config::util_config_filename_legacy_v1( 0,
-				$this->_preview );
-			$data = self::util_array_from_file_legacy_v1( $master_filename );
 		}
 
 		if ( is_array( $data ) ) {
@@ -163,14 +135,12 @@ class ConfigCompiler {
 
 
 		// apply child config
-		$child_filename = Config::util_config_filename( $this->_blog_id,
+		$data = Config::util_array_from_storage( $this->_blog_id,
 			$this->_preview );
-		$data = Config::util_array_from_file( $child_filename );
 		if ( is_null( $data ) && $this->_preview ) {
 			// try to read production data when preview not available
-			$child_filename = Config::util_config_filename( $this->_blog_id,
+			$data = Config::util_array_from_storage( $this->_blog_id,
 				false );
-			$data = Config::util_array_from_file( $child_filename );
 		}
 
 		// try to get legacy v2 data
@@ -178,13 +148,6 @@ class ConfigCompiler {
 			$child_filename = Config::util_config_filename_legacy_v2(
 				$this->_blog_id, $this->_preview );
 			$data = self::util_array_from_file_legacy_v2( $child_filename );
-		}
-
-		// try to get legacy v1 data
-		if ( is_null( $data ) ) {
-			$child_filename = Config::util_config_filename_legacy_v1(
-				$this->_blog_id, $this->_preview );
-			$data = self::util_array_from_file_legacy_v1( $child_filename );
 		}
 
 		if ( is_array( $data ) ) {
@@ -231,14 +194,7 @@ class ConfigCompiler {
 			}
 		}
 
-		$filename = Config::util_config_filename( $this->_blog_id,
-			$this->_preview );
-		if ( defined( 'JSON_PRETTY_PRINT' ) )
-			$config = json_encode( $data, JSON_PRETTY_PRINT );
-		else   // for older php versions
-			$config = json_encode( $data );
-
-		Util_File::file_put_contents_atomic( $filename, '<?php exit; ?>' . $config );
+		ConfigUtil::save_item( $this->_blog_id, $this->_preview, $data );
 	}
 
 
@@ -274,6 +230,20 @@ class ConfigCompiler {
 			if ( $bb_file ) {
 				$file_data['pgcache.bad_behavior_path'] = $bb_file;
 			}
+		}
+
+		//
+		// changes in 0.9.6
+		//
+		if ( !isset( $file_data['cdn.cors_header'] ) ) {
+			$file_data['cdn.cors_header'] = true;
+		}
+		if ( isset( $file_data['cdn.engine'] ) && $file_data['cdn.engine'] == 'netdna' ) {
+			$file_data['cdn.engine'] = 'maxcdn';
+			$file_data['cdn.maxcdn.authorization_key'] = $file_data['cdn.netdna.authorization_key'];
+			$file_data['cdn.maxcdn.domain'] = $file_data['cdn.netdna.domain'];
+			$file_data['cdn.maxcdn.ssl'] = $file_data['cdn.netdna.ssl'];
+			$file_data['cdn.maxcdn.zone_id'] = $file_data['cdn.netdna.zone_id'];
 		}
 
 		//
@@ -422,6 +392,40 @@ class ConfigCompiler {
 		if ( version_compare( $file_data['version'], '0.9.5.3', '<' ) ) {
 			if ( !isset( $file_data['extensions.active']['swarmify'] ) ) {
 				$file_data['extensions.active']['swarmify'] = 'w3-total-cache/Extension_Swarmify_Plugin.php';
+			}
+		}
+
+		//
+		// changes in 0.9.5.4
+		//
+		if ( isset( $file_data['cdn.engine'] ) ) {
+			if ( $file_data['cdn.engine'] == 'maxcdn_fsd' ) {
+				$file_data['cdnfsd.engine'] = 'maxcdn';
+				$file_data['cdnfsd.enabled'] = $file_data['cdn.enabled'];
+
+				if ( isset( $file_data['cdn.maxcdn_fsd.api_key'] ) ) {
+					$file_data['cdnfsd.maxcdn.api_key'] =
+						$file_data['cdn.maxcdn_fsd.api_key'];
+					$file_data['cdnfsd.maxcdn.zone_id'] =
+						$file_data['cdn.maxcdn_fsd.zone_id'];
+					$file_data['cdnfsd.maxcdn.zone_domain'] =
+						$file_data['cdn.maxcdn_fsd.zone_domain'];
+				}
+			}
+			if ( $file_data['cdn.engine'] == 'cloudfront_fsd' ) {
+				$file_data['cdnfsd.engine'] = 'cloudfront';
+				$file_data['cdnfsd.enabled'] = $file_data['cdn.enabled'];
+
+				if ( isset( $file_data['cdn.cloudfront_fsd.access_key'] ) ) {
+					$file_data['cdnfsd.cloudfront.access_key'] =
+						$file_data['cdn.cloudfront_fsd.access_key'];
+					$file_data['cdnfsd.cloudfront.distribution_domain'] =
+						$file_data['cdn.cloudfront_fsd.distribution_domain'];
+					$file_data['cdnfsd.cloudfront.secret_key'] =
+						$file_data['cdn.cloudfront_fsd.secret_key'];
+					$file_data['cdnfsd.cloudfront.distribution_id'] =
+						$file_data['cdn.cloudfront_fsd.distribution_id'];
+				}
 			}
 		}
 

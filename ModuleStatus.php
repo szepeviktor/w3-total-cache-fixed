@@ -61,22 +61,6 @@ class ModuleStatus {
 	 *
 	 * @return bool
 	 */
-	public function all_modules_enabled() {
-		return $this->is_enabled( 'pgcache' )
-			&& $this->is_enabled( 'minify' )
-			&& $this->is_enabled( 'dbcache' )
-			&& $this->is_enabled( 'objectcache' )
-			&& $this->is_enabled( 'browsercache' )
-			&& $this->is_enabled( 'cdn' )
-			&& $this->is_enabled( 'varnish' )
-			&& $this->is_enabled( 'fragmentcache' );
-	}
-
-	/**
-	 *
-	 *
-	 * @return bool
-	 */
 	public function can_empty_memcache() {
 		return $this->_enabled_module_uses_engine( 'pgcache', 'memcached' )
 			|| $this->_enabled_module_uses_engine( 'dbcache', 'memcached' )

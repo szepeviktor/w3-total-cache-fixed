@@ -9,7 +9,7 @@ class Extension_CloudFlare_Plugin_Admin {
 
 	static public function w3tc_extensions( $extensions, $config ) {
 		$current_user = wp_get_current_user();
-		
+
 		$message = array();
 		$message[] = 'CloudFlare';
 		$cloudflare_signup_email = '';
@@ -64,6 +64,11 @@ class Extension_CloudFlare_Plugin_Admin {
 		$widget->init();
 
 		// modify settings page
+		add_filter( 'w3tc_ui_config_item_cdnfsd.enabled',
+			array( $this, 'w3tc_ui_config_item_cdnfsd_enabled' ) );
+		add_filter( 'w3tc_ui_config_item_cdnfsd.engine',
+			array( $this, 'w3tc_ui_config_item_cdnfsd_engine' ) );
+
 		add_filter( 'w3tc_settings_general_anchors',
 			array( $this, 'w3tc_settings_general_anchors' ) );
 		add_action( 'w3tc_settings_general_boxarea_cloudflare',
@@ -73,10 +78,6 @@ class Extension_CloudFlare_Plugin_Admin {
 			array( $this, 'action_cloudflare_api_request' ) );
 
 		// modify main menu
-		add_action( 'w3tc_extension_page_cloudflare', array(
-				'\W3TC\Extension_CloudFlare_Page',
-				'w3tc_extension_page_cloudflare'
-			) );
 		add_filter( 'w3tc_admin_bar_menu', array( $this, 'w3tc_admin_bar_menu' ) );
 
 		// dashboard
@@ -85,12 +86,30 @@ class Extension_CloudFlare_Plugin_Admin {
 		add_filter( 'w3tc_admin_actions', array( $this, 'w3tc_admin_actions' ) );
 
 		// own settings page
+		add_action( 'w3tc_extension_page_cloudflare', array(
+				'\W3TC\Extension_CloudFlare_Page',
+				'w3tc_extension_page_cloudflare'
+			) );
 		add_action( 'admin_print_scripts-performance_page_w3tc_extensions',
 			array( '\W3TC\Extension_CloudFlare_Page',
 				'admin_print_scripts_w3tc_extensions'
 			) );
+
 		add_action( 'w3tc_ajax',
 			array( '\W3TC\Extension_CloudFlare_Popup', 'w3tc_ajax' ) );
+
+		$cdnfsd_engine = $c->get_string( 'cdnfsd.engine' );
+
+		if ( empty( $cdnfsd_engine ) || $cdnfsd_engine == 'cloudflare' ) {
+			add_action( 'w3tc_settings_box_cdnfsd', array(
+					'\W3TC\Extension_CloudFlare_Page',
+					'w3tc_settings_box_cdnfsd'
+				) );
+			add_action( 'admin_print_scripts-performance_page_w3tc_cdn',
+				array( '\W3TC\Extension_CloudFlare_Page',
+					'admin_print_scripts_w3tc_extensions'
+				) );
+		}
 
 		// add check to comments page
 		add_filter( 'comment_row_actions', array( $this, 'comment_row_actions' ),
@@ -119,7 +138,7 @@ class Extension_CloudFlare_Plugin_Admin {
 
 
 
-	function admin_notices() {
+	public function admin_notices() {
 		$plugins = get_plugins();
 		if ( array_key_exists( 'cloudflare/cloudflare.php', $plugins ) && $this->_config->get_boolean( 'notes.cloudflare_plugin' ) ) {
 
@@ -285,6 +304,39 @@ class Extension_CloudFlare_Plugin_Admin {
 			( ( ! $can_empty_memcache && ! $can_empty_opcode && ! $can_empty_file && ! $can_empty_varnish ) ?
 			'disabled="disabled"':'' ) . '> ' . __( 'at once', 'w3-total-cache' );
 		return $actions;
+	}
+
+
+
+	public function w3tc_ui_config_item_cdnfsd_enabled( $a ) {
+		$c = Dispatcher::config();
+		$cdnfsd_engine = $c->get_string( 'cdnfsd.engine' );
+
+		// overwrite behavior if controlled by extension
+		if ( empty( $cdnfsd_engine ) || $cdnfsd_engine == 'cloudflare' ) {
+			$a['value'] = true;
+		}
+
+		return $a;
+	}
+
+
+
+	public function w3tc_ui_config_item_cdnfsd_engine( $a ) {
+		$c = Dispatcher::config();
+		$cdnfsd_engine = $c->get_string( 'cdnfsd.engine' );
+
+		// overwrite behavior if controlled by extension
+		if ( empty( $cdnfsd_engine ) || $cdnfsd_engine == 'cloudflare' ) {
+			$a['value'] = 'cloudflare';
+		}
+
+		if ( isset( $a['selectbox_values']['cloudflare'] ) ) {
+			$a['selectbox_values']['cloudflare']['label'] = 'CloudFlare';
+			$a['selectbox_values']['cloudflare']['disabled'] = null;
+		}
+
+		return $a;
 	}
 
 

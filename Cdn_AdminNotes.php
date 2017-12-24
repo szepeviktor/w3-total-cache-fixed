@@ -108,7 +108,7 @@ class Cdn_AdminNotes {
 			}
 		}
 
-		if ( in_array( $config->get_string( 'cdn.engine' ), array( 'netdna', 'maxcdn' ) ) &&
+		if ( $config->get_string( 'cdn.engine' ) == 'maxcdn' &&
 			!$state->get_boolean( 'cdn.hide_note_maxcdn_whitelist_ip' ) &&
 			$state->get_integer( 'track.maxcdn_authorize' ) == 0 &&
 			$config->get_string( 'cdn.' . $config->get_string( 'cdn.engine' ) .'.authorization_key' ) ) {
@@ -231,26 +231,6 @@ class Cdn_AdminNotes {
 
 		case ( $cdn_engine == 'mirror' && !count( $c->get_array( 'cdn.mirror.domain' ) ) ):
 			$error = __( 'The <strong>"Replace default hostname with"</strong> field cannot be empty.', 'w3-total-cache' );
-			break;
-
-		case ( $cdn_engine == 'netdna' ):
-			$fields = array();
-			if ( $c->get_string( 'cdn.netdna.authorization_key' ) == '' )
-				$fields[] = '"' . __( 'Authorization key', 'w3-total-cache' ) . '"';
-
-			if ( !count( $c->get_array( 'cdn.netdna.domain' ) ) )
-				$fields[] = '"' . __( 'Replace default hostname with', 'w3-total-cache' ) . '"';
-
-			if ( $fields ) {
-				$error = sprintf( __( 'The <strong>%s</strong> field(s) cannot be empty.', 'w3-total-cache' ),
-					implode( __( ' and ', 'w3-total-cache' ), $fields ) );
-			}
-
-			if ( $c->get_string( 'cdn.netdna.authorization_key' ) != '' &&
-				sizeof( explode( '+', $c->get_string( 'cdn.netdna.authorization_key' ) ) ) != 3 )
-				$error .= __( 'The <strong>"Authorization key"</strong> is not correct.', 'w3-total-cache' );
-			elseif ( $c->get_integer( 'cdn.netdna.zone_id', 0 ) <= 0 )
-				$error .= __( 'You need to select / create a pull zone.', 'w3-total-cache' );
 			break;
 
 		case ( $cdn_engine == 'maxcdn' ):

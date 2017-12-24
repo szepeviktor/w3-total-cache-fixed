@@ -9,8 +9,6 @@ namespace W3TC;
  *   common.install - time() of plugin installation
  *   common.support_us_invitations - number of invitations to support us shown
  *   common.next_support_us_invitation - time() of next support us invitation
- *   common.edge_invitations
- *   common.next_edge_invitation
  *   common.hide_note_wp_content_permissions
  *   common.hide_note_no_zlib
  *   common.hide_note_zlib_output_compression

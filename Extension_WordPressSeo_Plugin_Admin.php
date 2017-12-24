@@ -3,21 +3,9 @@ namespace W3TC;
 
 class Extension_WordPressSeo_Plugin_Admin {
 	function run() {
-		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_filter( 'w3tc_extension_plugin_links_wordpress-seo', array( $this, 'remove_settings' ) );
 		add_action( 'w3tc_activate_extension_wordpress-seo', array( $this, 'activate' ) );
 		add_action( 'w3tc_deactivate_extension_wordpress-seo', array( $this, 'deactivate' ) );
-	}
-
-	public function admin_init() {
-		$config = Dispatcher::config();
-		$groups = $config->get_array( 'mobile.rgroups' );
-		if ( Util_Environment::is_w3tc_edge( $config ) &&
-			isset( $groups['google'] ) &&
-			sizeof( $groups['google']['agents'] ) == 1 &&
-			$groups['google']['agents'][0] == 'googlebot' ) {
-			w3tc_delete_user_agent_group( 'google' );
-		}
 	}
 
 	/**

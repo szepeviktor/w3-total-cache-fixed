@@ -32,15 +32,15 @@
 #w3tc-dashboard-widgets div.postbox,
 #w3tc-dashboard-widgets #postbox-container-3 .hndle,
 #w3tc-dashboard-widgets #postbox-container-3 .inside,
-#w3tc-dashboard-widgets #postbox-container-3 .meta-box-sortables
-#w3tc-dashboard-widgets #postbox-container-3 .widefat{
+#w3tc-dashboard-widgets #postbox-container-3 .meta-box-sortables,
+#w3tc-dashboard-widgets #postbox-container-3 .widefat {
     background: none;
 }
 #w3tc-dashboard-widgets #postbox-container-3 .postbox,
 #w3tc-dashboard-widgets #postbox-container-3 .hndle,
 #w3tc-dashboard-widgets #postbox-container-3 .inside,
-#w3tc-dashboard-widgets #postbox-container-3 .meta-box-sortables
-#w3tc-dashboard-widgets #postbox-container-3 .widefat{
+#w3tc-dashboard-widgets #postbox-container-3 .meta-box-sortables,
+#w3tc-dashboard-widgets #postbox-container-3 .widefat {
     border:none;
 }
 #w3tc-dashboard-widgets {
@@ -94,13 +94,6 @@
     background: url("pub/img/w3tc_google-logo.png") 0 3px no-repeat;
 }
 
-.w3tc-widget-netdna-logo {
-    float: left;
-    width: 150px;
-    height: 35px;
-    background: url("pub/img/w3tc_netdna-logo.png") 0 5px no-repeat;
-}
-
 .w3tc-widget-maxcdn-logo {
     width: 150px;
     height: 35px;
@@ -112,6 +105,34 @@
     float:left;
     margin-right:10px;
 }
+
+@media only screen and (max-device-width: 480px) {
+	#w3tc-dashboard-widgets #postbox-container-left {
+		margin-right: 0px;
+	}
+	#w3tc-dashboard-widgets {
+        min-width: auto;
+    }
+    #postbox-container-right {
+        width: 100%;
+        white-space: nowrap;
+        float: left;
+        margin-left: 0px;
+    }
+    #w3tc-dashboard-widgets {
+        background: none;
+    }
+    #w3tc-dashboard-widgets #normal-sortables .postbox {
+        width: 100%;
+    }
+    .w3tc_generic_widgetservice_label {
+        display: inline;
+    }
+    #cdn_maxcdn_authorization_key {
+        width: 100%;
+    }
+}
+
 /**
  * HiDPI Displays
  */
@@ -158,14 +179,6 @@ only screen and (                min-resolution: 2dppx)  {
         height: 90px;
         background-image: url("pub/img/w3tc_netdna-logo-retina.png");
         background-size: 177px 90px;
-    }
-
-    .w3tc-widget-maxcdn-logo{
-        float: left;
-        width: 180px;
-        height: 90px;
-        background-image: url("pub/img/w3tc_maxcdn-logo-retina.png");
-        background-size: 468px 90px;
     }
 }
 */

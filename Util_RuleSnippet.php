@@ -8,7 +8,8 @@ class Util_RuleSnippet {
 	 * @param bool    $cdnftp
 	 * @return string
 	 */
-	static public function canonical_without_location( $cdnftp = false, $add_header_rules ) {
+	static public function canonical_without_location( $cdnftp = false,
+		$add_header_rules, $cors_header ) {
 		$rules = '';
 
 		switch ( true ) {
@@ -34,14 +35,17 @@ class Util_RuleSnippet {
 			$link_header = '    add_header Link "<$scheme://' .
 				$home . '$uri>; rel=\"canonical\"";' . "\n";
 
-			$rules .=
-				$link_header .
+			$rules .= $link_header;
+
+			if ( $cors_header ) {
+				$rules .=
 				'    if ($request_uri ~ ^[^?]*\\.(ttf|ttc|otf|eot|woff|woff2|font.css)(\\?|$)) {' .
 				"\n    " . $link_header .
 				"    " .
 				str_replace( "\n", "\n    ", $add_header_rules ) .
 				"    add_header Access-Control-Allow-Origin \"*\";\n" .
 				"    }\n";
+			}
 
 			break;
 		}
@@ -55,7 +59,7 @@ class Util_RuleSnippet {
 	 * @param bool    $cdnftp
 	 * @return string
 	 */
-	static public function canonical( $cdnftp = false ) {
+	static public function canonical( $cdnftp = false, $cors_header ) {
 		$rules = '';
 
 		$mime_types = self::_get_other_types();
@@ -68,45 +72,18 @@ class Util_RuleSnippet {
 			$extensions_uppercase = array_map( 'strtoupper', $extensions );
 			$rules .= "<FilesMatch \"\\.(" . implode( '|',
 				array_merge( $extensions_lowercase, $extensions_uppercase ) ) . ")$\">\n";
-			$rules .= self::canonical_without_location( $cdnftp, '' );
+			$rules .= self::canonical_without_location( $cdnftp, '', $cors_header );
 			$rules .= "</FilesMatch>\n";
 			break;
 
 		case Util_Environment::is_nginx():
 			$rules .= "location ~ \.(" . implode( '|', $extensions ) . ")$ {\n";
-			$rules .= self::canonical_without_location( $cdnftp, '' );
+			$rules .= self::canonical_without_location( $cdnftp, '', $cors_header );
 			$rules .= "}\n";
 			break;
 		}
 
 		return $rules;
-	}
-
-
-	/**
-	 * Returns allow-origin rules
-	 *
-	 * @param bool    $cdnftp
-	 * @return string
-	 */
-	static public function allow_origin( $cdnftp = false ) {
-		switch ( true ) {
-		case Util_Environment::is_apache():
-		case Util_Environment::is_litespeed():
-			$r  = "<IfModule mod_headers.c>\n";
-			$r .= "    Header set Access-Control-Allow-Origin \"*\"\n";
-			$r .= "</IfModule>\n";
-
-			if ( !$cdnftp )
-				return $r;
-			else
-				return
-				"<FilesMatch \"\.(ttf|ttc|otf|eot|woff|woff2|font.css)$\">\n" .
-					$r .
-					"</FilesMatch>\n";
-		}
-
-		return '';
 	}
 
 	/**

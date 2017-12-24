@@ -3,14 +3,7 @@ namespace W3TC;
 
 
 
-class Extension_Swarmify_Page extends Base_Page_Settings {
-	/**
-	 * Current page
-	 */
-	protected $_page = 'w3tc_swarmify';
-
-
-
+class Extension_Swarmify_Page {
 	public function render_content() {
 		$config = Dispatcher::config();
 

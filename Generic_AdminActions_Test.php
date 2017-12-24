@@ -39,6 +39,8 @@ class Generic_AdminActions_Test {
 	 */
 	function w3tc_test_redis() {
 		$servers = Util_Request::get_array( 'servers' );
+		$password   = Util_Request::get_string('password', '');
+		$dbid       = Util_Request::get_integer( 'dbid', 0 );
 
 		if ( count( $servers ) <= 0 )
 			$success = false;
@@ -48,7 +50,9 @@ class Generic_AdminActions_Test {
 			foreach ( $servers as $server ) {
 				@$cache = Cache::instance( 'redis', array(
 						'servers' => $server,
-						'persistent' => false
+						'persistent' => false,
+						'password' => $password,
+						'dbid' => $dbid
 					) );
 				if ( is_null( $cache ) )
 					$success = false;
@@ -204,7 +208,9 @@ class Generic_AdminActions_Test {
 
 		$config = Dispatcher::config();
 		$key = $config->get_string( 'widget.pagespeed.key' );
-		$w3_pagespeed = new PageSpeed_Api( $key );
+		$ref = $config->get_string( 'widget.pagespeed.key.restrict.referrer' );
+
+ 		$w3_pagespeed = new PageSpeed_Api( $key, $ref );
 
 		$results = $w3_pagespeed->analyze( get_home_url() );
 		include W3TC_INC_POPUP_DIR . '/pagespeed_results.php';

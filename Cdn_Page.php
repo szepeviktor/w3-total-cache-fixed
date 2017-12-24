@@ -20,11 +20,6 @@ class Cdn_Page extends Base_Page_Settings {
 		$config = Dispatcher::config();
 		$cdn_engine = $config->get_string( 'cdn.engine' );
 
-		if ( Cdn_Util::is_engine_fsd( $cdn_engine ) ) {
-			do_action( 'w3tc_settings_cdn' );
-			return;
-		}
-
 		$cdn_enabled = $config->get_boolean( 'cdn.enabled' );
 		$cdn_mirror = Cdn_Util::is_engine_mirror( $cdn_engine );
 		$cdn_mirror_purge_all = Cdn_Util::can_purge_all( $cdn_engine );
@@ -45,33 +40,6 @@ class Cdn_Page extends Base_Page_Settings {
 		// Required for Update Media Query String button
 		$browsercache_enabled = $config->get_boolean( 'browsercache.enabled' );
 		$browsercache_update_media_qs = ( $config->get_boolean( 'browsercache.cssjs.replace' ) || $config->get_boolean( 'browsercache.other.replace' ) );
-		if ( in_array( $cdn_engine, array( 'netdna', 'maxcdn' ) ) ) {
-			$pull_zones = array();
-			$authorization_key = $config->get_string( "cdn.$cdn_engine.authorization_key" );
-			$zone_id = $config->get_integer( "cdn.$cdn_engine.zone_id" );
-			$alias = $consumerkey = $consumersecret = '';
-
-			if ( $authorization_key ) {
-				$keys = explode( '+', $authorization_key );
-				if ( sizeof( $keys ) == 3 ) {
-					list( $alias, $consumerkey, $consumersecret ) =  $keys;
-				}
-			}
-
-			$authorized = $authorization_key != '' && $alias && $consumerkey && $consumersecret;
-			$have_zone = $zone_id != 0;
-			if ( $authorized ) {
-				require_once W3TC_LIB_NETDNA_DIR . '/NetDNA.php';
-				try {
-					$api = new \NetDNA( $alias, $consumerkey, $consumersecret );
-					$pull_zones = $api->get_zones_by_url( get_home_url() );
-				} catch ( \Exception $ex ) {
-
-
-					Util_Ui::error_box( '<p>There is an error with your CDN settings: ' . $ex->getMessage() . '</p>' );
-				}
-			}
-		}
 		include W3TC_INC_DIR . '/options/cdn.php';
 	}
 

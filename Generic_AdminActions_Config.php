@@ -89,7 +89,7 @@ class Generic_AdminActions_Config {
 	 * @return void
 	 */
 	function w3tc_config_preview_enable() {
-		$this->preview_production_copy( -1 );
+		ConfigUtil::preview_production_copy( Util_Environment::blog_id(), -1 );
 		Util_Environment::set_preview( true );
 
 		Util_Admin::redirect( array(
@@ -104,9 +104,7 @@ class Generic_AdminActions_Config {
 	 */
 	function w3tc_config_preview_disable() {
 		$blog_id = Util_Environment::blog_id();
-		$preview_filename = Config::util_config_filename( $blog_id, true );
-		@unlink( $preview_filename );
-
+		ConfigUtil::remove_item( $blog_id, true );
 		Util_Environment::set_preview( false );
 
 		Util_Admin::redirect( array(
@@ -120,40 +118,12 @@ class Generic_AdminActions_Config {
 	 * @return void
 	 */
 	function w3tc_config_preview_deploy() {
-		$this->preview_production_copy( 1 );
+		ConfigUtil::preview_production_copy( Util_Environment::blog_id(), 1 );
 		Util_Environment::set_preview( false );
 
 		Util_Admin::redirect( array(
 				'w3tc_note' => 'preview_deploy'
 			) );
-	}
-
-
-
-	/**
-	 * Deploys the config file from a preview config file
-	 *
-	 * @param integer $direction     +1: preview->production
-	 *                           -1: production->preview
-	 * @param boolean $remove_source remove source file
-	 */
-	private function preview_production_copy( $direction = 1 ) {
-		$blog_id = Util_Environment::blog_id();
-
-		$preview_filename = Config::util_config_filename( $blog_id, true );
-		$production_filename = Config::util_config_filename( $blog_id, false );
-
-		if ( $direction > 0 ) {
-			$src = $preview_filename;
-			$dest = $production_filename;
-		} else {
-			$src = $production_filename;
-			$dest = $preview_filename;
-		}
-
-		if ( !@copy( $src, $dest ) ) {
-			Util_Activation::throw_on_write_error( $dest );
-		}
 	}
 
 
@@ -195,11 +165,11 @@ class Generic_AdminActions_Config {
 		$this->_config->set( 'common.tweeted', $tweeted );
 		if ( $track_usage )
 			$this->_config->set( 'common.track_usage', true );
+		else
+			$this->_config->set( 'common.track_usage', false );
 
 		if ( $signmeup ) {
-			if ( Util_Environment::is_w3tc_enterprise( $this->_config ) )
-				$license = 'enterprise';
-			elseif ( Util_Environment::is_w3tc_pro( $this->_config ) )
+			if ( Util_Environment::is_w3tc_pro( $this->_config ) )
 				$license = 'pro';
 			else
 				$license = 'community';

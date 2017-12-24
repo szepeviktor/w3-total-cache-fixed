@@ -367,6 +367,7 @@ class Cdn_Core {
 					'key' => $this->_config->get_string( 'cdn.cf.key' ),
 					'secret' => $this->_config->get_string( 'cdn.cf.secret' ),
 					'bucket' => $this->_config->get_string( 'cdn.cf.bucket' ),
+					'bucket_location' => $this->_config->get_string( 'cdn.cf.bucket.location' ),
 					'id' => $this->_config->get_string( 'cdn.cf.id' ),
 					'cname' => $this->_config->get_array( 'cdn.cf.cname' ),
 					'ssl' => $this->_config->get_string( 'cdn.cf.ssl' ),
@@ -477,16 +478,6 @@ class Cdn_Core {
 				);
 				break;
 
-			case 'netdna':
-				$engine_config = array(
-					'authorization_key' => $this->_config->get_string( 'cdn.netdna.authorization_key' ),
-					'zone_id' => $this->_config->get_integer( 'cdn.netdna.zone_id' ),
-					'domain' => $this->_config->get_array( 'cdn.netdna.domain' ),
-					'ssl' => $this->_config->get_string( 'cdn.netdna.ssl' ),
-					'compression' => false
-				);
-				break;
-
 			case 'rackspace_cdn':
 				$state = Dispatcher::config_state();
 
@@ -533,6 +524,7 @@ class Cdn_Core {
 					'key' => $this->_config->get_string( 'cdn.s3.key' ),
 					'secret' => $this->_config->get_string( 'cdn.s3.secret' ),
 					'bucket' => $this->_config->get_string( 'cdn.s3.bucket' ),
+					'bucket_location' => $this->_config->get_string( 'cdn.s3.bucket.location' ),
 					'cname' => $this->_config->get_array( 'cdn.s3.cname' ),
 					'ssl' => $this->_config->get_string( 'cdn.s3.ssl' ),
 					'compression' => $compression
@@ -667,6 +659,25 @@ class Cdn_Core {
 		}
 
 		return ltrim( $remote_uri, '/' );
+	}
+
+	/**
+	 * Need to pass full URL and it's URI
+	 * URI passed to prevent redundant parsing, normally it's available for caller
+	 **/
+	function url_to_cdn_url( $url, $path ) {
+		$cdn = $this->get_cdn();
+		$remote_path = $this->uri_to_cdn_uri( $path );
+		$new_url = $cdn->format_url( $remote_path );
+		if ( !$new_url ) {
+			return null;
+		}
+		$is_engine_mirror = Cdn_Util::is_engine_mirror(
+			$this->_config->get_string( 'cdn.engine' ) );
+
+		$new_url = apply_filters( 'w3tc_cdn_url', $new_url, $url,
+			$is_engine_mirror );
+		return $new_url;
 	}
 
 	/**

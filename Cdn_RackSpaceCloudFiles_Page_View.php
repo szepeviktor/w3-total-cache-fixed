@@ -38,7 +38,7 @@ if ( !defined( 'W3TC' ) )
 	</td>
 </tr>
 <tr>
-	<th><label><?php _e( 'CDN host (CNAME target):', 'w3-total-cache' ); ?></label></th>
+	<th><label><?php _e( '<acronym title="Content Delivery Network">CDN</acronym> host (CNAME target):', 'w3-total-cache' ); ?></label></th>
 	<td class="w3tc_config_value_text">
 		http: <?php echo $cdn_host_http ?><br />
 		https: <?php echo $cdn_host_https ?>
@@ -52,7 +52,7 @@ if ( !defined( 'W3TC' ) )
 			<option value="enabled"<?php selected( $config->get_string( 'cdn.rscf.ssl' ), 'enabled' ); ?>><?php _e( 'Enabled (always use SSL)', 'w3-total-cache' ); ?></option>
 			<option value="disabled"<?php selected( $config->get_string( 'cdn.rscf.ssl' ), 'disabled' ); ?>><?php _e( 'Disabled (always use HTTP)', 'w3-total-cache' ); ?></option>
 		</select>
-        <br /><span class="description"><?php _e( 'Some <acronym>CDN</acronym> providers may or may not support <acronym title="Secure Sockets Layer">SSL</acronym>, contact your vendor for more information.', 'w3-total-cache' ); ?></span>
+        <br /><span class="description"><?php _e( 'Some <acronym title="Content Delivery Network">CDN</acronym> providers may or may not support <acronym title="Secure Sockets Layer">SSL</acronym>, contact your vendor for more information.', 'w3-total-cache' ); ?></span>
 	</td>
 </tr>
 <tr>
@@ -61,7 +61,7 @@ if ( !defined( 'W3TC' ) )
 		<?php $cnames = $config->get_array( 'cdn.rscf.cname' ); include W3TC_INC_DIR . '/options/cdn/common/cnames.php'; ?>
         <br />
         <span class="description">
-        	<?php _e( 'Enter hostname mapped to <acronym>CDN</acronym> host, this value will replace your site\'s hostname in the <acronym title="Hypertext Markup Language">HTML</acronym>.', 'w3-total-cache' ); ?>
+        	<?php _e( 'Enter hostname mapped to <acronym title="Content Delivery Network">CDN</acronym> host, this value will replace your site\'s hostname in the <acronym title="Hypertext Markup Language">HTML</acronym>.', 'w3-total-cache' ); ?>
         </span>
     </td>
 </tr>

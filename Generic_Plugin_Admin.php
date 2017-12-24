@@ -67,7 +67,7 @@ class Generic_Plugin_Admin {
 		if ( is_network_admin() ) {
 			add_action( 'network_admin_menu', array(
 					$this,
-					'admin_menu'
+					'network_admin_menu'
 				) );
 			add_filter( 'network_admin_plugin_action_links_' . W3TC_FILE, array(
 					$this,
@@ -329,14 +329,23 @@ class Generic_Plugin_Admin {
         <?php
 	}
 
+
+	function network_admin_menu() {
+		$this->_admin_menu( 'manage_network_options' );
+	}
+
+	function admin_menu() {
+		$this->_admin_menu( 'manage_options' );
+	}
+
 	/**
 	 * Admin menu
 	 *
 	 * @return void
 	 */
-	function admin_menu() {
+	private function _admin_menu( $base_capability ) {
 		$base_capability = apply_filters( 'w3tc_capability_menu',
-			'manage_options' );
+			$base_capability );
 
 		if ( current_user_can( $base_capability ) ) {
 			$menus = Dispatcher::component( 'Root_AdminMenu' );
@@ -649,7 +658,7 @@ class Generic_Plugin_Admin {
 			'flush_minify' => __( 'Minify cache successfully emptied.', 'w3-total-cache' ),
 			'flush_browser_cache' => __( 'Media Query string has been successfully updated.', 'w3-total-cache' ),
 			'flush_varnish' => __( 'Varnish servers successfully purged.', 'w3-total-cache' ),
-			'flush_cdn' => __( 'CDN was successfully purged.', 'w3-total-cache' ),
+			'flush_cdn' => __( '<acronym title="Content Delivery Network">CDN</acronym> was successfully purged.', 'w3-total-cache' ),
 			'support_request' => __( 'The support request has been successfully sent.', 'w3-total-cache' ),
 			'config_import' => __( 'Settings successfully imported.', 'w3-total-cache' ),
 			'config_reset' => __( 'Settings successfully restored.', 'w3-total-cache' ),

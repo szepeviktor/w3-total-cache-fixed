@@ -1,3 +1,12 @@
+#w3tc_lightbox_content .metabox-holder {
+	padding-top: 0;
+}
+
+/* make mismatch in popup resizing invisible, border shows them well */
+#w3tc_lightbox_content .postbox {
+	border: none;
+}
+
 #overlay {
     background: #666;
     font-size:12px;

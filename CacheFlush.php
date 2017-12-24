@@ -128,8 +128,8 @@ class CacheFlush {
 	/**
 	 * Purges/Flushes post page
 	 */
-	function flush_post( $post_id ) {
-		return $this->_executor->flush_post( $post_id );
+	function flush_post( $post_id, $extras = null ) {
+		return $this->_executor->flush_post( $post_id, $extras );
 	}
 
 	/**
@@ -162,12 +162,12 @@ class CacheFlush {
 	/**
 	 * Purges/Flushes url
 	 */
-	function flush_url( $url ) {
+	function flush_url( $url, $extras = null ) {
 		static $flushed_urls = array();
 
 		if ( !in_array( $url, $flushed_urls ) ) {
 			$flushed_urls[] = $url;
-			return $this->_executor->flush_url( $url );
+			return $this->_executor->flush_url( $url, $extras );
 		}
 		return true;
 	}

@@ -3,12 +3,20 @@ namespace W3TC;
 
 class Extension_CloudFlare_Page {
 	static public function admin_print_scripts_w3tc_extensions() {
-		if ( isset( $_REQUEST['extension'] ) &&
-			$_REQUEST['extension'] == 'cloudflare' ) {
+		if ( ( isset( $_REQUEST['extension'] ) &&
+			$_REQUEST['extension'] == 'cloudflare' ) ||
+			( isset( $_REQUEST['page'] ) &&
+			$_REQUEST['page'] == 'w3tc_cdnfsd' ) ) {
 			wp_enqueue_script( 'w3tc_extension_cloudflare',
 				plugins_url( 'Extension_CloudFlare_Page_View.js', W3TC_FILE ),
 				array( 'jquery' ), '1.0' );
 		}
+	}
+
+
+
+	static public function w3tc_settings_box_cdnfsd() {
+		include  W3TC_DIR . '/Extension_CloudFlare_Cdn_Page_View.php';
 	}
 
 

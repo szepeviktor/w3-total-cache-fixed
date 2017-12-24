@@ -34,7 +34,7 @@ $licensing_visible = ( ( !Util_Environment::is_wpmu() || is_network_admin() ) &&
 				array( 'id' => 'browser_cache', 'text' => __( 'Browser Cache', 'w3-total-cache' ) ),
 				array( 'id' => 'cdn', 'text' => __( '<abbr title="Content Delivery Network">CDN</abbr>', 'w3-total-cache' ) ),
 				array( 'id' => 'reverse_proxy', 'text' => __( 'Reverse Proxy', 'w3-total-cache' ) ) ) );
-		if ( Util_Environment::is_w3tc_enterprise() )
+		if ( Util_Environment::is_w3tc_pro() )
 			$anchors[] = array( 'id' => 'amazon_sns', 'text' => __( 'Amazon <abbr title="Simple Notification Service">SNS</abbr>', 'w3-total-cache' ) );
 		$anchors[] = array( 'id' => 'monitoring', 'text' => __( 'Monitoring', 'w3-total-cache' ) );
 		if ( $licensing_visible )

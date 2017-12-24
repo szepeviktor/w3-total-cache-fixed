@@ -99,14 +99,14 @@ class Extensions_Plugin_Admin {
 	 * @return array
 	 */
 	public function w3tc_admin_menu( $menu ) {
-		$menu_item = array(
-			'w3tc_extensions' => array(
-				'page_title' => __( 'Extensions', 'w3-total-cache' ),
-				'menu_text' => __( 'Extensions', 'w3-total-cache' ),
-				'visible_always' => false
-			)
+		$menu['w3tc_extensions'] = array(
+			'page_title' => __( 'Extensions', 'w3-total-cache' ),
+			'menu_text' => __( 'Extensions', 'w3-total-cache' ),
+			'visible_always' => false,
+			'order' => 1900
 		);
-		return array_merge( $menu, $menu_item );
+
+		return $menu;
 	}
 
 	/**

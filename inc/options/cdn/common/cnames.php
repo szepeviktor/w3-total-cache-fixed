@@ -11,13 +11,22 @@ if (! count($cnames)) {
     $cnames = array('');
 }
 
-$count = count($cnames);
+$count = count( $cnames );
+if ( isset( $cnames['http_default'] ) )
+	$count--;
+if ( isset( $cnames['https_default'] ) )
+	$count--;
 
-foreach ($cnames as $index => $cname):
+$real_index = 0;
+foreach ( $cnames as $index => $cname ):
+	if ( $index === 'http_default' || $index === 'https_default' ) {
+		continue;
+	}
+
     $label = '';
 
     if ($count > 1):
-    	switch ($index):
+    	switch ($real_index):
             case 0:
                 $label = __('(reserved for CSS)', 'w3-total-cache');
                 break;
@@ -47,7 +56,7 @@ foreach ($cnames as $index => $cname):
                        <?php Util_Ui::sealing_disabled('cdn.') ?> value="<?php _e('Delete', 'w3-total-cache'); ?>"<?php if (!$index): ?> style="display: none;"<?php endif; ?> />
 		<span><?php echo htmlspecialchars($label); ?></span>
 	</li>
-<?php endforeach; ?>
+<?php $real_index++; endforeach; ?>
 </ol>
 <input id="cdn_cname_add" class="button" type="button" value="<?php _e('Add CNAME', 'w3-total-cache'); ?>"
     <?php Util_Ui::sealing_disabled('cdn.') ?> />
