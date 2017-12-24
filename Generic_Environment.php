@@ -22,6 +22,7 @@ class Generic_Environment {
 		$this->add_index_to_folders();
 
 		if ( count( $exs->exceptions() ) <= 0 ) {
+			try {
 			// save actual version of config is it's built on legacy configs
 			$f = ConfigUtil::is_item_exists( 0, false );
 			$f2 = file_exists( Config::util_config_filename_legacy_v2( 0, false ) );
@@ -34,6 +35,9 @@ class Generic_Environment {
 
 			if ( $f && $f2 )
 				@unlink( Config::util_config_filename_legacy_v2( 0, false ) );
+			} catch ( \Exception $ex ) {
+				$exs->push( $ex );
+			}
 		}
 
 		if ( count( $exs->exceptions() ) > 0 )
