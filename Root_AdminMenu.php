@@ -89,23 +89,11 @@ class Root_AdminMenu {
 				'order' => 2000,
 				'redirect_faq' => '*'
 			),
-			'w3tc_support' => array(
-				'page_title' => __( 'Support', 'w3-total-cache' ),
-				'menu_text' => __( '<span style="color: red;">Support</span>', 'w3-total-cache' ),
-				'visible_always' => true,
-				'order' => 2100
-			),
 			'w3tc_install' => array(
 				'page_title' => __( 'Install', 'w3-total-cache' ),
 				'menu_text' => __( 'Install', 'w3-total-cache' ),
 				'visible_always' => false,
 				'order' => 2200
-			),
-			'w3tc_about' => array(
-				'page_title' => __( 'About', 'w3-total-cache' ),
-				'menu_text' => __( 'About', 'w3-total-cache' ),
-				'visible_always' => true,
-				'order' => 2300
 			)
 		);
 		$pages = apply_filters( 'w3tc_admin_menu', $pages, $this->_config );

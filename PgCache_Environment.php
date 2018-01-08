@@ -737,8 +737,14 @@ class PgCache_Environment {
 			$rules .= "    RewriteRule .* - [E=W3TC_SSL:_ssl]\n";
 			$env_W3TC_SSL = '%{ENV:W3TC_SSL}';
 		}
+		
+		$document_root = Util_Environment::document_root();
 
-		$cache_path = str_replace( Util_Environment::document_root(), '', $cache_dir );
+		if ( strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ) {
+			$document_root = str_replace('\\', '/', $document_root);
+		}
+		
+		$cache_path = str_replace( $document_root, '', $cache_dir );
 
 		/**
 		 * Set Accept-Encoding
