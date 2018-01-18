@@ -15,7 +15,7 @@ This project is a community driven build of W3 Total Cache (W3TC) originally dev
 
 ### Fixes, Improvements, & Enhancement Highlights
 
-For all changes by W3 Total Cache (Fixed) contributors (that were or not merged by W3 Total Cache official release), read the [Changelog](https://github.com/szepeviktor/w3-total-cache-fixed/wiki/Changelog).
+For all changes by W3 Total Cache (Fixed) contributors (that were or not merged by W3 Total Cache official release), read the [changelog](https://github.com/szepeviktor/w3-total-cache-fixed/wiki/Changelog).
 
 Since the last [official release](https://wordpress.org/plugins/w3-total-cache/) of W3 Total Cache, the following new features, bug fixes, and updates have been applied to this repository's:
 
