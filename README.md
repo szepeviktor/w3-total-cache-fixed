@@ -6,10 +6,9 @@ This project is a community driven build of W3 Total Cache (W3TC) originally dev
 
 ### Installation
 
-1. Download the [latest release](https://github.com/szepeviktor/w3-total-cache-fixed/releases/latest)
 1. Deactivate and delete your existing W3 Total Cache plugin (if installed) from within WordPress' Plugin page.
 1. Use FTP or some other file manager to navigate to _`wp-content/plugins/`_.
-1. Download the **_latest release_** (see above) and extract its contents into _`wp-content/plugins/`_. The extracted directory name should be: **`w3-total-cache`**.  If not, then rename it.
+1. Download the [latest release](https://github.com/szepeviktor/w3-total-cache-fixed/releases/latest) and extract its contents into _`wp-content/plugins/`_. The extracted directory name should be: **`w3-total-cache`**.  If not, then rename it.
 1. Activate the _W3 Total Cache (Fixed)_ plugin from within WordPress' Plugin page.
 1. Verify everything is working correctly and that your original configuration settings are still present.
 1. Empty all caches.
