@@ -29,3 +29,4 @@ Type | More Information |
 :beetle: Bug Fix | [PHP Notice:  Undefined index: minify in CacheFlush_Locally.php](https://github.com/szepeviktor/w3-total-cache-fixed/pull/554) |
 :beetle: Bug Fix | [PHP Notice: Undefined offset: 1 in Extension_CloudFlare_Plugin.php on line 376](https://github.com/szepeviktor/w3-total-cache-fixed/pull/555) |
 :beetle: Bug Fix | [Nginx: missing semicolon](https://github.com/szepeviktor/w3-total-cache-fixed/pull/556) |
+:beetle: Bug Fix | [Validate needle passed to stristr function](https://github.com/szepeviktor/w3-total-cache-fixed/pull/558) |
