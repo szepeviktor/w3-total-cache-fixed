@@ -134,7 +134,7 @@ class Cache_Apcu extends Cache_Base {
 	 * @param unknown $key
 	 * @return bool
 	 */
-	function hard_delete( $key ) {
+	function hard_delete( $key, $group = '' ) {
 		$storage_key = $this->get_item_key( $key );
 		return apcu_delete( $storage_key );
 	}

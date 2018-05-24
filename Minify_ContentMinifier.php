@@ -246,7 +246,7 @@ class Minify_ContentMinifier {
 				) );
 		}
 
-		if ( $this->_config->get_boolean( 'cdn.enabled' ) && $this->_config->get_boolean( 'cdn.minify.enable' ) ) {
+		if ( $this->_config->get_boolean( 'cdn.enabled' ) ) {
 			$common = Dispatcher::component( 'Cdn_Core' );
 			$cdn = $common->get_cdn();
 

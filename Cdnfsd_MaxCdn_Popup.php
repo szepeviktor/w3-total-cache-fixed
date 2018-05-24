@@ -15,7 +15,7 @@ class Cdnfsd_MaxCdn_Popup {
 			array( $o, 'w3tc_ajax_cdn_maxcdn_fsd_view_zone' ) );
 		add_action( 'w3tc_ajax_cdn_maxcdn_fsd_configure_zone',
 			array( $o, 'w3tc_ajax_cdn_maxcdn_fsd_configure_zone' ) );
-		add_action( 'w3tc_ajax_cdn_maxcdn_fsd_configure_zone_skip', 
+		add_action( 'w3tc_ajax_cdn_maxcdn_fsd_configure_zone_skip',
 			array( $o, 'w3tc_ajax_cdn_maxcdn_fsd_configure_zone_skip' ) );
 	}
 

@@ -629,7 +629,7 @@ class Extension_FragmentCache_WpObjectCache {
 	 */
 	private function _fragment_group( $id, $group ) {
 		if ( empty( $id ) )
-			return array( 'nogroup', 0 );
+			return array( 'nogroup', 0, false );
 		$groups = $this->_core->get_registered_fragment_groups();
 		$use_group = '';
 		$length = 0;

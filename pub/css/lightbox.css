@@ -475,3 +475,24 @@ padding: 10px 20px 20px 20px;
 .w3tc_overlay_upgrade_right_text {
     font-weight: normal;
 }
+
+.w3tc_change_label {
+    color:black;
+    font-weight:inherit;
+}
+
+@media only screen and (max-device-width: 480px) {
+    .w3tc_overlay_upgrade_content_l {
+        display: none;
+    }
+    .w3tc_overlay_upgrade_content_r {
+        width: inherit;
+        padding: none;
+        float: none;
+    }
+
+    .w3tc-overlay #w3tc-upgrade ul {
+        width: inherit;
+        float: none;
+    }
+}

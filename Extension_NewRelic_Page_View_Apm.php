@@ -135,7 +135,7 @@ _e( 'Use <acronym title="Real User Monitoring">RUM</acronym> only for following 
 _e( 'Select user roles that <acronym title="Real User Monitoring">RUM</acronym> should be enabled for:', 'w3-total-cache' )
 ?></span>
 
-                <div id="newrelic_accept_roles">
+                <div id="newrelic_accept_roles" class="w3tc_reject_roles">
                     <?php $saved_roles = $config->get_array( array( 'newrelic', 'accept.roles' ) ); ?>
                     <input type="hidden" name="newrelic___accept__roles" value="" /><br />
                     <?php foreach ( get_editable_roles() as $role_name => $role_data ) : ?>

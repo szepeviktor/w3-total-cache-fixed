@@ -300,29 +300,6 @@ class NetDNA {
 	}
 
 	/**
-	 * Returns all zones connected to an url
-	 * @param $url
-	 * @throws Exception
-	 * @return array|null
-	 */
-	public function get_zones_by_url($url) {
-		$zone_id = null;
-		$pull_zones =  json_decode($this->get('/zones/pull.json'), true);
-		$zones = array();
-		if (preg_match("(200|201)", $pull_zones['code'])) {
-			foreach ($pull_zones ['data']['pullzones'] as $zone) {
-				if (trim($zone['url'], '/') != trim($url, '/'))
-					continue;
-				else {
-					$zones[] = $zone;
-				}
-			}
-		} else
-			throw new Exception($this->error_message($pull_zones));
-		return $zones;
-	}
-
-	/**
 	 * Retrieves pull zones
 	 * @throws Exception
 	 * @return array|null
@@ -370,49 +347,6 @@ class NetDNA {
 		} else {
 			throw new Exception($this->error_message($zone_data));
 		}
-	}
-
-	/**
-	 * Creates a new pull zone with default settings
-	 * @param string $url the sites url 4-100 chars; only valid URLs accepted
-	 * @param null|string $name 3-32 chars; only letters, digits, and dash (-)accepted
-	 * @param null|string $label length: 1-255 chars
-	 * @param array $zone_settings custom settings
-	 * @return string
-	 */
-	public function create_default_pull_zone($url, $name = null, $label = null, $zone_settings=array()) {
-		$zone_defaults = array();
-		if (is_null($name)) {
-			$name = md5($url);
-			$len = strlen($name)>24 ? 24 : strlen($name);
-			$name = substr($name, 0, $len);
-		}
-		if (is_null($label))
-			$label = sprintf(__('Zone for %s was created by W3 Total Cache', 'w3-total-cache'), $url);
-		$zone_defaults['name'] = $name;
-		$zone_defaults['label'] = $label;
-		$zone_defaults['url'] = $url;
-		$zone_defaults['use_stale'] = 0;
-		$zone_defaults['queries'] = 1;
-		$zone_defaults['compress'] = 1;
-		$zone_defaults['backend_compress'] = 1;
-		$zone_defaults['disallow_robots'] = 1;
-		$zone_defaults = array_merge( $zone_defaults, $zone_settings);
-		$response = $this->create_pull_zone($zone_defaults);
-		return $response;
-	}
-
-	/**
-	 * Returns number of zones
-	 * @throws Exception
-	 * @return array
-	 */
-	public function get_zone_count() {
-		$pull_zones =  json_decode($this->get('/zones.json/count'), true);
-		if (preg_match("(200|201)", $pull_zones['code'])) {
-			return intval($pull_zones ['data']['count']);
-		} else
-			throw new Exception($this->error_message($pull_zones));
 	}
 
 	/**

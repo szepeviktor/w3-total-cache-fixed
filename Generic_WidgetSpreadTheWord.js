@@ -1,4 +1,8 @@
 jQuery(function() {
+    jQuery('.button-vote').live('click', function() {
+        window.open('https://wordpress.org/support/plugin/w3-total-cache/reviews/#new-post');
+    });
+
     jQuery('.button-share').live('click', function() {
         window.open('https://plus.google.com/share?url=' +
              encodeURIComponent(w3tc_spread_the_word_product_url), '_blank');

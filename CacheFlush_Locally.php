@@ -26,7 +26,7 @@ class CacheFlush_Locally {
 		if ( !method_exists( $GLOBALS['wpdb'], 'flush_cache' ) )
 			return false;
 
-		return $GLOBALS['wpdb']->flush_cache();
+		return $GLOBALS['wpdb']->flush_cache( $extras );
 	}
 
 	/**
@@ -125,7 +125,7 @@ class CacheFlush_Locally {
 		do_action( 'w3tc_cdn_purge_files', $purgefiles );
 		$common = Dispatcher::component( 'Cdn_Core' );
 		$results = array();
-		$v = $common->purge( $purgefiles, false, $results );
+		$v = $common->purge( $purgefiles, $results );
 		do_action( 'w3tc_cdn_purge_files_after', $purgefiles );
 
 		return $v;
@@ -189,7 +189,7 @@ class CacheFlush_Locally {
 			if ( $config->get_boolean( 'dbcache.enabled' ) )
 				add_action( 'w3tc_flush_all',
 					array( $this, 'dbcache_flush' ),
-					100, 1 );
+					100, 2 );
 			if ( $config->get_boolean( 'objectcache.enabled' ) )
 				add_action( 'w3tc_flush_all',
 					array( $this, 'objectcache_flush' ),
@@ -205,6 +205,12 @@ class CacheFlush_Locally {
 		$do_flush = apply_filters( 'w3tc_preflush_all', true, $extras );
 		if ( $do_flush )
 			do_action( 'w3tc_flush_all', $extras );
+	}
+
+	function flush_group( $group, $extras ) {
+		$do_flush = apply_filters( 'w3tc_preflush_group', true, $group, $extras );
+		if ( $do_flush )
+			do_action( 'w3tc_flush_group', $group, $extras );
 	}
 
 	/**

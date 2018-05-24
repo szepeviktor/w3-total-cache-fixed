@@ -86,13 +86,26 @@ class Root_AdminMenu {
 				'page_title' => __( 'FAQ', 'w3-total-cache' ),
 				'menu_text' => __( 'FAQ', 'w3-total-cache' ),
 				'visible_always' => true,
-				'order' => 2000
+				'order' => 2000,
+				'redirect_faq' => '*'
+			),
+			'w3tc_support' => array(
+				'page_title' => __( 'Support', 'w3-total-cache' ),
+				'menu_text' => __( '<span style="color: red;">Support</span>', 'w3-total-cache' ),
+				'visible_always' => true,
+				'order' => 2100
 			),
 			'w3tc_install' => array(
 				'page_title' => __( 'Install', 'w3-total-cache' ),
 				'menu_text' => __( 'Install', 'w3-total-cache' ),
 				'visible_always' => false,
 				'order' => 2200
+			),
+			'w3tc_about' => array(
+				'page_title' => __( 'About', 'w3-total-cache' ),
+				'menu_text' => __( 'About', 'w3-total-cache' ),
+				'visible_always' => true,
+				'order' => 2300
 			)
 		);
 		$pages = apply_filters( 'w3tc_admin_menu', $pages, $this->_config );
@@ -120,7 +133,7 @@ class Root_AdminMenu {
 
 		foreach ( $pages as $slug => $titles ) {
 			if ( $is_master || $titles['visible_always'] || $remaining_visible ) {
-				$submenu_pages[] = add_submenu_page( 'w3tc_dashboard',
+				$hook = add_submenu_page( 'w3tc_dashboard',
 					$titles['page_title'] . ' | W3 Total Cache',
 					$titles['menu_text'],
 					apply_filters( 'w3tc_capability_menu_' . $slug,
@@ -128,11 +141,20 @@ class Root_AdminMenu {
 					$slug,
 					array( $this, 'options' )
 				);
+				$submenu_pages[] = $hook;
+
+				if ( isset( $titles['redirect_faq'] ) ) {
+					add_action( 'load-' . $hook, array( $this, 'redirect_faq' ) );
+				}
 			}
 		}
 		return $submenu_pages;
 	}
 
+	public function redirect_faq() {
+		wp_redirect( W3TC_FAQ_URL );
+		exit;
+	}
 
 	/**
 	 * Options page
@@ -204,11 +226,6 @@ class Root_AdminMenu {
 		case 'w3tc_cdn':
 			$options_cdn = new Cdn_Page();
 			$options_cdn->options();
-			break;
-
-		case 'w3tc_faq':
-			$options_faq = new Generic_Page_Faq();
-			$options_faq->options();
 			break;
 
 		case 'w3tc_support':

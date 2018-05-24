@@ -206,7 +206,7 @@ class Cache_Memcached extends Cache_Base {
 	 * @param unknown $key
 	 * @return bool
 	 */
-	function hard_delete( $key ) {
+	function hard_delete( $key, $group = '' ) {
 		$storage_key = $this->get_item_key( $key );
 		return @$this->_memcache->delete( $storage_key );
 	}
@@ -278,6 +278,8 @@ class Cache_Memcached extends Cache_Base {
 	 * @return boolean
 	 */
 	private function _set_key_version( $v, $group = '' ) {
+		// expiration has to be as long as possible since
+		// all cache data expires when key version expires
 		@$this->_memcache->set( $this->_get_key_version_key( $group ), $v, 0 );
 	}
 

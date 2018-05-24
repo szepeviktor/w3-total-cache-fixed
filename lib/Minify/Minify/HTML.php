@@ -274,11 +274,12 @@ class Minify_HTML {
     {
         if (false !== strpos($str, '<![CDATA[')) {
             $str = str_replace('//<![CDATA[', '', $str);
-            $str = str_replace('/*<![CDATA[*/', '', $str);
+
+            $str = preg_replace('~/\*\s*<!\[CDATA\[\s*\*/~', '', $str);
             $str = str_replace('<![CDATA[', '', $str);
 
             $str = str_replace('//]]>', '', $str);
-            $str = str_replace('/*]]>*/', '', $str);
+            $str = preg_replace('~/\*\s*\]\]>\s*\*/~', '', $str);
             $str = str_replace(']]>', '', $str);
         }
 

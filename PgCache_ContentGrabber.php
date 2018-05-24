@@ -106,13 +106,6 @@ class PgCache_ContentGrabber {
 	/**
 	 *
 	 *
-	 * @var If sitemap was matched
-	 */
-	var $_sitemap_matched;
-
-	/**
-	 *
-	 *
 	 * @var bool If cached page should be displayed after init
 	 */
 	var $_late_init = false;
@@ -231,22 +224,13 @@ class PgCache_ContentGrabber {
 		$encryption = $this->_page_key_extension['encryption'];
 		$compression = $this->_page_key_extension['compression'];
 
-		$group = '';
-		$sitemap_regex = $this->_config->get_string( 'pgcache.purge.sitemap_regex' );
-		if ( $sitemap_regex && preg_match( '/' . $sitemap_regex . '/', basename( $this->_request_uri ) ) ) {
-			$group = 'sitemaps';
-			$this->_sitemap_matched = true;
-		} else {
-			$this->_sitemap_matched = false;
-		}
-
 		/**
 		 * Check if page is cached
 		 */
 		if ( !$this->_set_extract_page_key( $this->_page_key_extension, $with_filter ) ) {
 			$data = null;
 		} else {
-			$data = $cache->get_with_old( $this->_page_key, $group );
+			$data = $cache->get_with_old( $this->_page_key, $this->_page_group );
 			list( $data, $this->_old_exists ) = $data;
 		}
 
@@ -259,7 +243,7 @@ class PgCache_ContentGrabber {
 						array( 'compression' => '') ), $with_filter ) ) {
 				$data = null;
 			} else {
-				$data = $cache->get_with_old( $this->_page_key, $group );
+				$data = $cache->get_with_old( $this->_page_key, $this->_page_group );
 				list( $data, $this->_old_exists ) = $data;
 				$compression = false;
 			}
@@ -281,6 +265,18 @@ class PgCache_ContentGrabber {
 
 
 	private function _set_extract_page_key( $page_key_extension, $with_filter ) {
+		// set page group
+		$this->_page_group = $page_key_extension['group'];
+		if ( $with_filter ) {
+			// return empty value if caching should not happen
+			$this->_page_group = apply_filters( 'w3tc_page_extract_group',
+				$page_key_extension['group'],
+				$this->_request_host . $this->_request_uri,
+				$page_key_extension );
+			$page_key_extension['group'] = $this->_page_group;
+		}
+
+		// set page key
 		$this->_page_key = $this->_get_page_key( $page_key_extension );
 
 		if ( $with_filter ) {
@@ -324,6 +320,13 @@ class PgCache_ContentGrabber {
 		$content = $data['content'];
 		$has_dynamic = isset( $data['has_dynamic'] ) && $data['has_dynamic'];
 		$etag = md5( $content );
+
+		// for REST under disk-enhanced - return json content type
+		if ( !empty( $this->_page_key_extension['content_type'] ) &&
+			!isset( $headers['Content-Type'] ) ) {
+			$headers['Content-Type'] = $this->_page_key_extension['content_type'];
+		}
+
 
 		if ( $has_dynamic ) {
 			// its last modification date is now, and any compression
@@ -503,13 +506,22 @@ class PgCache_ContentGrabber {
 		/**
 		 * Skip if there is query in the request uri
 		 */
-		if ( !$this->_check_query_string() &&
-			( !$this->_config->get_boolean( 'pgcache.cache.query' ) ||
-				$this->_config->get_string( 'pgcache.engine' ) == 'file_generic' ) &&
-			strstr( $this->_request_uri, '?' ) !== false ) {
-			$this->cache_reject_reason = 'Requested URI contains query';
+		if ( !$this->_is_whitelisted_query_string() ) {
+			$should_skip_qs =
+				( !$this->_config->get_boolean( 'pgcache.cache.query' ) ||
+				$this->_config->get_string( 'pgcache.engine' ) == 'file_generic' );
 
-			return false;
+			if ( $should_skip_qs &&
+				$this->_config->get_string( 'pgcache.rest' ) == 'cache' &&
+				Util_Environment::is_rest_request( $this->_request_uri ) ) {
+				$should_skip_qs = false;
+			}
+
+			if ( $should_skip_qs && strstr( $this->_request_uri, '?' ) !== false ) {
+				$this->cache_reject_reason = 'Requested URI contains query';
+
+				return false;
+			}
 		}
 
 		/**
@@ -586,6 +598,13 @@ class PgCache_ContentGrabber {
 		if ( defined( 'DONOTCACHEPAGE' ) && DONOTCACHEPAGE ) {
 			$this->cache_reject_reason = 'DONOTCACHEPAGE constant is defined';
 			return false;
+		}
+
+		if ( $this->_config->get_string( 'pgcache.rest' ) != 'cache' ) {
+			if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+				$this->cache_reject_reason = 'REST request';
+				return false;
+			}
 		}
 
 		/**
@@ -945,18 +964,12 @@ class PgCache_ContentGrabber {
 			}
 		}
 
-        $reject_cookies = $this->_config->get_array( 'pgcache.reject.cookie' );
-        Util_Rule::array_trim( $reject_cookies );
-
-        $reject_cookies = str_replace( "+", " ", $reject_cookies );
-        $reject_cookies = array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $reject_cookies );
-
-        $reject_cookies = implode( '|', $reject_cookies );
-
-        if ( !empty( $reject_cookies ) ) {
-            foreach ( $_COOKIE as $key => $value ) {
-                if ( @preg_match( '~' . $reject_cookies . '~i', $key . "=$value" ) ) {
-                    return false;
+		foreach ( $this->_config->get_array( 'pgcache.reject.cookie' ) as $reject_cookie ) {
+			if ( !empty( $reject_cookie ) ) {
+				foreach ( array_keys( $_COOKIE ) as $cookie_name ) {
+					if ( strstr( $cookie_name, $reject_cookie ) !== false ) {
+						return false;
+					}
 				}
 			}
 		}
@@ -1059,6 +1072,7 @@ class PgCache_ContentGrabber {
 			'content_type' => '',
 			'cache' => true,
 			'cache_reject_reason' => '',
+			'group' => ''
 		);
 
 		if ( $this->_mobile )
@@ -1069,6 +1083,24 @@ class PgCache_ContentGrabber {
 			$extension['encryption'] = 'ssl';
 
 		$this->_fill_key_extension_cookie( $extension );
+
+		// fill group
+		$sitemap_regex = $this->_config->get_string(
+			'pgcache.purge.sitemap_regex' );
+		if ( !$this->_enhanced_mode && $sitemap_regex &&
+			preg_match( '~' . $sitemap_regex . '~',
+				basename( $this->_request_uri ) ) ) {
+			// dont store to separate group under disk-enhanced
+			// so that rewrite rules still work.
+			// flushing is handled by workaround in this case
+			$extension['group'] = 'sitemaps';
+		} elseif ( $this->_config->get_string( 'pgcache.rest' ) == 'cache' &&
+			Util_Environment::is_rest_request( $this->_request_uri ) &&
+			Util_Environment::is_w3tc_pro( $this->_config ) ) {
+			$extension['group'] = 'rest';
+			$extension['querystring.processing'] = 'include';
+			$extension['content_type'] = 'application/json';
+		}
 
 		return $extension;
 	}
@@ -1267,8 +1299,9 @@ class PgCache_ContentGrabber {
 			$key = $parts['host'] .
 				( isset( $parts['path'] ) ? $parts['path'] : '' ) .
 				( isset( $parts['query'] ) ? '?' . $parts['query'] : '' );
-		} else
+		} else {
 			$key = $this->_request_host . $this->_request_uri;
+		}
 
 		// replace fragment
 		$key = preg_replace( '~#.*$~', '', $key );
@@ -1281,24 +1314,35 @@ class PgCache_ContentGrabber {
 			// replace double slashes
 			$key = preg_replace( '~[/\\\]+~', '/', $key );
 
-			// replace query string
-			$key = preg_replace( '~\?.*$~', '', $key );
-
 			// replace index.php
 			$key = str_replace( '/index.php', '/', $key );
 
-			// trim slash
-			$key = ltrim( $key, '/' );
+			$key_query = '';
+			if ( isset( $page_key_extension['querystring.processing'] ) &&
+				$page_key_extension['querystring.processing'] == 'include' ) {
 
+				if ( preg_match( '~\?.*$~', $key, $m ) ) {
+					$key_query = '_' . md5( $m[0] );
+				}
+			}
+
+			$key = preg_replace( '~\?.*$~', '', $key );
+
+			// make sure one slash is at the end
+			$key = ltrim( $key, '/' );
 			if ( $key && substr( $key, -1 ) != '/' ) {
 				$key .= '/';
 			}
 
 			$key .= '_index';
 		} else {
-			if ( $this->_check_query_string() )
+			if ( isset( $page_key_extension['querystring.processing'] ) &&
+				$page_key_extension['querystring.processing'] == 'include' ) {
+				// include querystring in key
+			} elseif ( $this->_is_whitelisted_query_string() ) {
 				// replace query string
 				$key = preg_replace( '~\?.*$~', '', $key );
+			}
 
 			$key = md5( $key );
 		}
@@ -1330,7 +1374,7 @@ class PgCache_ContentGrabber {
 				}
 			}
 
-			$key .= $key_postfix;
+			$key .= $key_query . $key_postfix;
 		}
 
 		/**
@@ -1754,7 +1798,7 @@ class PgCache_ContentGrabber {
 		return in_array( $content_type, $cache_headers );
 	}
 
-	private function _check_query_string() {
+	private function _is_whitelisted_query_string() {
 		$accept_qs = $this->_config->get_array( 'pgcache.accept.qs' );
 		Util_Rule::array_trim( $accept_qs );
 
@@ -1878,26 +1922,6 @@ class PgCache_ContentGrabber {
 		 * Store different versions of cache
 		 */
 		$buffers = array();
-		$group = '';
-		if ( !isset( $this->_sitemap_matched ) ) {
-			$sitemap_regex =
-				$this->_config->get_string( 'pgcache.purge.sitemap_regex' );
-			if ( $sitemap_regex && preg_match( '/' . $sitemap_regex . '/', basename( $this->_request_uri ) ) ) {
-				$group = 'sitemaps';
-				$this->_sitemap_matched = true;
-			}
-		} elseif ( $this->_sitemap_matched )
-			$group = 'sitemaps';
-
-        /**
-         * Filters the current theme page cache lifetime.
-         *
-         * @param integer $_lifetime      The page cache lifetime.
-         * @param string  $_request_uri   The URI of the page.
-         * @param integer $mobile_group   The request's mobile group.
-         * @param integer $referrer_group The request's referrer group.
-         */
-        $_expire = apply_filters('w3tc_pgcache_lifetime', $this->_lifetime, $this->_request_uri, $mobile_group, $referrer_group);
 
 		foreach ( $compressions_to_store as $_compression ) {
 			$this->_set_extract_page_key(
@@ -1921,10 +1945,11 @@ class PgCache_ContentGrabber {
 			if ( $has_dynamic )
 				$_data['has_dynamic'] = true;
 
-			$_data = apply_filters( 'w3tc_pagecache_set', $_data, $this->_page_key );
+			$_data = apply_filters( 'w3tc_pagecache_set', $_data, $this->_page_key,
+				$this->_page_group );
 
 			if ( !empty( $_data ) )
-				$cache->set( $this->_page_key, $_data, $_expire, $group );
+				$cache->set( $this->_page_key, $_data, $this->_lifetime, $this->_page_group );
 		}
 
 		// Change buffer if using compression
@@ -1961,7 +1986,7 @@ class PgCache_ContentGrabber {
 	/**
 	 * Log
 	 */
-	static private function log( $msg ) {
+	static protected function log( $msg ) {
 		$data = sprintf( "[%s] [%s] [%s] %s\n", date( 'r' ),
 			$_SERVER['REQUEST_URI'],
 			( !empty( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : '-' ),

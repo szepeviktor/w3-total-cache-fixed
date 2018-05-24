@@ -19,7 +19,7 @@ class Cdnfsd_Core {
 			case 'cloudflare':
 				$engine_object = null;   // extension handles everything
 				break;
-				
+
 			case 'cloudfront':
 				$engine_object = new Cdnfsd_CloudFront_Engine( array(
 						'access_key' => $c->get_string( 'cdnfsd.cloudfront.access_key' ),
@@ -29,7 +29,7 @@ class Cdnfsd_Core {
 				break;
 
 			case 'limelight':
-				$engine_object = new Cdnfsd_Limelight_Engine( array(
+				$engine_object = new Cdnfsd_LimeLight_Engine( array(
 						'short_name' => $c->get_string( 'cdnfsd.limelight.short_name' ),
 						'username' => $c->get_string( 'cdnfsd.limelight.username' ),
 						'api_key' => $c->get_string( 'cdnfsd.limelight.api_key' ),
@@ -41,6 +41,13 @@ class Cdnfsd_Core {
 				$engine_object = new Cdnfsd_MaxCdn_Engine( array(
 						'api_key' => $c->get_string( 'cdnfsd.maxcdn.api_key' ),
 						'zone_id' => $c->get_integer( 'cdnfsd.maxcdn.zone_id' )
+					) );
+				break;
+
+			case 'stackpath':
+				$engine_object = new Cdnfsd_StackPath_Engine( array(
+						'api_key' => $c->get_string( 'cdnfsd.stackpath.api_key' ),
+						'zone_id' => $c->get_integer( 'cdnfsd.stackpath.zone_id' )
 					) );
 				break;
 

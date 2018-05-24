@@ -3,7 +3,7 @@ namespace W3TC;
 
 
 
-class Cdnfsd_Limelight_Engine {
+class Cdnfsd_LimeLight_Engine {
 	private $short_name;
 	private $username;
 	private $api_key;
@@ -25,7 +25,7 @@ class Cdnfsd_Limelight_Engine {
 			empty( $this->api_key ) )
 			throw new \Exception( __( 'Credentials are not specified.', 'w3-total-cache' ) );
 
-		$api = new Cdnfsd_Limelight_Api( $this->short_name, $this->username, $this->api_key );
+		$api = new Cdnfsd_LimeLight_Api( $this->short_name, $this->username, $this->api_key );
 		$items = array();
 
 		foreach ( $urls as $url ) {
@@ -64,7 +64,7 @@ class Cdnfsd_Limelight_Engine {
 			empty( $this->api_key ) )
 			throw new \Exception( __( 'Access key not specified.', 'w3-total-cache' ) );
 
-		$api = new Cdnfsd_Limelight_Api( $this->short_name, $this->username, $this->api_key );
+		$api = new Cdnfsd_LimeLight_Api( $this->short_name, $this->username, $this->api_key );
 		$url = Util_Environment::home_domain_root_url() . '/*';
 
 		$items = array(

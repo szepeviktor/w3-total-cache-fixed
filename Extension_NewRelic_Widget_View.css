@@ -1,8 +1,8 @@
-#new-relic-widget ul li, .maxcdn-netdna-widget-base ul li {
+#new-relic-widget ul li {
     margin-bottom: 3px;
     padding: 0;
 }
-#new-relic-widget ul li span, .maxcdn-netdna-widget-base  .summary ul li span{
+#new-relic-widget ul li span {
     display: block;
     font-weight: bold;
     width: 110px;

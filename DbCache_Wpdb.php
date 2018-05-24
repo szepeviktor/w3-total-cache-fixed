@@ -129,11 +129,11 @@ class DbCache_Wpdb extends DbCache_WpdbBase {
 			$processor->w3tc_usage_statistics_of_request( $storage );
 	}
 
-	function flush_cache() {
+	function flush_cache( $extras = array() ) {
 		$v = true;
 
 		foreach ( $this->processors as $processor )
-			$v &= $processor->flush_cache();
+			$v &= $processor->flush_cache( $extras );
 
 		return $v;
 	}

@@ -21,6 +21,9 @@ class PgCache_Plugin {
 		add_action( 'w3tc_flush_all',
 			array( $this, 'w3tc_flush_posts' ),
 			1100, 1 );
+		add_action( 'w3tc_flush_group',
+			array( $this, 'w3tc_flush_group' ),
+			1100, 2 );
 		add_action( 'w3tc_flush_post',
 			array( $this, 'w3tc_flush_post' ),
 			1100, 1 );
@@ -58,8 +61,6 @@ class PgCache_Plugin {
 		}
 
 		add_action( 'w3_pgcache_prime', array( $this, 'prime' ) );
-        
-        add_action( 'w3_pgcache_prime_cli', array( $this, 'prime_cli' ), 10, 4 );
 
 		Util_AttachToActions::flush_posts_on_actions();
 
@@ -96,7 +97,29 @@ class PgCache_Plugin {
 			add_action( 'init',
 				array( $this, 'redirect_on_foreign_domain' ) );
 		}
+		if ( $this->_config->get_string( 'pgcache.rest' ) == 'disable' ) {
+			// remove XMLRPC edit link
+			remove_action( 'xmlrpc_rsd_apis', 'rest_output_rsd' );
+			// remove wp-json in <head>
+			remove_action( 'wp_head', 'rest_output_link_wp_head', 10 );
+			// remove HTTP Header
+			remove_action( 'template_redirect', 'rest_output_link_header', 11 );
+
+			add_filter( 'rest_authentication_errors',
+				array( $this, 'rest_authentication_errors' ),
+				100 );
+		}
 	}
+
+
+
+	public function rest_authentication_errors( $result ) {
+		$error_message = __( 'REST API disabled.', 'w3-total-cache' );
+
+		return new \WP_Error( 'rest_disabled', $error_message, array( 'status' => rest_authorization_required_code() ) );
+	}
+
+
 
 	/**
 	 * Does disk cache cleanup
@@ -113,23 +136,9 @@ class PgCache_Plugin {
 	 * @param integer $start
 	 * @return void
 	 */
-	function prime( $start = 0 ) {
-		$this->_get_admin()->prime( $start );
+	function prime() {
+		$this->_get_admin()->prime();
 	}
-
-    /**
-     * Prime cache (WP_CLI)
-     *
-     * @param   integer $user_limit     Pages per batch size
-     * @param   integer $user_interval  Number of seconds to wait before creating another batch
-     * @param   string  $user_sitemap   The sitemap url to use
-     * @param   integer $start          Index position within the sitemap to prime cache
-     * @param   boolean $boot           Indicates if the prime cache is about to start for the first time
-     * @return  void
-     */
-    function prime_cli( $user_limit, $user_interval, $user_sitemap, $start, $boot = false ) {
-        $this->_get_admin()->prime_cli( $user_limit, $user_interval, $user_sitemap, $start, $boot );
-    }
 
 	/**
 	 * Instantiates worker on demand
@@ -271,6 +280,16 @@ class PgCache_Plugin {
 		}
 
 		return $menu_items;
+	}
+
+	function w3tc_flush_group( $group, $extras = array() ) {
+		if ( isset( $extras['only'] ) && $extras['only'] != 'pagecache' )
+			return;
+
+		$pgcacheflush = Dispatcher::component( 'PgCache_Flush' );
+		$v = $pgcacheflush->flush_group( $group );
+
+		return $v;
 	}
 
 	/**

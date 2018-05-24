@@ -12,7 +12,7 @@ if ( !defined( 'W3TC' ) )
 
     <p>
         <?php _e( '<span style="background-color: #33cc33">Installed/Ok/Yes/True</span>: Functionality will work properly.', 'w3-total-cache' ); ?><br />
-        <?php _e( '<span style="background-color: #FFFF00">Not detected/Not installed/Off</span>: May be installed, but cannot be automatically confirmed. Functionality will be limmited.', 'w3-total-cache' ); ?><br />
+        <?php _e( '<span style="background-color: #FFFF00">Not detected/Not installed/Off</span>: May be installed, but cannot be automatically confirmed. Functionality will be limited.', 'w3-total-cache' ); ?><br />
         <?php _e( '<span style="background-color: #FF0000">Not Installed/Error/No/False</span>: Plugin or some functions may not work.', 'w3-total-cache' ); ?><br />
     </p>
 </fieldset>

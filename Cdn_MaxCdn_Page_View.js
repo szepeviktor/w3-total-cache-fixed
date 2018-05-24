@@ -59,10 +59,4 @@ jQuery(function($) {
 			// refresh page
 	    	window.location = window.location + '&';
 	    })
-
-
-
-	    .on('size_change', '#cdn_cname_add', function() {
-	    	w3tc_maxcdn_resize(W3tc_Lightbox);
-	    })
 });

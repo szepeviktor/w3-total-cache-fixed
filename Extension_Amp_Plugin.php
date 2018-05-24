@@ -25,8 +25,13 @@ class Extension_Amp_Plugin {
 
 
 	private function is_amp_endpoint() {
-		if ( is_null( $this->is_amp_endpoint ) && function_exists('is_amp_endpoint') ) {
-			$this->is_amp_endpoint = is_amp_endpoint();
+		// support for different plugins defining those own functions
+		if ( is_null( $this->is_amp_endpoint ) ) {
+			if ( function_exists('is_amp_endpoint') ) {
+				$this->is_amp_endpoint = is_amp_endpoint();
+			} elseif ( function_exists('ampforwp_is_amp_endpoint') ) {
+				$this->is_amp_endpoint = ampforwp_is_amp_endpoint();
+			}
 		}
 
 		return $this->is_amp_endpoint;

@@ -149,7 +149,7 @@ class DbCache_WpdbInjection {
 	public function w3tc_usage_statistics_of_request( $storage ) {
 	}
 
-	public function flush_cache() {
+	public function flush_cache( $extras = array() ) {
 		return true;
 	}
 }

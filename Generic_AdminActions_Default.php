@@ -516,13 +516,16 @@ class Generic_AdminActions_Default {
 			}
 
 			switch ( $this->_config->get_string( 'cdn.engine' ) ) {
-			case 'ftp':
-				$config->set( 'cdn.ftp.domain', $cdn_domains );
+			case 'akamai':
+				$config->set( 'cdn.akamai.domain', $cdn_domains );
 				break;
 
-			case 's3':
-			case 's3_compatible':
-				$config->set( 'cdn.s3.cname', $cdn_domains );
+			case 'att':
+				$config->set( 'cdn.att.domain', $cdn_domains );
+				break;
+
+			case 'azure':
+				$config->set( 'cdn.azure.cname', $cdn_domains );
 				break;
 
 			case 'cf':
@@ -533,17 +536,26 @@ class Generic_AdminActions_Default {
 				$config->set( 'cdn.cf2.cname', $cdn_domains );
 				break;
 
-			case 'rackspace_cdn':
-				$config->set( 'cdn.rackspace_cdn.domains', $cdn_domains );
+			case 'cotendo':
+				$config->set( 'cdn.cotendo.domain', $cdn_domains );
 				break;
 
-			case 'rscf':
-				$config->set( 'cdn.rscf.cname', $cdn_domains );
+			case 'edgecast':
+				$config->set( 'cdn.edgecast.domain', $cdn_domains );
 				break;
 
-			case 'azure':
-				$config->set( 'cdn.azure.cname', $cdn_domains );
+			case 'ftp':
+				$config->set( 'cdn.ftp.domain', $cdn_domains );
 				break;
+
+			case 'highwinds':
+				$config->set( 'cdn.highwinds.host.domains', $cdn_domains );
+				break;
+
+			case 'limelight':
+				$config->set( 'cdn.limelight.host.domains', $cdn_domains );
+				break;
+
 			case 'mirror':
 				$config->set( 'cdn.mirror.domain', $cdn_domains );
 				break;
@@ -558,24 +570,27 @@ class Generic_AdminActions_Default {
 				$config->set( 'cdn.maxcdn.domain', $cdn_domains );
 				break;
 
-			case 'cotendo':
-				$config->set( 'cdn.cotendo.domain', $cdn_domains );
+			case 'rackspace_cdn':
+				$config->set( 'cdn.rackspace_cdn.domains', $cdn_domains );
 				break;
 
-			case 'edgecast':
-				$config->set( 'cdn.edgecast.domain', $cdn_domains );
+			case 'rscf':
+				$config->set( 'cdn.rscf.cname', $cdn_domains );
 				break;
 
-			case 'att':
-				$config->set( 'cdn.att.domain', $cdn_domains );
+			case 's3':
+			case 's3_compatible':
+				$config->set( 'cdn.s3.cname', $cdn_domains );
 				break;
 
-			case 'akamai':
-				$config->set( 'cdn.akamai.domain', $cdn_domains );
-				break;
+			case 'stackpath':
+				$v = $config->get( 'cdn.stackpath.domain' );
+				if ( isset( $v['http_default'] ) )
+					$cdn_domains['http_default'] = $v['http_default'];
+				if ( isset( $v['https_default'] ) )
+					$cdn_domains['https_default'] = $v['https_default'];
 
-			case 'highwinds':
-				$config->set( 'cdn.highwinds.host.domains', $cdn_domains );
+				$config->set( 'cdn.stackpath.domain', $cdn_domains );
 				break;
 			}
 		}

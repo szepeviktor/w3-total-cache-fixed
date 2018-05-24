@@ -428,22 +428,38 @@ class Util_Ui {
 
 	/**
 	 * Echos a group of radio elements
-	 *
-	 * @param string  $id
-	 * @param string  $name
-	 * @param bool    $state    whether checked or not
-	 * @param bool    $disabled
+	 * values: value => label pair or
+	 *  value => array(label, disabled, postfix)
 	 */
 	static public function radiogroup( $name, $value, $values,
-		$disabled = false ) {
-		foreach ( $values as $key => $label ) {
+		$disabled = false, $separator = '' ) {
+		$first = true;
+		foreach ( $values as $key => $label_or_array ) {
+			if ( $first ) {
+				$first = false;
+			} else {
+				echo $separator;
+			}
+
+			$label = '';
+			$item_disabled = false;
+			$postfix = '';
+
+			if ( !is_array( $label_or_array ) ) {
+				$label = $label_or_array;
+			} else {
+				$label = $label_or_array['label'];
+				$item_disabled = $label_or_array['disabled'];
+				$postfix = $label_or_array['postfix'];
+			}
+
 			echo '<label><input type="radio" name="' . esc_attr( $name )  .
 				'" value="' . esc_attr( $key ) . '"';
 			checked( $value, $key );
-			disabled( $disabled );
+			disabled( $disabled || $item_disabled );
 			echo ' />';
 			echo $label;
-			echo '</label>' . "\n";
+			echo '</label>' . $postfix . "\n";
 		}
 	}
 
@@ -558,7 +574,8 @@ class Util_Ui {
 			elseif ( $key == 'html' )
 				echo $e;
 			elseif ( $key == 'radiogroup' )
-				Util_Ui::radiogroup( $e['name'], $e['value'], $e['values'] );
+				Util_Ui::radiogroup( $e['name'], $e['value'], $e['values'],
+					$e['disabled'], $e['separator'] );
 			elseif ( $key == 'selectbox' )
 				Util_Ui::selectbox( $id, $e['name'], $e['value'], $e['values'],
 					( isset( $e['disabled'] ) ? $e['disabled'] : false ),
@@ -642,7 +659,9 @@ class Util_Ui {
 					'name' => Util_Ui::config_key_to_http_name( $a['key'] ),
 					'value' => $a['value'],
 					'disabled' => $disabled,
-					'values' => $a['radiogroup_values']
+					'values' => $a['radiogroup_values'],
+					'separator' => isset( $a['radiogroup_separator'] ) ?
+						$a['radiogroup_separator'] : ''
 				);
 			} else if ( $a['control'] == 'selectbox' ) {
 				$table_tr['selectbox'] = array(

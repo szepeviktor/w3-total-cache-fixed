@@ -194,12 +194,18 @@ class Cdnfsd_CacheFlush {
 	static public function w3tc_flush_execute_delayed_operations( $actions_made ) {
 		$o = Dispatcher::component( 'Cdnfsd_CacheFlush' );
 
+		// protection from incorrect w3tc upgrade operation when engine gets empty
+		$c = Dispatcher::config();
+		$engine = $c->get_string( 'cdnfsd.engine' );
+		if ( empty( $engine ) )
+			return $actions_made;
+
 		if ( $o->flush_all_requested ) {
 			$core = Dispatcher::component( 'Cdnfsd_Core' );
 
 			try {
 				$engine = $core->get_engine();
-				
+
 				if ( !is_null( $engine ) ) {
 					$engine->flush_all();
 					$actions_made[] = array( 'module' => 'cdn' );
@@ -219,10 +225,10 @@ class Cdnfsd_CacheFlush {
 				$urls = array_keys( $o->queued_urls );
 
 				$core = Dispatcher::component( 'Cdnfsd_Core' );
-				
+
 				try {
 					$engine = $core->get_engine();
-					
+
 					if ( !is_null( $engine ) ) {
 						$engine->flush_urls( $urls );
 						$actions_made[] = array( 'module' => 'cdn' );

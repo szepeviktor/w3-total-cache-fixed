@@ -80,7 +80,7 @@ echo sprintf( __( 'To rebuild the page cache use the %s operation', 'w3-total-ca
 					<?php $this->checkbox( 'pgcache.reject.logged_roles' ) ?> <?php Util_Ui::e_config_label( 'pgcache.reject.logged_roles' ) ?></label><br />
 					<span class="description"><?php _e( 'Select user roles that should not receive cached pages:', 'w3-total-cache' ); ?></span>
 
-					<div id="pgcache_reject_roles">
+					<div id="pgcache_reject_roles" class="w3tc_reject_roles">
 						<?php $saved_roles = $this->_config->get_array( 'pgcache.reject.roles' ); ?>
 						<input type="hidden" name="pgcache__reject__roles" value="" /><br />
 						<?php foreach ( get_editable_roles() as $role_name => $role_data ) : ?>
@@ -142,7 +142,7 @@ Util_Ui::config_item( array(
 					<input id="pgcache_prime_limit" type="text" name="pgcache__prime__limit"
 						<?php Util_Ui::sealing_disabled( 'pgcache.' ) ?>
 						value="<?php echo esc_attr( $this->_config->get_integer( 'pgcache.prime.limit' ) ); ?>" size="8" /><br />
-                    <span class="description"><?php _e( 'Limit the number of pages to create per batch. Fewer pages may be better for under-powered servers. Set to 0 for no limit.', 'w3-total-cache' ); ?></span>
+					<span class="description"><?php _e( 'Limit the number of pages to create per batch. Fewer pages may be better for under-powered servers.', 'w3-total-cache' ); ?></span>
 				</td>
 			</tr>
 			<tr>
@@ -183,6 +183,7 @@ Util_Ui::postbox_header( __( 'Purge Policy: ', 'w3-total-cache' ) . implode( ', 
 								<?php $this->checkbox( 'pgcache.purge.home' ) ?>  <?php Util_Ui::e_config_label( 'pgcache.purge.home' ) ?></label><br />
 								<?php $this->checkbox( 'pgcache.purge.post' ) ?> <?php Util_Ui::e_config_label( 'pgcache.purge.post' ) ?></label><br />
 								<?php $this->checkbox( 'pgcache.purge.feed.blog' ) ?> <?php Util_Ui::e_config_label( 'pgcache.purge.feed.blog' ) ?></label><br />
+
 							</th>
 							<th>
 								<?php $this->checkbox( 'pgcache.purge.comments' ) ?> <?php Util_Ui::e_config_label( 'pgcache.purge.comments' ) ?></label><br />
@@ -247,6 +248,32 @@ Util_Ui::postbox_header( __( 'Purge Policy: ', 'w3-total-cache' ) . implode( ', 
 		<?php echo Util_Ui::button_config_save( 'pagecache_purge_policy' ); ?>
 		<?php Util_Ui::postbox_footer(); ?>
 
+		<?php Util_Ui::postbox_header( __( '<acronym title="REpresentational State Transfer">REST</acronym> <acronym title="Application Programming Interface">API</acronym>', 'w3-total-cache' ), '', 'rest' ); ?>
+		<table class="form-table">
+			<?php
+			Util_Ui::config_item( array(
+					'key' => 'pgcache.rest',
+					'label' => '<acronym title="REpresentational State Transfer">REST</acronym> <acronym title="Application Programming Interface">API</acronym>',
+					'control' => 'radiogroup',
+					'radiogroup_values' => array(
+						'' => "Don't cache",
+						'cache' => array(
+							'label' => "Cache",
+							'disabled' => !Util_Environment::is_w3tc_pro( $this->_config ),
+							'postfix' => ( Util_Environment::is_w3tc_pro( $this->_config ) ? '' :
+								'&nbsp;&nbsp;&nbsp;(<a href="#" class="button-buy-plugin">Upgrade</a> now to enable)')
+						),
+						'disable' => 'Disable <acronym title="REpresentational State Transfer">REST</acronym> <acronym title="Application Programming Interface">API</acronym>',
+					),
+					'radiogroup_separator' => '<br />',
+					'description' => __( 'Controls WordPress <acronym title="REpresentational State Transfer">REST</acronym> <acronym title="Application Programming Interface">API</acronym> functionality.', 'w3-total-cache' )
+				) );
+			?>
+		</table>
+		<?php echo Util_Ui::button_config_save( 'rest' ); ?>
+		<?php Util_Ui::postbox_footer(); ?>
+
+
 		<?php Util_Ui::postbox_header( __( 'Advanced', 'w3-total-cache' ), '', 'advanced' ); ?>
 		<table class="form-table">
 			<tr>
@@ -303,7 +330,7 @@ if ( $this->_config->get_string( 'pgcache.engine' ) == 'memcached' ) {
 				</td>
 			</tr>
 			<?php endif; ?>
-			<?php if ( $this->_config->get_string( 'pgcache.engine' ) != 'file' && $this->_config->get_string( 'pgcache.engine' ) != 'file_generic' ): ?>
+			<?php if ( $this->_config->get_string( 'pgcache.engine' ) != 'file_generic' ): ?>
 			<tr>
 				<th><label for="pgcache_lifetime"><?php Util_Ui::e_config_label( 'pgcache.lifetime' ) ?></label></th>
 				<td>

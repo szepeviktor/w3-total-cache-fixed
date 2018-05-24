@@ -164,12 +164,16 @@ class ObjectCache_WpObjectCache_Regular {
 					json_encode($a);
 			*/
 
+			$this->cache_total++;
+
 			if ( is_array( $v ) && isset( $v['content'] ) ) {
 				$found = true;
 				$value = $v['content'];
+				$this->cache_hits++;
 			} else {
 				$found = false;
 				$value = false;
+				$this->cache_misses++;
 			}
 		} else {
 			$found = false;
@@ -195,12 +199,7 @@ class ObjectCache_WpObjectCache_Regular {
 		if ( $found ) {
 			if ( !$in_incall_cache ) {
 				$this->cache[$key] = $value;
-				$this->cache_total++;
 			}
-
-			$this->cache_hits++;
-		} else {
-			$this->cache_misses++;
 		}
 
 		/**
@@ -230,14 +229,16 @@ class ObjectCache_WpObjectCache_Regular {
 				}
 			}
 
-			$this->debug_info[] = array(
-				'id' => $id,
-				'group' => $group,
-				'operation' => 'get',
-				'returned' => $returned,
-				'data_size' => ( $value ? strlen( serialize( $value ) ) : '' ),
-				'time' => $time
-			);
+			if ( !$in_incall_cache ) {
+				$this->debug_info[] = array(
+					'id' => $id,
+					'group' => $group,
+					'operation' => 'get',
+					'returned' => $returned,
+					'data_size' => ( $value ? strlen( serialize( $value ) ) : '' ),
+					'time' => $time
+				);
+			}
 		}
 
 		return $value;

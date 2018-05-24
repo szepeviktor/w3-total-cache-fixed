@@ -24,13 +24,16 @@ if ( !defined( 'W3TC' ) )
             <div class="w3tc_overlay_upgrade_content_r">
                 <ul>
                     <li>
+                        <strong>Extension</strong><br>
+                        Improve the performance of your Genesis, WPML-powered site, and much more by unlocking W3TC Pro.</li>
+                    <li>
                         <strong>Full Site Delivery (FSD)</strong><br>
                         Provide the best user experience possible by enhancing by hosting HTML pages and RSS feeds with (supported) <acronym title="Content Delivery Network">CDN</acronym>'s high speed global networks.</li>
-                    <li><strong>Fragment Caching Module</strong><br>
-                        Unlocking the fragment caching module delivers enhanced performance for plugins and themes that use the WordPress Transient API. StudioPress' Genesis Framework is up to 60% faster with W3TC Pro.</li>
                     <li>
-                        <strong>WPML Extension</strong><br>
-                        Improve the performance of your WPML-powered site by unlocking W3TC Pro.</li>
+                        <strong>REST API Caching</strong><br>
+                        Save resources or add scale and performance to the WordPress API with W3TC Pro.</li>
+                    <li><strong>Fragment Caching</strong><br>
+                        Unlocking the fragment caching module delivers enhanced performance for plugins and themes that use the WordPress Transient API. StudioPress' Genesis Framework is up to 60% faster with W3TC Pro.</li>
                 </ul>
             </div>
         </div>

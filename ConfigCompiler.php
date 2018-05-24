@@ -233,6 +233,15 @@ class ConfigCompiler {
 		}
 
 		//
+		// changes in 0.9.7
+		//
+		if ( isset( $file_data['cdnfsd.enabled'] ) &&
+			$file_data['cdnfsd.enabled'] == '1' &&
+			empty( $file_data['cdnfsd.engine'] ) ) {
+			$file_data['cdnfsd.enabled'] = '0';
+		}
+
+		//
 		// changes in 0.9.6
 		//
 		if ( !isset( $file_data['cdn.cors_header'] ) ) {

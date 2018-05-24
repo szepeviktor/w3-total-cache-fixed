@@ -18,6 +18,8 @@ class Cache_File_Cleaner_Generic extends Cache_File_Cleaner {
 	 */
 	var $_expire = 0;
 
+	private $hard_delete = false;
+
 	/**
 	 * PHP5-style constructor
 	 *
@@ -47,7 +49,8 @@ class Cache_File_Cleaner_Generic extends Cache_File_Cleaner {
 
 				$full_path = $path . DIRECTORY_SEPARATOR . $entry;
 
-				if ( substr( $entry, -4 ) === '_old' && !$this->is_old_file_expired( $full_path ) ) {
+				if ( substr( $entry, -4 ) === '_old' &&
+					!$this->is_old_file_expired( $full_path ) ) {
 					continue;
 				}
 
@@ -60,24 +63,34 @@ class Cache_File_Cleaner_Generic extends Cache_File_Cleaner {
 
 				if ( @is_dir( $full_path ) ) {
 					$this->_clean( $full_path );
-				} elseif ( substr( $entry, -4 ) === '_old' ) {
-					$this->processed_count++;
-					@unlink( $full_path );
-				} elseif ( !$this->is_valid( $full_path ) ) {
-					$old_entry_path = $full_path . '_old';
-					$this->processed_count++;
-					if ( !@rename( $full_path, $old_entry_path ) ) {
-						// if we can delete old entry - do second attempt to store in old-entry file
-						if ( @unlink( $old_entry_path ) ) {
-							@rename( $full_path, $old_entry_path );
-						}
-					}
+				} else {
+					$this->_clean_file( $entry, $full_path );
 				}
 			}
 
 			@closedir( $dir );
 			if ( $this->is_empty_dir( $path ) )
 				@rmdir( $path );
+		}
+	}
+
+	function _clean_file( $entry, $full_path ) {
+		if ( substr( $entry, -4 ) === '_old' ) {
+			$this->processed_count++;
+			@unlink( $full_path );
+		} elseif ( !$this->is_valid( $full_path ) ) {
+			$old_entry_path = $full_path . '_old';
+			$this->processed_count++;
+			if ( !@rename( $full_path, $old_entry_path ) ) {
+				// if we can delete old entry -
+				// do second attempt to store in old-entry file
+				if ( @unlink( $old_entry_path ) ) {
+					if ( !@rename( $full_path, $old_entry_path ) ) {
+						// last attempt - just remove entry
+						@unlink( $full_path );
+					}
+				}
+			}
 		}
 	}
 

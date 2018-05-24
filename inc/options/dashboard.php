@@ -40,7 +40,7 @@ echo implode( " $string ", apply_filters( 'w3tc_dashboard_actions', array() ) ) 
             <div class="content">
             <div id="dashboard-text" style="display:inline-block;">
                 <h1><?php _e( 'Dashboard', 'w3-total-cache' )?></h1>
-                <p>Thanks for choosing W3TC as your Web Performance Optimization (<acronym title="Web Performance Optimization">WPO</acronym>) framework. Please share <a href="admin.php?page=w3tc_support&amp;request_type=new_feature">your suggestions</a> about the statistics and reporting you would like to see!</p>
+                <p>Thanks for choosing W3TC as your Web Performance Optimization (<acronym title="Web Performance Optimization">WPO</acronym>) framework!
             </div>
             <div id="widgets-container">
             <?php do_meta_boxes( $screen->id, 'normal', '' ); ?>

@@ -41,15 +41,14 @@ class Extension_NewRelic_Service {
 		$verified = array();
 		$version = explode( '.', PHP_VERSION );
 		$php_version = sprintf( '%s.%s.%s', $version[0], $version[1], $version[2] );
-		$php_version_ok = ( version_compare( $php_version, '5.2', '>' ) &&
-			version_compare( $php_version, '5.5', '<' ) );
+		$php_version_ok = version_compare( $php_version, '5.2', '>' );
 
 		$supported_string = __( 'Supported', 'w3-total-cache' );
 
 		$verified[__( 'PHP version', 'w3-total-cache' )] =
 			( $php_version_ok ? $supported_string :
-			sprintf( __( 'Not supported: %s. Supported versions are %s.', 'w3-total-cache' ),
-				$php_version, implode( ', ', $php_versions ) ) );
+			sprintf( __( 'Not supported: %s.', 'w3-total-cache' ),
+				$php_version ) );
 
 		$os_name = php_uname( 's' );
 		switch ( $os_name ) {
@@ -119,7 +118,7 @@ class Extension_NewRelic_Service {
 		switch ( true ) {
 		case Util_Environment::is_apache():
 			if ( $ws_version )
-				$ws_check = version_compare( $ws_version, '2.2', '>=' ) || version_compare( $ws_version, '2.4', '>=' );
+				$ws_check = version_compare( $ws_version, '2.2', '>=' );
 			break;
 		case Util_Environment::is_nginx():
 			$ws_check = php_sapi_name() == 'fpm-fcgi';

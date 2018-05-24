@@ -737,14 +737,8 @@ class PgCache_Environment {
 			$rules .= "    RewriteRule .* - [E=W3TC_SSL:_ssl]\n";
 			$env_W3TC_SSL = '%{ENV:W3TC_SSL}';
 		}
-		
-		$document_root = Util_Environment::document_root();
 
-		if ( strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ) {
-			$document_root = str_replace('\\', '/', $document_root);
-		}
-		
-		$cache_path = str_replace( $document_root, '', $cache_dir );
+		$cache_path = str_replace( Util_Environment::document_root(), '', $cache_dir );
 
 		/**
 		 * Set Accept-Encoding
@@ -781,11 +775,9 @@ class PgCache_Environment {
 		/**
 		 * Check for rejected cookies
 		 */
-        if ( !empty( $reject_cookies ) ) {
-            $reject_cookies = str_replace( ' ', '+', $reject_cookies );
-			$use_cache_rules .= "    RewriteCond %{HTTP_COOKIE} !(" . implode( '|',
+		$use_cache_rules .= "    RewriteCond %{HTTP_COOKIE} !(" . implode( '|',
 			array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $reject_cookies ) ) . ") [NC]\n";
-		}
+
 		/**
 		 * Check for rejected user agents
 		 */
@@ -997,13 +989,10 @@ class PgCache_Environment {
 		/**
 		 * Check for rejected cookies
 		 */
-		if ( !empty( $reject_cookies ) ) {
-            $reject_cookies = str_replace( ' ', '+', $reject_cookies );
-			$rules .= "if (\$http_cookie ~* \"(" . implode( '|',
-				array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $reject_cookies ) ) . ")\") {\n";
-			$rules .= "    set \$w3tc_rewrite 0;\n";
-			$rules .= "}\n";
-		}
+		$rules .= "if (\$http_cookie ~* \"(" . implode( '|',
+			array_map( array( '\W3TC\Util_Environment', 'preg_quote' ), $reject_cookies ) ) . ")\") {\n";
+		$rules .= "    set \$w3tc_rewrite 0;\n";
+		$rules .= "}\n";
 
 		/**
 		 * Check for rejected user agents
@@ -1147,8 +1136,7 @@ class PgCache_Environment {
 			$env_w3tc_enc = "\$w3tc_enc";
 		}
 
-		$document_root = str_replace('\\', '/', Util_Environment::document_root());
-		$cache_path = str_replace($document_root, '', $cache_dir);
+		$cache_path = str_replace( Util_Environment::document_root(), '', $cache_dir );
 		$uri_prefix = $cache_path . "/\$http_host/" .
 			"\$request_uri/_index" . $env_w3tc_ua . $env_w3tc_ref .
 			$env_w3tc_cookie . $env_w3tc_ssl . $env_w3tc_preview;
@@ -1424,6 +1412,7 @@ class PgCache_Environment {
 		$lifetime = ( $browsercache ? $config->get_integer( 'browsercache.html.lifetime' ) : 0 );
 		$cache_control = ( $browsercache && $config->get_boolean( 'browsercache.html.cache.control' ) );
 		$w3tc = ( $browsercache && $config->get_integer( 'browsercache.html.w3tc' ) );
+		$hsts = ( $browsercache && $config->get_boolean( 'browsercache.hsts' ) );
 
 		$common_rules = '';
 
@@ -1436,6 +1425,9 @@ class PgCache_Environment {
 				Util_Environment::w3tc_header() . "\";\n";
 		}
 
+		if ( $hsts ) {
+			$common_rules .= " add_header Strict-Transport-Security \"max-age=31536000; preload\";\n";
+		}
 		if ( $expires ) {
 			$common_rules .= "    add_header Vary \"Accept-Encoding, Cookie\";\n";
 		}

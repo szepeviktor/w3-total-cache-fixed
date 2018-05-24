@@ -160,8 +160,9 @@ if ( !$upload_blogfiles_enabled )
 		<table class="form-table">
 			<?php
 if ( $cdn_engine == 'google_drive' || $cdn_engine == 'highwinds' ||
-	$cdn_engine == 'maxcdn' ||
-	$cdn_engine == 'rackspace_cdn' || $cdn_engine == 'rscf' ) {
+	$cdn_engine == 'limelight' ||
+	$cdn_engine == 'maxcdn' || $cdn_engine == 'rackspace_cdn' ||
+	$cdn_engine == 'rscf' || $cdn_engine == 'stackpath' ) {
 	do_action( 'w3tc_settings_cdn_boxarea_configuration' );
 } else if ( Cdn_Util::is_engine( $cdn_engine ) ) {
 		include W3TC_INC_DIR . '/options/cdn/' . $cdn_engine . '.php';
@@ -185,7 +186,7 @@ if ( $cdn_engine == 'google_drive' || $cdn_engine == 'highwinds' ||
 			<tr>
  				<th colspan="2">
  					<?php $this->checkbox( 'cdn.admin.media_library' ) ?> <?php Util_Ui::e_config_label( 'cdn.admin.media_library' ) ?></label><br />
-					<span class="description">All Media Library content will use CDN links on administration pages.</span>
+					<span class="description">All Media Library content will use <acronym title="Content Delivery Network">CDN</acronym> links on administration pages.</span>
 				</th>
  			</tr>
 			<tr>
@@ -200,7 +201,7 @@ if ( $cdn_engine == 'google_drive' || $cdn_engine == 'highwinds' ||
 					<?php $this->checkbox( 'cdn.reject.logged_roles' ) ?> <?php Util_Ui::e_config_label( 'cdn.reject.logged_roles' ) ?></label><br />
 					<span class="description"><?php _e( 'Select user roles that will use the origin server exclusively:', 'w3-total-cache' ) ?></span>
 
-					<div id="cdn_reject_roles">
+					<div id="cdn_reject_roles" class="w3tc_reject_roles">
 						<?php $saved_roles = $this->_config->get_array( 'cdn.reject.roles' ); ?>
 						<input type="hidden" name="cdn__reject__roles" value="" /><br />
 						<?php foreach ( get_editable_roles() as $role_name => $role_data ) : ?>

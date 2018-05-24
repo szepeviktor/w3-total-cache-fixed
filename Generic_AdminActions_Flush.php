@@ -390,7 +390,7 @@ class Generic_AdminActions_Flush {
 				), true );
 		} else {
 			Util_Admin::redirect_with_custom_messages2( array(
-					'errors' => array( 'Failed to flush: ' .
+					'errors' => array( 'Failed to purge: ' .
 						implode( ', ', $errors ) )
 				), true );
 		}

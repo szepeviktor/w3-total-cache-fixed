@@ -91,21 +91,12 @@ class Util_PageUrls {
 
 		if ( !isset( $post_urls[$post_id] ) ) {
 			$full_urls = array();
-			$post = get_post( $post_id );
-			
-			// On the admin page when changing a post type to "Draft" or "Pending Review"
-			// the get_permalink() returns back in the form: http://foo.bar/?p=###
-			// even if the site's permalink setting is different (e.g. http://foo.bar/post-name/).
-			// When this happens the post can potentially not get flushed.
-			// Setting the "post_status" to empty forces get_permalink() to return 
-			// the correct url for flushing.
-			
-			$post->post_status = "";
-			$post_link = get_permalink( $post );
+			$post_link = get_permalink( $post_id );
 			$post_uri = str_replace( Util_Environment::home_domain_root_url(), '', $post_link );
 
 			$full_urls[] = $post_link;
 			$uris[] = $post_uri;
+			$post = get_post( $post_id );
 			$matches =array();
 			if ( $post && ( $post_pages_number = preg_match_all( '/\<\!\-\-nextpage\-\-\>/', $post->post_content, $matches ) )>0 ) {
 				global $wp_rewrite;
@@ -739,6 +730,52 @@ class Util_PageUrls {
 		}
 
 		return $link;
+	}
+
+	static public function get_rest_posts_urls() {
+		static $posts_urls = array();
+
+		if ( empty( $posts_urls ) ) {
+			$types = get_post_types( array( 'show_in_rest' => true ), 'objects' );
+			$wp_json_base = self::wp_json_base();
+
+			foreach ( $types as $post_type ) {
+				$rest_base = ( !empty( $post_type->rest_base ) ?
+					$post_type->rest_base : $post_type->name );
+
+				$posts_urls[] = $wp_json_base . $rest_base;
+			}
+		}
+
+		return $posts_urls;
+	}
+
+	static public function get_rest_post_urls( $post_id ) {
+		static $post_urls = array();
+
+		if ( !isset( $post_urls[$post_id] ) ) {
+			$post = get_post( $post_id );
+			$urls = array();
+			$wp_json_base = self::wp_json_base();
+
+			if ( $post ) {
+				$post_type = get_post_type_object( $post->post_type );
+				$rest_base = ( !empty( $post_type->rest_base ) ?
+					$post_type->rest_base : $post_type->name );
+
+				$urls[] = $wp_json_base . $rest_base . '/' . $post->ID;
+			}
+
+			$post_urls[$post_id] = $urls;
+		}
+
+		return $post_urls[$post_id];
+	}
+
+	static private function wp_json_base() {
+		$wp_json_base = rtrim( get_home_url(), '/' ) . W3TC_WP_JSON_URI;
+		$wp_json_base = apply_filters( 'w3tc_pageurls_wp_json_base', $wp_json_base );
+		return $wp_json_base;
 	}
 
 	static public function complement_with_mirror_urls( $queued_urls ) {

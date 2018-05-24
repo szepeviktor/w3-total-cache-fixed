@@ -37,7 +37,7 @@ class Cdn_Core_Admin {
 		$common = Dispatcher::component( 'Cdn_Core' );
 		$files = $common->get_attachment_files( $attachment_id );
 
-		return $common->purge( $files, false, $results );
+		return $common->purge( $files, $results );
 	}
 
 	/**

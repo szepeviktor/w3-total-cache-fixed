@@ -5,30 +5,30 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 define( 'W3TC', true );
-define( 'W3TC_VERSION', '0.9.6' );
+define( 'W3TC_VERSION', '0.9.7' );
 define( 'W3TC_POWERED_BY', 'W3 Total Cache' );
 define( 'W3TC_EMAIL', 'w3tc@w3-edge.com' );
 define( 'W3TC_TEXT_DOMAIN', 'w3-total-cache' );
 define( 'W3TC_LINK_URL', 'https://www.w3-edge.com/wordpress-plugins/' );
 define( 'W3TC_LINK_NAME', 'W3 EDGE, Optimization Products for WordPress' );
-define( 'W3TC_FEED_URL', 'https://wordpress.org/support/plugin/w3-total-cache/feed' );
+define( 'W3TC_FEED_URL', 'http://feeds.feedburner.com/W3TOTALCACHE' );
 define( 'W3TC_NEWS_FEED_URL', 'http://feeds.feedburner.com/W3EDGE' );
 define( 'W3TC_README_URL', 'http://plugins.svn.wordpress.org/w3-total-cache/trunk/readme.txt' );
 define( 'W3TC_SUPPORT_US_PRODUCT_URL', 'https://www.w3-edge.com/products/w3-total-cache/' );
-define( 'W3TC_SUPPORT_US_RATE_URL', 'http://wordpress.org/support/view/plugin-reviews/w3-total-cache?rate=5#postform' );
-define( 'W3TC_SUPPORT_US_TIMEOUT', 2592000 );   // 30 days
+define( 'W3TC_SUPPORT_US_RATE_URL', 'https://wordpress.org/support/plugin/w3-total-cache/reviews/#new-post' );
 define( 'W3TC_SUPPORT_US_TWEET', 'YES! I optimized the user experience of my website with the W3 Total Cache #WordPress #plugin by @w3edge! http://bit.ly/TeSBL3' );
 define( 'W3TC_EDGE_TIMEOUT', 7 * 24 * 60 * 60 );
 define( 'W3TC_SUPPORT_REQUEST_URL', 'https://www.w3-edge.com/w3tc-support/extra' );
 define( 'W3TC_SUPPORT_SERVICES_URL', 'https://www.w3-edge.com/w3tc/premium-widget.json' );
+define( 'W3TC_FAQ_URL', 'https://github.com/Auctollo/w3-total-cache-public/wiki/FAQ' );
 define( 'W3TC_TRACK_URL', 'https://www.w3-edge.com/w3tc/track/' );
 define( 'W3TC_MAILLINGLIST_SIGNUP_URL', 'https://www.w3-edge.com/w3tc/emailsignup/' );
-define( 'W3TC_CLI_PIDS', '.w3tc_cli_pids');
-define( 'W3TC_CLI_URLS', '.w3tc_cli_urls');
 define( 'NEWRELIC_SIGNUP_URL', 'http://bit.ly/w3tc-partner-newrelic-signup' );
 define( 'MAXCDN_SIGNUP_URL', 'http://bit.ly/w3tc-cdn-maxcdn-create-account' );
 define( 'MAXCDN_AUTHORIZE_URL', 'http://bit.ly/w3tc-cdn-maxcdn-authorize' );
 define( 'NETDNA_AUTHORIZE_URL', 'https://cp.netdna.com/i/w3tc' );
+define( 'STACKPATH_SIGNUP_URL', 'http://bit.ly/w3tc-cdn-stackpath-create-account' );
+define( 'STACKPATH_AUTHORIZE_URL', 'http://bit.ly/w3tc-cdn-stackpath-authorize' );
 define( 'GOOGLE_DRIVE_AUTHORIZE_URL', 'https://www.w3-edge.com/w3tcoa/google-drive/' );
 
 // this is the URL our updater / license checker pings. This should be the URL of the site with EDD installed
@@ -115,8 +115,13 @@ define( 'W3TC_MARKER_END_CDN', '# END W3TC CDN' );
 define( 'W3TC_MARKER_END_NEW_RELIC_CORE', '# END W3TC New Relic core' );
 
 
-if ( !defined( 'W3TC_EXTENSION_DIR' ) )
+if ( !defined( 'W3TC_EXTENSION_DIR' ) ) {
 	define( 'W3TC_EXTENSION_DIR', ( defined( 'WP_PLUGIN_DIR' ) ? WP_PLUGIN_DIR : WP_CONTENT_DIR . '/plugins' ) );
+}
+
+if ( !defined( 'W3TC_WP_JSON_URI' ) ) {
+	define( 'W3TC_WP_JSON_URI', '/wp-json/' );
+}
 
 @ini_set( 'pcre.backtrack_limit', 4194304 );
 @ini_set( 'pcre.recursion_limit', 4194304 );
@@ -214,7 +219,7 @@ function w3tc_config() {
 }
 
 /**
- * Shortcut for url varnish flush
+ * Purges/Flushes everything
  */
 function w3tc_flush_all( $extras = null ) {
 	$o = \W3TC\Dispatcher::component( 'CacheFlush' );
@@ -246,173 +251,14 @@ function w3tc_flush_url( $url, $extras = null ) {
 }
 
 /**
- * Shared read-locking access to retrieve contents
- * of an existing file. Although available for use by all, 
- * this was made to assist WP-CLI prime caching.
- *
- * @param   string   $file          File path to read
- * @param   boolean  $serialized    Is the file serialized (to unserialize it when returning)
- * @return  string
+ * Purges/Flushes separate cache group
  */
-function w3tc_lock_read( $file, $serialized = true ) {
-    $res = false;
-    $h = @fopen( $file, 'r' );
-
-    if ( $h !== false )
-    {
-        flock( $h, LOCK_SH );
-
-        clearstatcache( true, $file );
-        $sz = filesize( $file );
-
-        if ( $sz > 0 )
-            $res = fread( $h, $sz );
-        else
-            $res = "";
-
-        flock( $h, LOCK_UN );
-        fclose( $h );
-
-        if ( $serialized ) {
-            $res = unserialize( $res );
-        }
-    }
-
-    return $res;
+function w3tc_flush_group( $group, $extras = null ) {
+	$o = \W3TC\Dispatcher::component( 'CacheFlush' );
+	$o->flush_group( $group, $extras );
 }
 
-/**
- * Exclusive lock access to write contents to a file.
- * Although available for use by all, this was made to 
- * assist WP-CLI prime caching.
- *
- * @param   string  $file           File path to write to
- * @param   string  $data           The data to write
- * @param   boolean $serialized     Should the data be serialized
- * @return  string
- */
-function w3tc_lock_write( $file, $data, $serialized = true ) {
-    $res = false;
-    $h = @fopen( $file, 'c' );
 
-    if ( $h !== false )
-    {
-        flock( $h, LOCK_EX );
-
-        ftruncate( $h, 0 );
-
-        if ( $serialized ) {
-            $data = serialize( $data );
-        }
-
-        $res = fwrite( $h, $data );
-        fflush( $h );
-        flock( $h, LOCK_UN );
-        fclose( $h );
-    }
-
-    return $res;
-}
-
-/**
- * Unschedule an event by using a given hook name
- *
- * @param   string  $hook   The action hook name to unschedule
- * @return  boolean
- */
-function w3tc_clear_hook_crons( $hook ) {
-    $res = false;    
-    $crons = _get_cron_array();
-    if ( empty( $crons ) ) {
-        return false;
-    }
-    foreach( $crons as $timestamp => $cron ) {
-        if ( ! empty( $cron[$hook] ) )  {
-            unset( $crons[$timestamp][$hook] );
-            $res = true;
-        }
-
-        if ( empty( $crons[$timestamp] ) ) {
-            unset( $crons[$timestamp] );
-        }
-    }
-    _set_cron_array( $crons );
-    return $res;
-}
-
-/**
- * Stops an actively running WP-CLI page cache prime session.
- *
- * NOTE:
- * ====
- *
- * Because not every PHP environment is the same, if the user requests to stop 
- * an actively running WP-CLI prime session this checks for and uses either the 
- * sysvmsg or posix extension, if available, or the exec() function as a last
- * resort. It does this because the cli priming is carefully managed across
- * separate scheduled event processes and so we keep track of who those
- * active processes are and end them individually when requested to stop.
- *
- * @param   string  &$result    A text message result sent back to the caller
- * @return  boolean
- */
-function w3tc_wpcli_stop_prime( &$result = "" ) {
-    $w3_prime = \W3TC\Dispatcher::component( 'PgCache_Plugin_Admin' );
-    
-    if ( extension_loaded( 'sysvmsg' ) ) {
-        /**
-         * Inter-process messaging is available and was used to manage pids
-         */
-        $pids = true;
-        $que = msg_stat_queue( msg_get_queue( 99909 ) );
-        
-        if ( $que['msg_qnum'] > 0 ) {
-            msg_remove_queue( msg_get_queue( 99909 ) );
-        } else {
-            $pids = false;
-        }
-    } elseif (false !== ( $pids = $w3_prime->get_cli_pids() ) ) {
-        foreach( $pids as $pid ) {
-            if ( extension_loaded( 'posix' ) && w3tc_cmd_enabled( "posix_kill" ) ) {
-                /**
-                 * The posix extension is available - managed wp-cli pids will be stopped this way
-                 */
-                @posix_kill( $pid, SIGTERM );
-            } elseif ( w3tc_cmd_enabled( "exec" ) ) {
-                /**
-                 * This is the fallback option since the other two aren't available.
-                 * We use the exec to stop our managed wp-cli pids.
-                 */
-                @exec( "kill -9 $pid >/dev/null 2>&1" );
-            } else {
-                $result = "Can't issue the command to stop running process(es). Need either: exec, posix, or sysvmsg.";
-                return false;
-            }
-        }
-
-        $w3_prime->delete_cli_pids();
-    }
-
-    $w3_prime->delete_cli_urls();
-    
-    if ( w3tc_clear_hook_crons( 'w3_pgcache_prime_cli' ) === false && $pids === false ) {
-        $result = "No page cache priming to stop. Either the priming has completed or was already stopped.";
-        return false;
-    }
-
-    return true;
-}
-
-/**
- * Check if PHP function is available to use
- *
- * @param   string  $cmd   The PHP function name to check
- * @return  boolean
- */
-function w3tc_cmd_enabled( $cmd ) {
-  $disabled = explode( ',', @ini_get( 'disable_functions' ) );
-  return !in_array( $cmd, $disabled );
-}
 
 /**
  * deprecated
@@ -503,7 +349,7 @@ function w3tc_cdn_purge_files( $files ) {
  * Prints script tag for scripts group
  *
  * @param string  $location
- * @return void
+ * @retun void
  */
 function w3tc_minify_script_group( $location ) {
 	$o = \W3TC\Dispatcher::component( 'Minify_Plugin' );
@@ -518,7 +364,7 @@ function w3tc_minify_script_group( $location ) {
  * Prints style tag for styles group
  *
  * @param string  $location
- * @return void
+ * @retun void
  */
 function w3tc_minify_style_group( $location ) {
 	$o = \W3TC\Dispatcher::component( 'Minify_Plugin' );
@@ -733,7 +579,7 @@ if ( defined( 'W3TC_CONFIG_HIDE' ) && W3TC_CONFIG_HIDE ) {
 	    	if ( $master )
 	    		$blog_id = 0;
 
-	        return parent::__construct( $blog_id );
+	        return parent::__construct($blog_id);
 	    }
 	}
 }

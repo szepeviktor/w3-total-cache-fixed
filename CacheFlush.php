@@ -160,6 +160,17 @@ class CacheFlush {
 	}
 
 	/**
+	 * Purges/Flushes cache group
+	 */
+	function flush_group( $group, $extras = null ) {
+		static $flushed_groups = array();
+		if ( !isset( $flushed_groups[$group] ) ) {
+			$flushed_groups[$group] = '*';
+			$this->_executor->flush_group( $group, $extras );
+		}
+	}
+
+	/**
 	 * Purges/Flushes url
 	 */
 	function flush_url( $url, $extras = null ) {

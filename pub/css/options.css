@@ -43,24 +43,13 @@ input.w3tc-error, textarea.w3tc-error {
 
 
 .w3tc-status {
-    padding: 5px;
-    line-height:2.3
-}
-
-#browsercache_security_xfo_allow {
-    padding-top:0;
-    padding-bottom:4px;
+	padding: 5px
 }
 
 #w3tc-help ul {
-	float: left;
-	width: 29%;
+	columns: 2;
 	list-style-type: disc;
 	margin: 1em 2% 1em 2%;
-}
-
-#w3tc-help li {
-	margin: 0;
 }
 
 #w3tc-help a {
@@ -375,7 +364,7 @@ input.w3tc-error, textarea.w3tc-error {
 	display:none;
 }
 
-#cdn_netdna_authorization_key, #cdn_maxcdn_authorization_key, .maxcdn-netdna-widget-base .button-secondary{
+#cdn_netdna_authorization_key, #cdn_maxcdn_authorization_key, {
 	margin-bottom: 3px;
 }
 
@@ -447,6 +436,9 @@ td.w3tc_config_value_text {
 	padding: 20px;
 }
 
+.w3tc_reject_roles label {
+	font-weight: normal;
+}
 
 /*---*/
 /* js bound to id */
@@ -457,9 +449,13 @@ th.w3tc_extensions_manage_column_check {
 	width: 2.2em;
 }
 
+#browsercache_security_xfo_allow {
+	padding-top:0;
+	padding-bottom:4px;
+}
 #w3tc_csp {
-    width: 872px;
-    height: 654px;
-    background: url("../img/cspref.png") center center no-repeat;
-    margin: auto;
+	width: 872px;
+	height: 654px;
+	background: url("../img/cspref.png") center center no-repeat;
+	margin: auto;
 }

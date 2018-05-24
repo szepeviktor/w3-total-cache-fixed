@@ -92,7 +92,9 @@ class Minify_Plugin {
 
 		if ( substr( $_SERVER['REQUEST_URI'], 0, strlen( $prefix ) ) == $prefix ) {
 			$w3_minify = Dispatcher::component( 'Minify_MinifiedFileRequestHandler' );
-			$w3_minify->process( substr( $_SERVER['REQUEST_URI'], strlen( $prefix ) ) );
+			$filename = Util_Environment::remove_query_all(
+				substr( $_SERVER['REQUEST_URI'], strlen( $prefix ) ) );
+			$w3_minify->process( $filename );
 			exit();
 		}
 
@@ -195,6 +197,7 @@ class Minify_Plugin {
 						$embed_pos = 0;
 				}
 
+				$ignore_css_files = array_map( array( '\W3TC\Util_Environment', 'normalize_file' ), $ignore_css_files );
 				$handled_styles = array();
 				$style_tags = Minify_Extract::extract_css( $buffer );
 				$previous_file_was_ignored = false;
@@ -226,10 +229,7 @@ class Minify_Plugin {
 
 					$handled_styles[] = $file;
 					$this->replaced_styles[] = $file;
-                    $ignore_css_files = str_replace( "~", "\~", $ignore_css_files );
-                    Util_Rule::array_trim( $ignore_css_files );
-
-					if ( !empty( $ignore_css_files ) && @preg_match( '~' . implode("|", $ignore_css_files ) . '~i', $file ) ) {
+					if ( in_array( $file, $ignore_css_files ) ) {
 						if ( $tag_pos > $embed_pos ) {
 							if ( $files_to_minify ) {
 								$data = array(
@@ -1052,18 +1052,17 @@ class Minify_Plugin {
 	 * @return boolean
 	 */
 	function check_ua() {
-		if ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
-            $uas = array_merge( $this->_config->get_array( 'minify.reject.ua' ), array(
-                    W3TC_POWERED_BY
-                ) );
+		$uas = array_merge( $this->_config->get_array( 'minify.reject.ua' ), array(
+				W3TC_POWERED_BY
+			) );
 
-            $uas = str_replace( "~", "\~", $uas );
-            Util_Rule::array_trim( $uas );
-
-            if ( !empty( $uas ) && @preg_match( '~' . implode( "|", $uas ) . '~i', $_SERVER['HTTP_USER_AGENT'] ) ) {
-                return false;
-            }
-        }
+		foreach ( $uas as $ua ) {
+			if ( !empty( $ua ) ) {
+				if ( isset( $_SERVER['HTTP_USER_AGENT'] ) && stristr( $_SERVER['HTTP_USER_AGENT'], $ua ) !== false ) {
+					return false;
+				}
+			}
+		}
 
 		return true;
 	}
@@ -1275,6 +1274,15 @@ class _W3_MinifyHelpers {
 		}
 
 
+		if ( is_null( $file ) ) {
+			if ( $this->debug ) {
+				Minify_Core::log(
+					'is_file_for_minification: external not whitelisted url ' . $url );
+			}
+
+			return '';
+		}
+
 		$file_normalized = Util_Environment::remove_query_all( $file );
 		$ext = strrchr( $file_normalized, '.' );
 
@@ -1288,16 +1296,7 @@ class _W3_MinifyHelpers {
 			return '';
 		}
 
-		if ( Util_Environment::is_url( $file_normalized ) ) {
-			if ( $this->debug ) {
-				Minify_Core::log(
-					'is_file_for_minification: its url ' . $file . ' for url ' . $url );
-			}
-
-			return '';
-		}
-
-		$path = Util_Environment::document_root() . '/' . $file;
+		$path = Util_Environment::docroot_to_full_filename( $file );
 
 		if ( !file_exists( $path ) ) {
 			if ( $this->debug ) {
@@ -1418,8 +1417,7 @@ class _W3_MinifyJsAuto {
 
 		// ignored files
 		$this->ignore_js_files = $this->config->get_array( 'minify.reject.files.js' );
-        $this->ignore_js_files  = str_replace( "~", "\~", $this->ignore_js_files  );
-        Util_Rule::array_trim( $this->ignore_js_files  );
+		$this->ignore_js_files = array_map( array( '\W3TC\Util_Environment', 'normalize_file' ), $this->ignore_js_files );
 
 		// define embed type
 		$this->embed_type = array(
@@ -1537,10 +1535,14 @@ class _W3_MinifyJsAuto {
 		$script_src = Util_Environment::url_relative_to_full( $script_src );
 		$file = Util_Environment::url_to_docroot_filename( $script_src );
 
-		$step1_result = $this->minify_helpers->is_file_for_minification( $script_src, $file );
+		$step1_result = $this->minify_helpers->is_file_for_minification(
+			$script_src, $file );
+		if ( $step1_result == 'url' )
+			$file = $script_src;
+
 		$step1 = !empty( $step1_result );
-		$step2 = empty( $this->ignore_js_files ) || !@preg_match( '~' . implode( "|", $this->ignore_js_files ) . '~i', $file );
- 
+		$step2 = !in_array( $file, $this->ignore_js_files );
+
 		$do_tag_minification = $step1 && $step2;
 		$do_tag_minification = apply_filters( 'w3tc_minify_js_do_tag_minification',
 			$do_tag_minification, $script_tag, $file );
@@ -1602,16 +1604,6 @@ class _W3_MinifyJsAuto {
 
 		// find embed position
 		$embed_pos = $this->embed_pos;
-		
-		if ( $this->minify_group_number <= 0 && $this->group_type == 'head' ) {
-			// try forced embed position
-			$forced_embed_pos = strpos($this->buffer, '<!-- W3TC-include-js-head -->');
-		
-			if ($forced_embed_pos !== false) {
-				$this->buffer = str_replace('<!-- W3TC-include-js-head -->', '', $this->buffer);
-				$embed_pos = $forced_embed_pos;
-			}
-		}
 
 		// build minified script tag
 		$data = array(

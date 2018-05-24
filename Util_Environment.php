@@ -796,35 +796,36 @@ class Util_Environment {
 		if ( substr( $normalized_url, 0, strlen( $home_url ) ) != $home_url ) {
 			// not a home url, return unchanged since cant be
 			// converted to filename
-			return $url;
-		} else {
-			$path_relative_to_home = str_replace( $home_url, '', $normalized_url );
+			return null;
+		}
 
-			$home = set_url_scheme( get_option( 'home' ), 'http' );
-			$siteurl = set_url_scheme( get_option( 'siteurl' ), 'http' );
+		$path_relative_to_home = str_replace( $home_url, '', $normalized_url );
 
-			$home_path = rtrim( Util_Environment::site_path(), '/' );
-			// adjust home_path if site is not is home
-			if ( ! empty( $home ) && 0 !== strcasecmp( $home, $siteurl ) ) {
-				// $siteurl - $home
-				$wp_path_rel_to_home = rtrim( str_ireplace( $home, '', $siteurl ), '/' );
-				if ( substr( $home_path, -strlen( $wp_path_rel_to_home ) ) ==
-					$wp_path_rel_to_home ) {
-					$home_path = substr( $home_path, 0, -strlen( $wp_path_rel_to_home ) );
-				}
+		$home = set_url_scheme( get_option( 'home' ), 'http' );
+		$siteurl = set_url_scheme( get_option( 'siteurl' ), 'http' );
+
+		$home_path = rtrim( Util_Environment::site_path(), '/' );
+		// adjust home_path if site is not is home
+		if ( ! empty( $home ) && 0 !== strcasecmp( $home, $siteurl ) ) {
+			// $siteurl - $home
+			$wp_path_rel_to_home = rtrim( str_ireplace( $home, '', $siteurl ), '/' );
+			if ( substr( $home_path, -strlen( $wp_path_rel_to_home ) ) ==
+				$wp_path_rel_to_home ) {
+				$home_path = substr( $home_path, 0, -strlen( $wp_path_rel_to_home ) );
 			}
+		}
 
-			// common encoded characters
-			$path_relative_to_home = str_replace( '%20', ' ', $path_relative_to_home );
+		// common encoded characters
+		$path_relative_to_home = str_replace( '%20', ' ', $path_relative_to_home );
 
-			$full_filename = $home_path . DIRECTORY_SEPARATOR .
-				trim( $path_relative_to_home, DIRECTORY_SEPARATOR );
+		$full_filename = $home_path . DIRECTORY_SEPARATOR .
+			trim( $path_relative_to_home, DIRECTORY_SEPARATOR );
 
-			$docroot = Util_Environment::document_root();
-			if ( substr( $full_filename, 0, strlen( $docroot ) ) == $docroot )
-				$docroot_filename = substr( $full_filename, strlen( $docroot ) );
-			else
-				$docroot_filename = $path_relative_to_home;
+		$docroot = Util_Environment::document_root();
+		if ( substr( $full_filename, 0, strlen( $docroot ) ) == $docroot ) {
+			$docroot_filename = substr( $full_filename, strlen( $docroot ) );
+		} else {
+			$docroot_filename = $path_relative_to_home;
 		}
 
 		// sometimes urls (coming from other plugins/themes)
@@ -833,6 +834,11 @@ class Util_Environment {
 		$docroot_filename = str_replace( '//', DIRECTORY_SEPARATOR, $docroot_filename );
 
 		return ltrim( $docroot_filename, DIRECTORY_SEPARATOR );
+	}
+
+	static public function docroot_to_full_filename( $docroot_filename ) {
+		return rtrim( Util_Environment::document_root(), DIRECTORY_SEPARATOR ) .
+			DIRECTORY_SEPARATOR . $docroot_filename;
 	}
 
 	/**
@@ -1206,5 +1212,17 @@ class Util_Environment {
 		$temp = isset( $sig[1] ) ? explode( ' ', $sig[1] ) : array( '0' );
 		$version = $temp[0];
 		return $version;
+	}
+
+	/**
+	 * Checks if current request is REST REQUEST
+	 */
+	static public function is_rest_request( $url ) {
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST )
+			return true;
+
+		// in case when called before constant is set
+		// wp filters are not available in that case
+		return preg_match( '~' . W3TC_WP_JSON_URI . '~', $url );
 	}
 }

@@ -41,8 +41,6 @@ class Extension_Swarmify_Plugin_Admin {
 			array( $this, 'w3tc_extension_page_swarmify' ) );
 
 		add_filter( 'w3tc_admin_actions', array( $this, 'w3tc_admin_actions' ) );
-
-		add_filter( 'w3tc_notes', array( $this, 'w3tc_notes' ) );
 	}
 
 
@@ -57,29 +55,6 @@ class Extension_Swarmify_Plugin_Admin {
 	public function w3tc_admin_actions( $handlers ) {
 		$handlers['swarmify'] = 'Extension_Swarmify_AdminActions';
 		return $handlers;
-	}
-
-
-
-	public function w3tc_notes( $notes ) {
-		$config = Dispatcher::config();
-		$state = Dispatcher::config_state();
-
-		$api_key = $config->get_string( array( 'swarmify', 'api_key' ) );
-		$is_filled = !empty( $api_key );
-
-		if ( !$is_filled && !$state->get_boolean( 'extension.swarmify.hide_note_activate_suggestion' ) ) {
-			$notes['swarmify_activate_suggestion'] = sprintf(
-				__( 'Just as the load time and overall performance of your website impacts user satisfaction, so does the performance of your online videos. Optimize your video performance by enabling the <a href="%s">Swarmify SmartVideo™ solution</a>. %s',
-					'w3-total-cache' ),
-				esc_attr( Extension_Swarmify_Core::signup_url() ),
-				Util_Ui::button_hide_note2( array(
-						'w3tc_default_config_state' => 'y',
-						'key' => 'extension.swarmify.hide_note_activate_suggestion',
-						'value' => 'true' ) ) );
-		}
-
-		return $notes;
 	}
 
 

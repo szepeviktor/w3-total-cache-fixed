@@ -2,8 +2,8 @@
 Contributors: fredericktownes
 Tags: seo, cache, caching, compression, maxcdn, nginx, varnish, redis, new relic, aws, amazon web services, s3, cloudfront, rackspace, cloudflare, azure, apache
 Requires at least: 3.2
-Tested up to: 4.9.2
-Stable tag: 0.9.6.1
+Tested up to: 4.9.5
+Stable tag: 0.9.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -283,19 +283,48 @@ Please reach out to all of these people and support their projects if you're so 
 
 == Changelog ==
 
+= 0.9.7 =
+* Fixed minified files not being hosted by CDN when enabled if "host minified files" is disabled
+* Fixed warning thrown when purge all was selected (via nigrosimone)
+* Fixed undefined offset error in fragment cache
+* Fixed MaxCDN test button failure when debug mode is enabled
+* Fixed purging of feeds when cache feeds option is enabeld
+* Improved handling of errors when full site delivery isn't set
+* Improved nginx.conf to support xml caching
+* Improved nginx.conf to support HSTS for static files
+* Improved minify's handling of query strings
+* Improved database caching, frequent wp_options no longer flush posts or comments data
+* Improved Limelight Networks CDN integration
+* Improved FAQ, they're now hosted in the GitHub public repository
+* Improved handling for /*<![CDATA[*/ in HTML minify engine
+* Imporved garbage collection for basic disk caching
+* Improved HSTS support (via Dave Welsh)
+* Improved reliabilty of CSS embed options
+* Improved New Relic requirements in compatibility test
+* Added StackPath CDN integration (including full site delivery)
+* Added support for page cache priming via WP-CLI via prime function
+* Added filter support for managing cache groups
+* Added API for flushing individual cache groups via flush_group function
+* Added purge support for JSON cache e.g. cached REST API requests
+* Added filter support for managing database cache settings
+* Added filter support before (w3tc_process_content) and after (w3tc_processed_content) a cache object is created
+* Added compatibility for AMPforWP plugin
+* Added JSON caching support for Pro subscribers
+* Added additional security headers (via amiga-500)
+
 = 0.9.6 =
 * Fixed anonymous usage tracking, default to disabled
 * Fixed incorrect minify cache data written if target directory missing
 * Fixed empty minify cache file written when file locking enabled
-* Fixed missing commas in CSS (@nigrosimone)
-* Fixed typo in object cache engine (@Furniel)
+* Fixed missing commas in CSS (via nigrosimone)
+* Fixed typo in object cache engine (via Furniel)
 * Fixed incorrect reuse of redis connections when persistent connections option enabled
 * Fixed reliability of Google Drive (via jikamens)
 * Fixed handling of UTF-8 encoded files by writing them in binary (via jikamens)
 * Improved Full Site Delivery configuration user flow on the General and CDN settings screens
 * Improved content type matching and cache hits as a result
 * Improved minify file locking logic
-* Improved visual langage of the compatibility test (@Furniel)
+* Improved visual langage of the compatibility test (via Furniel)
 * Improved configuration file management
 * Improved MaxCDN set up wizard
 * Improved page cache's accepted query string handling to handle optional values and add support for disk enhanced mode (via amiga-500, nigrosimone)

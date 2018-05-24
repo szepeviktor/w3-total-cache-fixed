@@ -153,7 +153,7 @@ class Cache_Base {
 	 * @param string  $key
 	 * @return boolean
 	 */
-	function hard_delete( $key ) {
+	function hard_delete( $key, $group = '' ) {
 		return false;
 	}
 

@@ -18,6 +18,12 @@ class Cdnfsd_Plugin {
 	 * Runs plugin
 	 */
 	function run() {
+		$engine = $this->_config->get_string( 'cdnfsd.engine' );
+
+		if ( !Util_Environment::is_w3tc_pro( $this->_config ) || empty( $engine ) ) {
+			return;
+		}
+
 		add_filter( 'w3tc_footer_comment', array(
 				$this,
 				'w3tc_footer_comment'

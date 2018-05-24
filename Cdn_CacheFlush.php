@@ -51,7 +51,7 @@ class Cdn_CacheFlush {
 		$remote_path = $common->uri_to_cdn_uri( $local_site_path );
 		$files[] = $common->build_file_descriptor( $local_site_path, $remote_path );
 		$this->_flushed_urls[] = $url;
-		$common->purge( $files, false, $results );
+		$common->purge( $files, $results );
 	}
 
 	/**

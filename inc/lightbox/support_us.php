@@ -37,10 +37,35 @@ if ( !defined( 'W3TC' ) )
     <form action="<?php echo Util_Ui::admin_url( 'admin.php?page=w3tc_general' ); ?>&amp;w3tc_config_save_support_us" method="post">
 
     <div class="content">
-            <h3 class="font-palette-dark-skies"><?php _e( 'Support Us, It\'s Free!', 'w3-total-cache' ); ?></h3>
+            <h3 class="font-palette-dark-skies"><?php _e( 'Thank you! You\'ve been using W3 Total Cache for seven days or so! Please support us:', 'w3-total-cache' ); ?></h3>
 
-            <p><?php _e( 'We noticed you\'ve been using W3 Total Cache for 30 days or more, please help us improve WordPress by:', 'w3-total-cache' ); ?></p>
             <ul>
+                <li>
+                    <label>
+                        Please give us a five star rating:<br>
+                        <?php
+echo Util_Ui::action_button(
+    __( 'Login & Rate Us', 'w3-total-cache' ),
+    W3TC_SUPPORT_US_RATE_URL,
+    "btn w3tc-size image btn-default palette-wordpress",
+    true ) ?>
+                    </label>
+                </li>
+                <li>
+                    <label>Post a tweet:<br />
+                        <?php
+$tweet_url = 'http://twitter.com/home/?status=' . urlencode( W3TC_SUPPORT_US_TWEET );
+echo Util_Ui::action_button(
+    __( 'Tell Your Friends', 'w3-total-cache' ),
+    $tweet_url,
+    "btn w3tc-size image btn-default palette-twitter",
+    true );
+echo Util_Ui::hidden(
+    __( 'tweeted' ),
+    __( 'tweeted' ),
+    '0' ) ?>
+                    </label>
+                </li>
                 <li>
                     <label>
                         Link to us: <br />
@@ -54,35 +79,9 @@ if ( !defined( 'W3TC' ) )
                         </div>
                     </label>
                 </li>
-                <li>
-                    <label>Send a tweet:<br />
-                        <?php
-$tweet_url = 'http://twitter.com/home/?status=' . urlencode( W3TC_SUPPORT_US_TWEET );
-echo Util_Ui::action_button(
-	__( 'Tell Your Friends', 'w3-total-cache' ),
-	$tweet_url,
-	"btn w3tc-size image btn-default palette-twitter",
-	true );
-echo Util_Ui::hidden(
- 	__( 'tweeted' ),
- 	__( 'tweeted' ),
- 	'0' ) ?>
-                    </label>
-                </li>
-                <li>
-                    <label>
-                        Login to wordpress.org to give us a great rating:<br>
-                        <?php
-echo Util_Ui::action_button(
-	__( 'Login & Rate Us', 'w3-total-cache' ),
-	W3TC_SUPPORT_US_RATE_URL,
-	"btn w3tc-size image btn-default palette-wordpress",
-	true ) ?>
-                    </label>
-                </li>
             </ul>
             <p>
-            <label class="w3tc_signup_email" for="email">You can also sign up for our newsletter:<br />
+            <label class="w3tc_signup_email" for="email">Don't forget to join our newsletter:<br />
                 <input id="email" name="email" type="text" class="form-control w3tc-size" value="<?php esc_attr_e( $email ) ?>"></label><br />
             <input type="checkbox" name="signmeup" id="signmeup" class="css-checkbox" value="1" checked="checked" /><label for="signmeup" class="css-label"> <?php _e( 'Yes, sign me up.', 'w3-total-cache' ) ?> </label>
             </p>

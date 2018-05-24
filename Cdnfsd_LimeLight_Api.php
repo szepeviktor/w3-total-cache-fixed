@@ -3,7 +3,7 @@ namespace W3TC;
 
 
 
-class Cdnfsd_Limelight_Api {
+class Cdnfsd_LimeLight_Api {
 	private $url_base;
 
 

@@ -241,7 +241,8 @@ class Minify0_Minify {
         }
 
         $cg = new HTTP_ConditionalGet($cgOptions);
-        if ( $cg->cacheIsValid && !defined( 'W3TC_MINIFY_CONDITIONAL_OFF' ) ) {
+        if ( $cg->cacheIsValid && !self::$_options['disable_304'] &&
+        	!defined( 'W3TC_MINIFY_CONDITIONAL_OFF' ) ) {
             // client's cache is valid
             if (! self::$_options['quiet']) {
                 self::$lastServed = array(

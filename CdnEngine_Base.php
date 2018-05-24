@@ -181,7 +181,7 @@ class CdnEngine_Base {
 			default:
 				if ( !isset( $domains[0] ) ) {
 					$scheme = $this->_get_scheme();
-					if ( 'https' == $scheme && isset( $domains['https_default'] ) ) {
+					if ( 'https' == $scheme && !empty( $domains['https_default'] ) ) {
 						return $domains['https_default'];
 					} else {
 						return isset( $domains['http_default'] ) ? $domains['http_default'] :
@@ -515,10 +515,8 @@ class CdnEngine_Base {
 					$hostname = $_domain;
 				}
 
-				if ( !$hostname ) {
-					$error = 'Empty hostname';
-
-					return false;
+				if ( empty( $hostname ) ) {
+					continue;
 				}
 
 				if ( gethostbyname( $hostname ) === $hostname ) {

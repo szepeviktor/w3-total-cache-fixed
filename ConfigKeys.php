@@ -101,6 +101,10 @@ $keys = array(
 		'type' => 'integer',
 		'default' => 0
 	),
+	'dbcache.use_filters' => array(
+		'type' => 'boolean',
+		'default' => false
+	),
 	'dbcache.reject.constants' => array(
 		'type' => 'array',
 		'default' => array(
@@ -331,7 +335,7 @@ $keys = array(
 	),
 	'pgcache.cache.query' => array(
 		'type' => 'boolean',
-		'default' => true
+		'default' => false
 	),
 	'pgcache.cache.home' => array(
 		'type' => 'boolean',
@@ -348,7 +352,7 @@ $keys = array(
 	),
 	'pgcache.cache.ssl' => array(
 		'type' => 'boolean',
-		'default' => false
+		'default' => true
 	),
 	'pgcache.cache.404' => array(
 		'type' => 'boolean',
@@ -527,7 +531,7 @@ $keys = array(
 	),
 	'pgcache.purge.sitemap_regex' => array(
 		'type' => 'string',
-		'default' => '[a-z0-9_\-]*sitemap[a-z0-9_\-]*\.(xml|xsl|html?)(\.gz)?'
+		'default' => '([a-z0-9_\-]*?)sitemap([a-z0-9_\-]*)?\.xml'
 	),
 	'pgcache.prime.enabled' => array(
 		'type' => 'boolean',
@@ -548,6 +552,10 @@ $keys = array(
 	'pgcache.prime.post.enabled' => array(
 		'type' => 'boolean',
 		'default' => false
+	),
+	'pgcache.rest' => array(
+		'type' => 'string',
+		'default' => ''
 	),
 	'pgcache.cookiegroups.enabled' => array(
 		'type' => 'boolean',
@@ -711,8 +719,7 @@ $keys = array(
 		'type' => 'array',
 		'default' => array(
 			'google_ad_',
-			'RSPEAK_',
-			'mfunc'
+			'RSPEAK_'
 		)
 	),
 	'minify.css.combine' => array(
@@ -1048,9 +1055,9 @@ $keys = array(
 		'default' => false
 	),
 	'cdn.admin.media_library' => array(
- 		'type' => 'boolean',
- 		'default' => false
- 	),
+		'type' => 'boolean',
+		'default' => false
+	),
 	'cdn.cors_header' => array(
 		'type' => 'boolean',
 		'default' => true
@@ -1294,6 +1301,26 @@ $keys = array(
 		'type' => 'string',
 		'default' => 'auto'
 	),
+	'cdn.limelight.short_name' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'cdn.limelight.username' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'cdn.limelight.api_key' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'cdn.limelight.host.domains' => array(
+		'type' => 'array',
+		'default' => array()
+	),
+	'cdn.limelight.ssl' => array(
+		'type' => 'string',
+		'default' => 'auto'
+	),
 	'cdn.maxcdn.authorization_key' => array(
 		'type' => 'string',
 		'default' => ''
@@ -1390,6 +1417,22 @@ $keys = array(
 		'type' => 'string',
 		'default' => 'auto'
 	),
+	'cdn.stackpath.authorization_key' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'cdn.stackpath.domain' => array(
+		'type' => 'array',
+		'default' => array()
+	),
+	'cdn.stackpath.ssl' => array(
+		'type' => 'string',
+		'default' => 'auto'
+	),
+	'cdn.stackpath.zone_id' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
 	'cdn.reject.admins' => array(
 		'type' => 'boolean',
 		'default' => false
@@ -1434,6 +1477,46 @@ $keys = array(
 		'type' => 'boolean',
 		'default' => false
 	),
+	'cdnfsd.cloudfront.access_key' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'cdnfsd.cloudfront.secret_key' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'cdnfsd.cloudfront.distribution_id' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'cdnfsd.limelight.short_name' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'cdnfsd.limelight.username' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'cdnfsd.limelight.api_key' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'cdnfsd.maxcdn.api_key' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'cdnfsd.maxcdn.zone_id' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'cdnfsd.stackpath.api_key' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'cdnfsd.stackpath.zone_id' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
 
 	'varnish.configuration_overloaded' => array(
 		'type' => 'boolean',
@@ -1472,7 +1555,7 @@ $keys = array(
 		'type' => 'array',
 		'default' => array(
 			'robots\.txt',
-			'[a-z0-9_\-]*sitemap[a-z0-9_\-]*\.(xml|xsl|html?)(\.gz)?'
+			'[a-z0-9_\-]*sitemap[a-z0-9_\-]*\.(xml|xsl|html)(\.gz)?'
 		)
 	),
 	'browsercache.cssjs.last_modified' => array(
@@ -1497,7 +1580,7 @@ $keys = array(
 	),
 	'browsercache.cssjs.cache.control' => array(
 		'type' => 'boolean',
-		'default' => true
+		'default' => false
 	),
 	'browsercache.cssjs.cache.policy' => array(
 		'type' => 'string',
@@ -1529,7 +1612,7 @@ $keys = array(
 	),
 	'browsercache.html.expires' => array(
 		'type' => 'boolean',
-		'default' => true
+		'default' => false
 	),
 	'browsercache.html.lifetime' => array(
 		'type' => 'integer',
@@ -1537,7 +1620,7 @@ $keys = array(
 	),
 	'browsercache.html.cache.control' => array(
 		'type' => 'boolean',
-		'default' => true
+		'default' => false
 	),
 	'browsercache.html.cache.policy' => array(
 		'type' => 'string',
@@ -1577,7 +1660,7 @@ $keys = array(
 	),
 	'browsercache.other.cache.control' => array(
 		'type' => 'boolean',
-		'default' => true
+		'default' => false
 	),
 	'browsercache.other.cache.policy' => array(
 		'type' => 'string',
@@ -1591,142 +1674,6 @@ $keys = array(
 		'type' => 'boolean',
 		'default' => false
 	),
-    'browsercache.security.session.cookie_httponly' => array(
-        'type' => 'boolean',
-        'default' => false
-    ),
-    'browsercache.security.session.cookie_secure' => array(
-        'type' => 'boolean',
-        'default' => false
-    ),
-    'browsercache.security.session.use_only_cookies' => array(
-        'type' => 'boolean',
-        'default' => true
-    ),
-    'browsercache.security.hsts' => array(
-        'type' => 'boolean',
-        'default' => false
-    ),
-    'browsercache.security.hsts.directive' => array(
-        'type' => 'string',
-        'default' => 'maxage'
-    ),
-	'browsercache.security.xfo' => array(
-		'type' => 'boolean',
-		'default' => false
-	),
-	'browsercache.security.xfo.directive' => array(
-		'type' => 'string',
-		'default' => 'same'
-	),
-    'browsercache.security.xfo.allow' => array(
-            'type' => 'string',
-            'default' => ''
-    ),
-	'browsercache.security.xss' => array(
-		'type' => 'boolean',
-		'default' => false
-	),
-    'browsercache.security.xss.directive' => array(
-		'type' => 'string',
-		'default' => 'block'
-	),
-    'browsercache.security.xcto' => array(
-        'type' => 'boolean',
-        'default' => false
-    ),
-    'browsercache.security.pkp' => array(
-        'type' => 'boolean',
-        'default' => false
-    ),
-    'browsercache.security.pkp.pin' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
-    'browsercache.security.pkp.pin.backup' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
-    'browsercache.security.pkp.extra' => array(
-        'type' => 'string',
-        'default' => 'maxage'
-    ),
-    'browsercache.security.pkp.report.url' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
-    'browsercache.security.pkp.report.only' => array(
-        'type' => 'string',
-        'default' => '0'
-    ),
-    'browsercache.security.referrer.policy' => array(
-        'type' => 'boolean',
-        'default' => 'false'
-    ),
-    'browsercache.security.referrer.policy.directive' => array(
-        'type' => 'string',
-        'default' => '0'
-    ),
-    'browsercache.security.csp' => array(
-        'type' => 'boolean',
-        'default' => false
-    ),
-    'browsercache.security.csp.base' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
-    'browsercache.security.csp.frame' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
-    'browsercache.security.csp.connect' => array(
-        'type' => 'string',
-        'default' => '\'self\''
-    ),
-    'browsercache.security.csp.font' => array(
-        'type' => 'string',
-        'default' => '\'self\' fonts.gstatic.com'
-    ),
-    'browsercache.security.csp.script' => array(
-        'type' => 'string',
-        'default' => '\'self\' *.googleapis.com'
-    ),
-    'browsercache.security.csp.style' => array(
-        'type' => 'string',
-        'default' => '\'self\' *.googleapis.com'
-    ),
-    'browsercache.security.csp.img' => array(
-        'type' => 'string',
-        'default' => '\'self\' *.gravatar.com'
-    ),
-    'browsercache.security.csp.media' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
-    'browsercache.security.csp.object' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
-    'browsercache.security.csp.plugin' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
-    'browsercache.security.csp.form' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
-    'browsercache.security.csp.frame.ancestors' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
-    'browsercache.security.csp.sandbox' => array(
-        'type' => 'string',
-        'default' => ''
-    ),
-    'browsercache.security.csp.default' => array(
-        'type' => 'string',
-        'default' => '\'none\''
-    ),
 	'browsercache.other.replace' => array(
 		'type' => 'boolean',
 		'default' => false
@@ -1739,6 +1686,144 @@ $keys = array(
 		'type' => 'array',
 		'default' => array()
 	),
+	'browsercache.security.session.cookie_httponly' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.session.cookie_secure' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.session.use_only_cookies' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.hsts' => array(
+		'type' => 'boolean',
+		'default' => false
+	),
+	'browsercache.security.hsts.directive' => array(
+		'type' => 'string',
+		'default' => 'maxage'
+	),
+	'browsercache.security.xfo' => array(
+		'type' => 'boolean',
+		'default' => false
+	),
+	'browsercache.security.xfo.directive' => array(
+		'type' => 'string',
+		'default' => 'same'
+	),
+	'browsercache.security.xfo.allow' => array(
+			'type' => 'string',
+			'default' => ''
+	),
+	'browsercache.security.xss' => array(
+		'type' => 'boolean',
+		'default' => false
+	),
+	'browsercache.security.xss.directive' => array(
+		'type' => 'string',
+		'default' => 'block'
+	),
+	'browsercache.security.xcto' => array(
+		'type' => 'boolean',
+		'default' => false
+	),
+	'browsercache.security.pkp' => array(
+		'type' => 'boolean',
+		'default' => false
+	),
+	'browsercache.security.pkp.pin' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.pkp.pin.backup' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.pkp.extra' => array(
+		'type' => 'string',
+		'default' => 'maxage'
+	),
+	'browsercache.security.pkp.report.url' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.pkp.report.only' => array(
+		'type' => 'string',
+		'default' => '0'
+	),
+    'browsercache.security.referrer.policy' => array(
+        'type' => 'boolean',
+        'default' => 'false'
+    ),
+    'browsercache.security.referrer.policy.directive' => array(
+        'type' => 'string',
+        'default' => '0'
+    ),
+	'browsercache.security.csp' => array(
+		'type' => 'boolean',
+		'default' => false
+	),
+	'browsercache.security.csp.base' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.csp.frame' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.csp.connect' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.csp.font' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.csp.script' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.csp.style' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.csp.img' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.csp.media' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.csp.object' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.csp.plugin' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.csp.form' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.csp.frame.ancestors' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.csp.sandbox' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.csp.default' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+
+
 
 	'mobile.configuration_overloaded' => array(
 		'type' => 'boolean',

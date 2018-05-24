@@ -489,6 +489,8 @@ class Generic_Plugin {
 		if ( Util_Content::is_database_error( $buffer ) ) {
 			status_header( 503 );
 		} else {
+			$buffer = apply_filters( 'w3tc_process_content', $buffer );
+
 			if ( Util_Content::can_print_comment( $buffer ) ) {
 				/**
 				 * Add footer comment
@@ -518,13 +520,13 @@ class Generic_Plugin {
                     	Util_Content::escape_comment( implode( "\r\n", $strings ) ) .
                     	"\r\n-->";
                 }
-
-				$buffer = apply_filters( 'w3tc_process_content', $buffer );
 			}
 
 			$buffer = Util_Bus::do_ob_callbacks(
 				array( 'swarmify', 'minify', 'newrelic', 'cdn', 'browsercache', 'pagecache' ),
 				$buffer );
+
+			$buffer = apply_filters( 'w3tc_processed_content', $buffer );
 		}
 
 		return $buffer;

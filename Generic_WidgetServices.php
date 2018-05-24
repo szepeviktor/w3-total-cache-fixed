@@ -28,7 +28,10 @@ class Generic_WidgetServices {
 
 	function wp_dashboard_setup() {
 		Util_Widget::add( 'w3tc_services',
-			'<div class="w3tc-widget-w3tc-logo"></div>',
+			'<div class="w3tc-widget-w3tc-logo"></div>' .
+			'<div class="w3tc-widget-text">' .
+			__( 'Premium Services', 'w3-total-cache' ) .
+			'</div>',
 			array( $this, 'widget_form' ),
 			null, 'normal' );
 	}

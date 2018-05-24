@@ -143,6 +143,7 @@ class Minify_MinifiedFileRequestHandler {
 					'cacheheaders_enabled' => ( $browsercache && $this->_config->get_boolean( 'browsercache.cssjs.cache.control' ) ),
 					'cacheheaders' => $this->_config->get_string( 'browsercache.cssjs.cache.policy' )
 				),
+				'disable_304' => $quiet,   // when requested for service needs - need content instead of 304
 				'quiet' => $quiet
 			) );
 
@@ -366,13 +367,14 @@ class Minify_MinifiedFileRequestHandler {
 
 					$file = Util_Environment::url_to_docroot_filename( $url );
 
-					if ( Util_Environment::is_url( $file ) ) {
-						$precached_file = $this->_precache_file( $file, $type );
+					if ( is_null( $file ) ) {
+						// it's external url
+						$precached_file = $this->_precache_file( $url, $type );
 
 						if ( $precached_file ) {
-							$result[$location][$file] = $precached_file;
+							$result[$location][$url] = $precached_file;
 						} else {
-							Minify_Core::debug_error( sprintf( 'Unable to cache remote file: "%s"', $file ) );
+							Minify_Core::debug_error( sprintf( 'Unable to cache remote url: "%s"', $url ) );
 						}
 					} else {
 						$path = Util_Environment::document_root() . '/' . $file;
@@ -503,7 +505,10 @@ class Minify_MinifiedFileRequestHandler {
 		$result = array();
 		if ( is_array( $files ) && count( $files ) > 0 ) {
 			foreach ( $files as $file ) {
-				if ( Util_Environment::is_url( $file ) ) {
+				$docroot_filename = Util_Environment::url_to_docroot_filename( $file );
+
+				if ( Util_Environment::is_url( $file ) && is_null( $docroot_filename ) ) {
+					// it's external url
 					$precached_file = $this->_precache_file( $file, $type );
 
 					if ( $precached_file ) {
@@ -512,13 +517,12 @@ class Minify_MinifiedFileRequestHandler {
 						Minify_Core::debug_error( sprintf( 'Unable to cache remote file: "%s"', $file ) );
 					}
 				} else {
-					$file = Util_Environment::url_to_docroot_filename( $file );
-					$path = Util_Environment::document_root() . '/' . $file;
+					$path = Util_Environment::docroot_to_full_filename( $docroot_filename );
 
 					if ( file_exists( $path ) ) {
 						$result[] = $file;
 					} else {
-						Minify_Core::debug_error( sprintf( 'File "%s" doesn\'t exist', $path ) );
+						Minify_Core::debug_error( sprintf( 'File "%s" doesn\'t exist', $file ) );
 					}
 				}
 			}

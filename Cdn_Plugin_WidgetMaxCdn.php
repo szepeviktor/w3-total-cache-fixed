@@ -7,9 +7,6 @@ namespace W3TC;
 class Cdn_Plugin_WidgetMaxCdn {
 	private $authorized;
 	private $have_zone;
-	private $_sealed;
-
-	private $api;
 	private $_config = null;
 
 	function __construct() {
@@ -33,63 +30,84 @@ class Cdn_Plugin_WidgetMaxCdn {
 			), 100 );
 
 		// Configure authorize and have_zone
-		$this->_setup( $this->_config );
+		$this->authorized = $this->_config->get_string( 'cdn.maxcdn.authorization_key' ) != '' &&
+			$this->_config->get_string( 'cdn.engine' ) == 'maxcdn';
+		$keys = explode( '+', $this->_config->get_string( 'cdn.maxcdn.authorization_key' ) );
+		$this->authorized = $this->authorized  && sizeof( $keys ) == 3;
+		$this->have_zone = $this->_config->get_string( 'cdn.maxcdn.zone_id' ) != 0;
 
-		if ( $this->have_zone && $this->authorized && isset( $_GET['page'] ) && strpos( $_GET['page'], 'w3tc_dashboard' ) !== false ) {
-			require_once W3TC_LIB_NETDNA_DIR . '/NetDNA.php';
-			require_once W3TC_LIB_NETDNA_DIR . '/NetDNAPresentation.php';
-			$authorization_key = $this->_config->get_string( 'cdn.maxcdn.authorization_key' );
-			$alias = $consumerkey = $consumersecret = '';
-			$keys = explode( '+', $authorization_key );
-			if ( sizeof( $keys ) == 3 )
-				list( $alias, $consumerkey, $consumersecret ) =  $keys;
+		add_action( 'w3tc_ajax_cdn_maxcdn_widgetdata', array(
+			$this, 'w3tc_ajax_cdn_maxcdn_widgetdata' ) );
 
-			$this->api = new \NetDNA( $alias, $consumerkey, $consumersecret );
+		if ( $this->have_zone && $this->authorized && isset( $_GET['page'] ) &&
+				strpos( $_GET['page'], 'w3tc_dashboard' ) !== false ) {
 
-			add_action( 'admin_head', array( $this, 'admin_head' ) );
 		}
 	}
 
-	function admin_head() {
-		$zone_id = $this->_config->get_string( 'cdn.maxcdn.zone_id' );
-		try {
-			$zone_info = $this->api->get_pull_zone( $zone_id );
+	function w3tc_ajax_cdn_maxcdn_widgetdata() {
+		require_once W3TC_LIB_NETDNA_DIR . '/NetDNA.php';
+		require_once W3TC_LIB_NETDNA_DIR . '/NetDNAPresentation.php';
+		$api = \NetDNA::create( $this->_config->get_string( 'cdn.maxcdn.authorization_key' ) );
 
+		$zone_id = $this->_config->get_string( 'cdn.maxcdn.zone_id' );
+		$response = array();
+
+		try {
+			$zone_info = $api->get_pull_zone( $zone_id );
 			if ( !$zone_info )
-				return;
-			$filetypes = $this->api->get_list_of_file_types_per_zone( $zone_id );
+				throw new \Exception("Zone not found");
+			$filetypes = $api->get_list_of_file_types_per_zone( $zone_id );
 
 			if ( !isset( $filetypes['filetypes'] ) )
-				return;
-		} catch ( \Exception $ex ) {
-			return;
-		}
-		$filetypes = $filetypes['filetypes'];
-		$group_hits = \NetDNAPresentation::group_hits_per_filetype_group( $filetypes );
+				$filetypes['filetypes'] = array();
 
-		$list = array();
-		$colors = array();
-		foreach ( $group_hits as $group => $hits ) {
-			$list[] = sprintf( "['%s', %d]", $group, $hits );
-			$colors[] = '\'' . \NetDNAPresentation::get_file_group_color( $group ) . '\'';
+			$group_hits = \NetDNAPresentation::group_hits_per_filetype_group(
+				$filetypes['filetypes'] );
+
+			$graph = array( array('Filetype', 'Hits' ) );
+			$colors = array();
+			foreach ( $group_hits as $group => $hits ) {
+				$graph[] = array( $group, $hits );
+				$colors[] = \NetDNAPresentation::get_file_group_color( $group );
+			}
+
+			$response['graph'] = $graph;
+			$response['colors'] = $colors;
+
+			$summary = $api->get_stats_per_zone( $zone_id );
+
+			$response['zone_name'] = $zone_info['name'];
+			$response['summary'] = $summary;
+			$response['summary_size'] = Util_Ui::format_bytes( $summary['size'] );
+			$response['summary_cache_hit'] = $summary['cache_hit'];
+			$response['summary_cache_hit_percentage'] = $summary['hit'] ?
+				( $summary['cache_hit'] / $summary['hit'] ) * 100 :
+				$summary['hit'];
+        	$response['summary_noncache_hit'] = $summary['noncache_hit'];
+        	$response['summary_noncache_hit_percentage'] = $summary['hit'] ?
+        		( $summary['noncache_hit'] / $summary['hit'] ) * 100 :
+        		$summary['hit'];
+
+			$response['filetypes'] = $filetypes;
+			$popular_files = $api->get_list_of_popularfiles_per_zone( $zone_id );
+			$popular_files = \NetDNAPresentation::format_popular( $popular_files );
+			$response['popular_files'] = array_slice( $popular_files, 0 , 5 );
+			for ($n = 0; $n < count( $response['popular_files'] ); $n++) {
+				$response['popular_files'][$n]['color'] =
+					\NetDNAPresentation::get_file_group_color(
+						$response['popular_files'][$n]['group'] );
+			}
+
+			$account = $api->get_account();
+			$response['account_status'] = \NetDNAPresentation::get_account_status( $account['status'] );
+			$response['url_manage'] = 'https://cp.maxcdn.com/zones/pull/' . $zone_id;
+			$response['url_reports'] = 'https://cp.maxcdn.com/reporting/' . $zone_id;
+		} catch ( \Exception $ex ) {
+			$response['error'] = $ex->getMessage();
 		}
-?>
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript">
-        google.load("visualization", "1", {packages:["corechart"]});
-        google.setOnLoadCallback(drawChart);
-        function drawChart() {
-            var data = google.visualization.arrayToDataTable([
-                ['Filetype', 'Hits'],<?php
-		echo "                ", implode( ',', $list );
-?>
-            ]);
-            var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-            var options = {colors: [<?php echo implode( ',', $colors ) ?>]};
-            chart.draw(data, options);
-        }
-    </script>
-<?php
+
+		echo json_encode( $response );
 	}
 
 	/**
@@ -112,70 +130,28 @@ class Cdn_Plugin_WidgetMaxCdn {
 	 * @param array   $form_inputs
 	 */
 	function widget_maxcdn( $widget_id, $form_inputs = array() ) {
-
-		$authorized = $this->authorized;
-		$have_zone = $this->have_zone;
-		$error = '';
-		$no_zone = $this->_config->get_integer( 'cdn.maxcdn.zone_id' ) == 0;
-		$is_sealed = $this->_sealed;
-		$pull_zones = array();
-		$zone_info = false;
-		if ( $this->authorized && $this->have_zone ) {
-			$zone_id = $this->_config->get_integer( 'cdn.maxcdn.zone_id' );
-
-			try{
-				$zone_info = $this->api->get_pull_zone( $zone_id );
-			} catch ( \Exception $ex ) {
-				$zone_info = false;
-				$error = $ex->getMessage();
-			}
-
-			if ( $zone_info ) {
-				$content_zone = $zone_info['name'];
-				try {
-					$summary = $this->api->get_stats_per_zone( $zone_id );
-					$filetypes = $this->api->get_list_of_file_types_per_zone( $zone_id );
-					$popular_files = $this->api->get_list_of_popularfiles_per_zone( $zone_id );
-					$popular_files = \NetDNAPresentation::format_popular( $popular_files );
-					$popular_files = array_slice( $popular_files, 0 , 5 );
-					$account = $this->api->get_account();
-					$account_status = \NetDNAPresentation::get_account_status( $account['status'] );
-					include W3TC_INC_WIDGET_DIR . '/maxcdn.php';
-				} catch ( \Exception $ex ) {
-					$error = $ex->getMessage();
-					try {
-						$pull_zones = $this->api->get_zones_by_url( home_url() );
-					} catch ( \Exception $ex ) {}
-					include W3TC_INC_WIDGET_DIR . '/maxcdn_signup.php';
-				}
-			} else {
-				try {
-					$pull_zones = $this->api->get_zones_by_url( home_url() );
-				} catch ( \Exception $ex ) {}
-				include W3TC_INC_WIDGET_DIR . '/maxcdn_signup.php';
-			}
+		if ( $this->authorized && $this->have_zone &&
+				$this->_config->get_integer( 'cdn.maxcdn.zone_id' ) ) {
+			include dirname( __FILE__ ) . DIRECTORY_SEPARATOR .
+				'Cdn_Plugin_WidgetMaxCdn_View_Authorized.php';
 		} else {
-			include W3TC_INC_WIDGET_DIR . '/maxcdn_signup.php';
+			include dirname( __FILE__ ) . DIRECTORY_SEPARATOR .
+				'Cdn_Plugin_WidgetMaxCdn_View_Unauthorized.php';
 		}
 	}
 
-	/**
-	 *
-	 *
-	 * @param Config  $config
-	 */
-	private function _setup( $config ) {
-		$this->authorized = $config->get_string( 'cdn.maxcdn.authorization_key' ) != '' &&
-			$config->get_string( 'cdn.engine' ) == 'maxcdn';
-		$keys = explode( '+', $config->get_string( 'cdn.maxcdn.authorization_key' ) );
-		$this->authorized = $this->authorized  && sizeof( $keys ) == 3;
 
-		$this->have_zone = $config->get_string( 'cdn.maxcdn.zone_id' ) != 0;
-	}
 
 	public function enqueue() {
 		wp_enqueue_style( 'w3tc-widget' );
+		wp_enqueue_style( 'w3tc_maxcdn_widget',
+			plugins_url( 'Cdn_Plugin_WidgetMaxCdn_View.css', W3TC_FILE ) );
 		wp_enqueue_script( 'w3tc-metadata' );
 		wp_enqueue_script( 'w3tc-widget' );
+		wp_enqueue_script( 'google-jsapi', 'https://www.google.com/jsapi');
+		wp_enqueue_script( 'google-jsapi', 'https://www.google.com/jsapi');
+		wp_enqueue_script( 'w3tc_maxcdn_widget',
+			plugins_url( 'Cdn_Plugin_WidgetMaxCdn_View.js', W3TC_FILE ),
+			array( 'jquery' ), '1.0' );
 	}
 }

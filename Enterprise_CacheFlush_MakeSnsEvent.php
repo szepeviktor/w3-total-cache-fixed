@@ -131,6 +131,15 @@ class Enterprise_CacheFlush_MakeSnsEvent extends Enterprise_SnsBase {
 			) );
 	}
 
+	function flush_group( $group, $extras ) {
+		return $this->_prepare_message( array(
+				'action' => 'flush_group',
+				'group' => $group,
+				'extras' => $extras
+			) );
+	}
+
+
 	/**
 	 * Purges/Flushes url
 	 *

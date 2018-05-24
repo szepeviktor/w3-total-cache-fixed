@@ -4,6 +4,12 @@ namespace W3TC;
 if ( !defined( 'W3TC' ) )
 	die();
 
+$security_session_values = array(
+	'' => 'Leave as is',
+	'on' => 'Enable',
+	'off' => 'Disable'
+);
+
 ?>
 <?php include W3TC_INC_DIR . '/options/common/header.php'; ?>
 
@@ -98,7 +104,7 @@ if ( !defined( 'W3TC' ) )
                     <textarea id="browsercache_replace_exceptions"
                         <?php Util_Ui::sealing_disabled( 'browsercache.' ) ?>
                               name="browsercache__replace__exceptions" cols="40" rows="5"><?php echo esc_textarea( implode( "\r\n", $this->_config->get_array( 'browsercache.replace.exceptions' ) ) ); ?></textarea><br />
-                    <span class="description"><?php _e( 'Do not add the prevent caching query string to the specified URIs. Supports regular expressions.', 'w3-total-cache' ); ?></span>
+                    <span class="description"><?php _e( 'Do not add the prevent caching query string to the specified <acronym title="Uniform Resource Identifier">URI</acronym>s. Supports regular expressions.', 'w3-total-cache' ); ?></span>
                 </td>
             </tr>
             <tr>
@@ -113,7 +119,7 @@ if ( !defined( 'W3TC' ) )
                 <th colspan="2">
                     <?php $this->checkbox( 'browsercache.no404wp', !Util_Rule::can_check_rules() ) ?> <?php Util_Ui::e_config_label( 'browsercache.no404wp' ) ?></label>
                     <br /><span class="description"><?php _e( 'Reduce server load by allowing the web server to handle 404 (not found) errors for static files (images etc).', 'w3-total-cache' ); ?></span>
-                    <br /><span class="description"><?php _e( 'If enabled - you may get 404 File Not Found response for some files generated on-the-fly by WordPress plugins. You may add those file URIs to 404 error exception list below to avoid that.', 'w3-total-cache' ); ?></span>
+                    <br /><span class="description"><?php _e( 'If enabled - you may get 404 File Not Found response for some files generated on-the-fly by WordPress plugins. You may add those file <acronym title="Uniform Resource Identifier">URI</acronym>s to 404 error exception list below to avoid that.', 'w3-total-cache' ); ?></span>
                 </th>
             </tr>
             <tr>
@@ -122,7 +128,7 @@ if ( !defined( 'W3TC' ) )
                     <textarea id="browsercache_no404wp_exceptions"
                         <?php Util_Ui::sealing_disabled( 'browsercache.' ) ?>
                         name="browsercache__no404wp__exceptions" cols="40" rows="5"><?php echo esc_textarea( implode( "\r\n", $this->_config->get_array( 'browsercache.no404wp.exceptions' ) ) ); ?></textarea><br />
-                    <span class="description"><?php _e( 'Never process 404 (not found) events for the specified URIs.', 'w3-total-cache' ); ?></span>
+                    <span class="description"><?php _e( 'Never process 404 (not found) events for the specified <acronym title="Uniform Resource Identifier">URI</acronym>s.', 'w3-total-cache' ); ?></span>
                 </td>
             </tr>
             <?php
@@ -398,43 +404,52 @@ Util_Ui::config_item( array(
 
         <?php Util_Ui::button_config_save( 'browsercache_media' ); ?>
         <?php Util_Ui::postbox_footer(); ?>
-        
+
         <?php Util_Ui::postbox_header( __( 'Security Headers', 'w3-total-cache' ), '', 'security' ); ?>
-        <p><?php _e( 'HTTP security headers provide another layer of protection for your website by helping to mitigate attacks and security vulnerabilities.', 'w3-total-cache' ); ?></p>
+        <p><?php _e( '<acronym title="Hypertext Transfer Protocol">HTTP</acronym> security headers provide another layer of protection for your website by helping to mitigate attacks and security vulnerabilities.', 'w3-total-cache' ); ?></p>
         <table class="form-table">
+			<?php
+			Util_Ui::config_item( array(
+					'key' => 'browsercache.security.session.use_only_cookies',
+					'control' => 'selectbox',
+					'selectbox_values' => $security_session_values,
+					'description' => __( 'This setting prevents attacks that are caused by passing session IDs in URLs.',
+						'w3-total-cache' )
+				) );
+			?>
+			<?php
+			Util_Ui::config_item( array(
+					'key' => 'browsercache.security.session.cookie_httponly',
+					'control' => 'selectbox',
+					'selectbox_values' => $security_session_values,
+					'description' => __( 'This tells the user\'s browser not to make the session cookie accessible to client side scripting such as JavaScript. This makes it harder for an attacker to hijack the session ID and masquerade as the effected user.',
+						'w3-total-cache' )
+				) );
+			?>
+			<?php
+			Util_Ui::config_item( array(
+					'key' => 'browsercache.security.session.cookie_secure',
+					'control' => 'selectbox',
+					'selectbox_values' => $security_session_values,
+					'description' => __( 'This will prevent the user\'s session ID from being transmitted in plain text, making it much harder to hijack the user\'s session.',
+						'w3-total-cache' )
+				) );
+			?>
             <tr>
                 <th colspan="2">
-                    <?php $this->checkbox( 'browsercache.security.session.use_only_cookies' ) ?> <?php Util_Ui::e_config_label( 'browsercache.security.session.use_only_cookies' ) ?></label>
-                    <br /><span class="description"><?php _e( 'This setting prevents attacks that are caused by passing session IDs in URLs.', 'w3-total-cache' ); ?></span>
-                </th>
-            </tr>
-            <tr>
-                <th colspan="2">
-                    <?php $this->checkbox( 'browsercache.security.session.cookie_httponly' ) ?> <?php Util_Ui::e_config_label( 'browsercache.security.session.cookie_httponly' ) ?></label>
-                    <br /><span class="description"><?php _e( 'This tells the user\'s browser not to make the session cookie accessible to client side scripting such as JavaScript. This makes it harder for an attacker to hijack the session ID and masquerade as the effected user.', 'w3-total-cache' ); ?></span>
-                </th>
-            </tr>
-            <tr>
-                <th colspan="2">
-                    <?php $this->checkbox( 'browsercache.security.session.cookie_secure' ) ?> <?php Util_Ui::e_config_label( 'browsercache.security.session.cookie_secure' ) ?></label>
-                    <br /><span class="description"><?php _e( 'This will prevent the user\'s session ID from being transmitted in plain text, making it much harder to hijack the user\'s session.', 'w3-total-cache' ); ?></span>
-                </th>
-            </tr>
-            <tr>
-                <th colspan="2">
-                    <?php $this->checkbox( 'browsercache.security.hsts' ) ?> <?php Util_Ui::e_config_label( 'browsercache.security.hsts' ) ?></label>
-                    <br /><span class="description"><?php _e( 'HTTP Strict-Transport-Security (HSTS) enforces secure (HTTP over <acronym title="Secure Sockets Layer">SSL</acronym>/TLS) connections to the server. This can help mitigate adverse effects caused by bugs and session leaks through cookies and links. It also helps defend against man-in-the-middle attacks.  If there are SSL negotiation warnings then users will not be permitted to ignore them.', 'w3-total-cache' ); ?></span>
+                    <?php $this->checkbox( 'browsercache.hsts' ) ?> <?php Util_Ui::e_config_label( 'browsercache.hsts' ) ?></label>
+                    <br /><span class="description"><?php _e( '<acronym title="Hypertext Transfer Protocol">HTTP</acronym> Strict-Transport-Security (HSTS) enforces secure (<acronym title="Hypertext Transfer Protocol">HTTP</acronym> over <acronym title="Secure Sockets Layer">SSL</acronym>/<acronym title="Transport Layer Security">TLS</acronym>) connections to the server. This can help mitigate adverse effects caused by bugs and session leaks through cookies and links. It also helps defend against man-in-the-middle attacks.  If there are <acronym title="Secure Sockets Layer">SSL</acronym> negotiation warnings then users will not be permitted to ignore them.', 'w3-total-cache' ); ?></span>
                 </th>
             </tr>
             <tr>
                 <th>
                     <label for="browsercache_security_hsts_directive"><?php Util_Ui::e_config_label( 'browsercache.security.hsts.directive' ) ?></label>
-                </th>			 
+                </th>
                 <td>
                     <select id="browsercache_security_hsts_directive"
                         <?php Util_Ui::sealing_disabled( 'browsercache.' ) ?>
                         name="browsercache__security__hsts__directive">
-                        <?php $value = $this->_config->get_string( 'browsercache.security.hsts.directive' ); ?>				
+                        <?php $value = $this->_config->get_string( 'browsercache.security.hsts.directive' ); ?>
                         <option value="maxage"<?php selected( $value, 'maxage' ); ?>><?php _e( 'max-age=EXPIRES_SECONDS', 'w3-total-cache' ); ?></option>
                         <option value="maxagepre"<?php selected( $value, 'maxagepre' ); ?>><?php _e( 'max-age=EXPIRES_SECONDS; preload', 'w3-total-cache' ); ?></option>
                         <option value="maxageinc"<?php selected( $value, 'maxageinc' ); ?>><?php _e( 'max-age=EXPIRES_SECONDS; includeSubDomains', 'w3-total-cache' ); ?></option>
@@ -452,7 +467,7 @@ Util_Ui::config_item( array(
             <tr>
                 <th>
                     <label for="browsercache_security_xfo_directive"><?php Util_Ui::e_config_label( 'browsercache.security.xfo.directive' ) ?></label>
-                </th>			 
+                </th>
                 <td>
                     <select id="browsercache_security_xfo_directive"
                         <?php Util_Ui::sealing_disabled( 'browsercache.' ) ?>
@@ -476,7 +491,7 @@ Util_Ui::config_item( array(
             <tr>
                 <th>
                     <label for="browsercache_security_xss_directive"><?php Util_Ui::e_config_label( 'browsercache.security.xss.directive' ) ?></label>
-                </th>			 
+                </th>
                 <td>
                     <select id="browsercache_security_xss_directive"
                         <?php Util_Ui::sealing_disabled( 'browsercache.' ) ?>
@@ -498,7 +513,7 @@ Util_Ui::config_item( array(
             <tr>
                 <th colspan="2">
                     <?php $this->checkbox( 'browsercache.security.pkp' ) ?> <?php Util_Ui::e_config_label( 'browsercache.security.pkp' ) ?></label>
-                    <br /><span class="description"><?php _e( 'HTTP Public Key Pinning (HPKP) is a security feature for HTTPS websites that can prevent fraudulently issued certificates from being used to impersonate existing secure websites.' ); ?></span>
+                    <br /><span class="description"><?php _e( '<acronym title="Hypertext Transfer Protocol">HTTP</acronym> Public Key Pinning (<acronym title="HTTP Public Key Pinning">HPKP</acronym>) is a security feature for <acronym title="Hypertext Transfer Protocol">HTTP</acronym>S websites that can prevent fraudulently issued certificates from being used to impersonate existing secure websites.' ); ?></span>
                 </th>
             </tr>
             <tr>
@@ -591,7 +606,7 @@ Util_Ui::config_item( array(
             <tr>
                 <th colspan="2">
                     <?php $this->checkbox( 'browsercache.security.csp' ) ?> <?php Util_Ui::e_config_label( 'browsercache.security.csp' ) ?></label>
-                    <br /><span class="description"><?php _e( 'The Content Security Policy (CSP) header reduces the risk of <acronym title="Cross-Site Scripting">XSS</acronym> attacks by allowing you to define where resources can be retrieved from, preventing browsers from loading data from any other locations. This makes it harder for an attacker to inject malicious code into your site.' ); ?></span>
+                    <br /><span class="description"><?php _e( 'The Content Security Policy (<acronym title="Content Security Policy">CSP</acronym>) header reduces the risk of <acronym title="Cross-Site Scripting">XSS</acronym> attacks by allowing you to define where resources can be retrieved from, preventing browsers from loading data from any other locations. This makes it harder for an attacker to inject malicious code into your site.' ); ?></span>
                     <p><a onclick="w3tc_csp_reference()" href="javascript:void(0);">Quick Reference Chart</a></p>
                 </th>
             </tr>

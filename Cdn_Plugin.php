@@ -41,21 +41,6 @@ class Cdn_Plugin {
 			) );
 
 		if ( !Cdn_Util::is_engine_mirror( $cdn_engine ) ) {
-			add_action( 'delete_attachment', array(
-					$this,
-					'delete_attachment'
-				) );
-
-			add_filter( 'update_attached_file', array(
-					$this,
-					'update_attached_file'
-				) );
-
-			add_filter( 'wp_update_attachment_metadata', array(
-					$this,
-					'update_attachment_metadata'
-				) );
-
 			add_action( 'w3_cdn_cron_queue_process', array(
 					$this,
 					'cron_queue_process'
@@ -76,11 +61,16 @@ class Cdn_Plugin {
 					'update_feedback'
 				) );
 
-			add_filter( 'wp_prepare_attachment_for_js', array(
-					$this,
-					'wp_prepare_attachment_for_js'
-				), 0 );
 		}
+
+		add_action( 'delete_attachment',
+			array( $this, 'delete_attachment' ) );
+
+		add_filter( 'update_attached_file',
+			array( $this, 'update_attached_file' ) );
+
+		add_filter( 'wp_update_attachment_metadata',
+			array( $this, 'update_attachment_metadata' ) );
 
 		add_filter( 'w3tc_admin_bar_menu',
 			array( $this, 'w3tc_admin_bar_menu' ) );
@@ -89,6 +79,11 @@ class Cdn_Plugin {
 			add_action( 'w3tc_config_ui_save-w3tc_cdn', array(
 					$this, 'change_canonical_header' ), 0, 0 );
 			add_filter( 'w3tc_module_is_running-cdn', array( $this, 'cdn_is_running' ) );
+		}
+
+		if ( !is_admin() || $this->_config->get_boolean( 'cdn.admin.media_library' ) ) {
+			add_filter( 'wp_prepare_attachment_for_js',
+				array( $this, 'wp_prepare_attachment_for_js' ), 0 );
 		}
 
 		/**
@@ -104,35 +99,6 @@ class Cdn_Plugin {
 					'media_row_actions'
 				), 0, 2 );
 		}
-	}
-
-	/**
-	 * run code for FSD CDN
-	 */
-	private function run_fsd() {
-		add_action( 'w3tc_flush_all', array(
-				'\W3TC\Cdnfsd_CacheFlush',
-				'w3tc_flush_all'
-			), 3000, 1 );
-		add_action( 'w3tc_flush_post', array(
-				'\W3TC\Cdnfsd_CacheFlush',
-				'w3tc_flush_post'
-			), 3000, 1 );
-		add_action( 'w3tc_flushable_posts', '__return_true', 3000 );
-		add_action( 'w3tc_flush_posts', array(
-				'\W3TC\Cdnfsd_CacheFlush',
-				'w3tc_flush_all'
-			), 3000 );
-		add_action( 'w3tc_flush_url', array(
-				'\W3TC\Cdnfsd_CacheFlush',
-				'w3tc_flush_url'
-			), 3000, 1 );
-		add_filter( 'w3tc_flush_execute_delayed_operations', array(
-				'\W3TC\Cdnfsd_CacheFlush',
-				'w3tc_flush_execute_delayed_operations'
-			), 3000 );
-
-		Util_AttachToActions::flush_posts_on_actions();
 	}
 
 	/**
@@ -187,7 +153,12 @@ class Cdn_Plugin {
 
 		$results = array();
 
-		$common->upload( $files, true, $results );
+		$cdn_engine = $this->_config->get_string( 'cdn.engine' );
+		if ( Cdn_Util::is_engine_mirror( $cdn_engine ) ) {
+			$common->purge( $files, $results );
+		} else {
+			$common->upload( $files, true, $results );
+		}
 
 		return $attached_file;
 	}
@@ -206,7 +177,12 @@ class Cdn_Plugin {
 
 		$results = array();
 
-		$common->delete( $files, true, $results );
+		$cdn_engine = $this->_config->get_string( 'cdn.engine' );
+		if ( Cdn_Util::is_engine_mirror( $cdn_engine ) ) {
+			$common->purge( $files, $results );
+		} else {
+			$common->delete( $files, true, $results );
+		}
 	}
 
 	/**
@@ -224,7 +200,12 @@ class Cdn_Plugin {
 
 		$results = array();
 
-		$common->upload( $files, true, $results );
+		$cdn_engine = $this->_config->get_string( 'cdn.engine' );
+		if ( Cdn_Util::is_engine_mirror( $cdn_engine ) ) {
+			$common->purge( $files, $results );
+		} else {
+			$common->upload( $files, true, $results );
+		}
 
 		return $metadata;
 	}
